@@ -1,2 +1,0 @@
-# minishell
-shell of hell
