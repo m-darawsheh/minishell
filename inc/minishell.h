@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:24:48 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/02/25 17:26:57 by hassende         ###   ########.fr       */
+/*   Updated: 2025/02/25 18:22:56 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,10 +33,11 @@ typedef struct s_cmd
 	char	**cmd_split;
 	char	**path;
 	char	**envp;
+	pid_t	pid;
 }	t_cmd;
 
 void	exit_error(char *str);
 void	free_all(t_cmd *cmd);
 void	free_2d(char **str);
-
+void	struc_init(t_cmd *cmd);
 #endif
