@@ -1,29 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exit_utils.c                                       :+:      :+:    :+:   */
+/*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/25 16:19:37 by hassende          #+#    #+#             */
-/*   Updated: 2025/02/26 15:18:41 by hassende         ###   ########.fr       */
+/*   Created: 2025/02/26 15:17:16 by hassende          #+#    #+#             */
+/*   Updated: 2025/02/26 15:20:29 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	exit_error(char *str)
+void	sig_handler(int sig)
 {
-	ft_putendl_fd(str, 2);
-	exit(1);
+	if (sig == SIGINT)
+	{
+		ft_putstr_fd("\n", 1);
+		rl_on_new_line();
+		rl_replace_line("", 0);
+		rl_redisplay();
+	}
 }
 
-// ! removed for now, will be added later
-// void	free_all(t_cmd_path *cmd)
-// {
-// 	free_2d(cmd->cmd_split);
-// 	free_2d(cmd->path);
-// 	rl_clear_history();
-// 	if (cmd->cmd)
-// 		free(cmd->cmd);
-// }
+void	setup_signals()
+{
+	signal(SIGINT, sig_handler);
+	signal(SIGQUIT,  SIG_IGN);
+}

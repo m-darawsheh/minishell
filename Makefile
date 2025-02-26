@@ -1,4 +1,4 @@
-SRCS_FILES = main.c exit_utils.c free.c init.c
+SRCS_FILES = main.c exit_utils.c free.c init.c parser.c signals.c
 SRCS = $(addprefix srcs/, $(SRCS_FILES))
 
 OBJS_DIR = objs
