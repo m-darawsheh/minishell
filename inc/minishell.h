@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:24:48 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/03/03 14:03:45 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/03 14:59:09 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,18 +58,20 @@ typedef struct s_command
 	char					**cmd_split;
 	char					*infile;
 	char					*outfile;
-	t_cmd_path				*cmd_path;
+	char					*cmd_path;
+	t_cmd_path				*path;
 }	t_cmd;
 
 // Function Prototypes
 void	exit_error(char *str);
-void	free_all(t_cmd_path *cmd);
+// void	free_all(t_cmd_path *cmd);
 void	free_2d(char **str);
-void	struc_init(t_cmd_path *cmd, char **envp);
+void	struc_init(t_cmd_path *path, char **envp);
 char	**find_path(char **envp);
 void	setup_signals();
-void	exec_cmd(char *line_read, t_cmd_path *cmd_path);
-void	init_cmds(t_cmd **cmd, t_cmd_path *cmd_path, char *line);
+void	exec_cmd(char *line_read, t_cmd_path *path);
+void	init_cmds(t_cmd **cmd, char *line);
 t_cmd	**t_cmd_malloc(char *line_read);
+void	setup_command(t_cmd *cmd, t_cmd_path *path);
 
 #endif

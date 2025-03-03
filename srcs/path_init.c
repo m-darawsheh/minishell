@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   init.c                                             :+:      :+:    :+:   */
+/*   path_init.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 18:23:27 by hassende          #+#    #+#             */
-/*   Updated: 2025/02/26 15:24:29 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/03 14:40:42 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,10 @@ char	**find_path(char **envp)
 	return (NULL);
 }
 
-void	struc_init(t_cmd_path *cmd_path, char **envp)
+void	struc_init(t_cmd_path *path, char **envp)
 {
-	cmd_path->envp = envp;
-	cmd_path->path = find_path(envp);
-	if (!cmd_path->path)
+	path->envp = envp;
+	path->path = find_path(envp);
+	if (!path->path)
 		exit_error("PATH not found in envp");
 }
