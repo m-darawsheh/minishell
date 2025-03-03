@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:25:54 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/02/26 15:49:05 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/03 13:06:11 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,48 +39,14 @@
 // 	exit(1);
 // }
 
-void	stack_add_bottom(t_cmd **cmd, char *line_read)
-{
-	t_cmd	*new_cmd;
-	t_cmd	*tmp;
-
-	new_cmd = malloc(sizeof(t_cmd));
-	if (!new_cmd)
-		exit_error("Malloc failed");
-	new_cmd->has_pipe = 0;
-	new_cmd->has_infile = 0;
-	new_cmd->has_outfile = 0;
-	new_cmd->has_appendfile = 0;
-	new_cmd->has_heredoc = 0;
-	new_cmd->cmd = line_read;
-	new_cmd->cmd_split = NULL;
-	new_cmd->infile = NULL;
-	new_cmd->outfile = NULL;
-	new_cmd->cmd_path = NULL;
-	new_cmd->next = NULL;
-	tmp = *cmd;
-	if (!tmp)
-	{
-		*cmd = new_cmd;
-		return ;
-	}
-	while (tmp->next)
-		tmp = tmp->next;
-	tmp->next = new_cmd;
-}
-
 int	main(int argc, char **argv, char **envp)
 {
 	(void)argv;
 	char		*line_read;
-	t_cmd		*cmd;
 	t_cmd_path	cmd_path;
 
 	if (argc > 1)
 		exit_error("Usage: ./minishell");
-	cmd = malloc(sizeof(t_cmd));
-	if (!cmd)
-		exit_error("Malloc failed");
 	struc_init(&cmd_path, envp);
 	setup_signals();
 	while (1)
@@ -90,7 +56,7 @@ int	main(int argc, char **argv, char **envp)
 			break ;
 		if (*line_read)
 			add_history(line_read);
-		stack_add_bottom(&cmd, line_read);
+		exec_cmd(line_read, &cmd_path);
 		// exec_prepare(&cmd, line_read);
 	}
 }

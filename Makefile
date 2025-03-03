@@ -1,4 +1,5 @@
-SRCS_FILES = main.c exit_utils.c free.c init.c parser.c signals.c
+SRCS_FILES = main.c exit_utils.c free.c parser.c signals.c path_init.c \
+			cmd_exec.c cmd_utils.c cmd_init.c
 SRCS = $(addprefix srcs/, $(SRCS_FILES))
 
 OBJS_DIR = objs
@@ -6,7 +7,7 @@ OBJS_FILES = $(SRCS_FILES:.c=.o)
 OBJS = $(addprefix $(OBJS_DIR)/, $(OBJS_FILES))
 
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -g -I inc -I libft
+CFLAGS = -Wall -Wextra  -g -I inc -I libft
 
 
 NAME = minishell

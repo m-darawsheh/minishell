@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:24:48 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/02/26 15:20:40 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/03 14:03:45 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # ifndef MINISHELL_H
 # define MINISHELL_H
 
+// System Libraries
 # include <unistd.h>
 # include <sys/types.h>
 # include <sys/stat.h>
@@ -25,8 +26,21 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 
+// Custom Libraries
 # include "libft.h"
 
+// Macros
+#define MAX_FILENAME 256	// Standard filename length
+#define MAX_CMD_LEN 4096	// if the evaluator can get a command more than this size, i'll jump
+
+// Enums
+enum	file_type
+{
+	INFILE,
+	OUTFILE
+};
+
+// Structures
 typedef struct s_cmd_path
 {
 	char		**path;
@@ -45,15 +59,17 @@ typedef struct s_command
 	char					*infile;
 	char					*outfile;
 	t_cmd_path				*cmd_path;
-	struct s_command		*next;
 }	t_cmd;
 
-
+// Function Prototypes
 void	exit_error(char *str);
 void	free_all(t_cmd_path *cmd);
 void	free_2d(char **str);
 void	struc_init(t_cmd_path *cmd, char **envp);
 char	**find_path(char **envp);
 void	setup_signals();
+void	exec_cmd(char *line_read, t_cmd_path *cmd_path);
+void	init_cmds(t_cmd **cmd, t_cmd_path *cmd_path, char *line);
+t_cmd	**t_cmd_malloc(char *line_read);
 
 #endif
