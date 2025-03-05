@@ -6,11 +6,18 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 13:37:31 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/05 16:57:10 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/05 17:30:51 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+void	print_not_found(t_cmd *cmd)
+{
+	ft_putstr_fd(cmd->cmd, 2);
+	ft_putstr_fd(": command not found\n", 2);
+	exit(127);
+}
 
 void	setup_command(t_cmd *cmd, t_cmd_path *path)
 {
@@ -19,6 +26,11 @@ void	setup_command(t_cmd *cmd, t_cmd_path *path)
 
 	cmd->cmd_split = ft_split(cmd->cmd, ' ');
 	cmd->path = path;
+	if (access (cmd->cmd_split[0], X_OK) == 0)
+	{
+		cmd->cmd_path = ft_strdup(cmd->cmd_split[0]);
+		return ;
+	}
 	i = 0;
 	while (path->path[i])
 	{
@@ -31,11 +43,7 @@ void	setup_command(t_cmd *cmd, t_cmd_path *path)
 		i++;
 	}
 	if (!path->path[i])
-	{
-		ft_putstr_fd(cmd->cmd, 2);
-		ft_putstr_fd(": command not found\n", 2);
-		exit(127);
-	}
+		print_not_found(cmd);
 }
 
 static void	get_file(t_cmd **cmd, char *line_read, int *i, int j, int type)
