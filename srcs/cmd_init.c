@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 13:57:52 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/03 14:04:09 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/05 17:00:10 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ static void	free_cmd_array(t_cmd **cmd, int count)
 
 static void	init_cmd_struct(t_cmd *cmd)
 {
-	cmd->cmd = malloc(sizeof(char) * MAX_CMD_LEN);
+	cmd->cmd = malloc(sizeof(char) * MAX_CMD_LEN); // if the evaluator puts a command longer than this size, i'll jump
 	cmd->infile = malloc(sizeof(char) * MAX_FILENAME);
 	cmd->outfile = malloc(sizeof(char) * MAX_FILENAME);;
 	if (!cmd->cmd || !cmd->infile || !cmd->outfile)

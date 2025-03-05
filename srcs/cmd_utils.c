@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 13:37:31 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/03 15:26:13 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/05 16:57:10 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,15 +55,9 @@ static void	get_file(t_cmd **cmd, char *line_read, int *i, int j, int type)
 		k++;
 	}
 	if (type == INFILE)
-	{
 		cmd[j]->infile[k] = '\0';
-		printf("infile: %s\n", cmd[j]->infile);
-	}
 	else
-	{
 		cmd[j]->outfile[k] = '\0';
-		printf("outfile: %s\n", cmd[j]->outfile);
-	}
 }
 
 static void	handle_redirections(t_cmd **cmd, char *line, int *i, int j)
@@ -97,7 +91,7 @@ void	init_cmds(t_cmd **cmd, char *line)
 		if (line[i] == '|')
 		{
 			cmd[j]->cmd[k] = '\0';
-			cmd[++j]->has_pipe = 1;
+			cmd[j++]->has_pipe = 1;
 			k = 0;
 		}
 		else if (line[i] == '<' || line[i] == '>')
