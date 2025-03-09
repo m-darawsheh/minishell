@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 13:37:31 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/05 17:30:51 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/09 05:22:31 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@ void	setup_command(t_cmd *cmd, t_cmd_path *path)
 {
 	int		i;
 	char	*tmp;
-
 	cmd->cmd_split = ft_split(cmd->cmd, ' ');
 	cmd->path = path;
 	if (access (cmd->cmd_split[0], X_OK) == 0)
@@ -84,7 +83,7 @@ static void	handle_redirections(t_cmd **cmd, char *line, int *i, int j)
 		get_file(cmd, line, i, j, OUTFILE);
 	}
 }
-
+// ls > j -la
 void	init_cmds(t_cmd **cmd, char *line)
 {
 	int	i;

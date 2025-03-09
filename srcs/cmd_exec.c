@@ -3,14 +3,63 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_exec.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/05 16:56:29 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/09 06:48:37 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+void	bluitin_cheak(t_cmd **cmd)
+{
+	int	i;
+
+	i = 0;
+	if (cmd[1] == NULL)
+	{
+		if (ft_strncmp(cmd[0]->cmd, "echo", 5) == 0)
+			cmd[0]->builtin = 1;
+		else if (ft_strncmp(cmd[0]->cmd, "cd", 3) == 0)
+			cmd[0]->builtin = 2;
+		else if (ft_strncmp(cmd[0]->cmd, "pwd", 4) == 0)
+			cmd[0]->builtin = 3;
+		else if (ft_strncmp(cmd[0]->cmd, "export", 7) == 0)
+			cmd[0]->builtin = 4;
+		else if (ft_strncmp(cmd[0]->cmd, "unset", 6) == 0)
+			cmd[0]->builtin = 5;
+		else if (ft_strncmp(cmd[0]->cmd, "env", 4) == 0)
+			cmd[0]->builtin = 6;
+		else if (ft_strncmp(cmd[0]->cmd, "exit", 5) == 0)
+			cmd[0]->builtin = 7;
+		else
+			cmd[0]->builtin = 0;
+	}
+}
+
+
+
+void	exec_builtin(t_cmd **cmd, t_cmd_path *path)
+{
+	(void ) path;
+	if (cmd[0]->builtin == 1)
+		return ;
+	else if (cmd[0]->builtin == 2)
+		return ;
+	else if (cmd[0]->builtin == 3)
+		ft_pwd();
+	else if (cmd[0]->builtin == 4)
+		return ;
+		// ft_export(cmd, path);
+	else if (cmd[0]->builtin == 5)
+		return ;
+	else if (cmd[0]->builtin == 6)
+		return ;
+	else if (cmd[0]->builtin == 7)
+		return ;
+}
+
 
 void	exec_cmd(char *line_read, t_cmd_path *path)
 {
@@ -27,6 +76,14 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 	if (!cmd)
 		exit_error("Malloc failed");
 	init_cmds(cmd, line_read);
+
+	bluitin_cheak(cmd);
+	if (cmd[0]->builtin)
+	{
+		exec_builtin(cmd, path);
+		return ;
+	}
+	printf("i passed the builtin\n");
 	while (cmd[++i])
 	{
 		if (cmd[i]->has_pipe)
@@ -34,6 +91,7 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 			if (pipe(pipe_fd) == -1)
 				exit_error("Pipe failed");
 		}
+
 		pid = fork();
 		if (pid == 0)
 		{

@@ -1,5 +1,5 @@
 SRCS_FILES = main.c exit_utils.c free.c signals.c path_init.c \
-			cmd_exec.c cmd_utils.c cmd_init.c
+			cmd_exec.c cmd_utils.c cmd_init.c pwd_handle.c
 SRCS = $(addprefix srcs/, $(SRCS_FILES))
 
 OBJS_DIR = objs
