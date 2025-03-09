@@ -6,7 +6,7 @@
 /*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/09 06:48:37 by mdarawsh         ###   ########.fr       */
+/*   Updated: 2025/03/09 07:15:52 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,6 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 		exec_builtin(cmd, path);
 		return ;
 	}
-	printf("i passed the builtin\n");
 	while (cmd[++i])
 	{
 		if (cmd[i]->has_pipe)
