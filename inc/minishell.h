@@ -6,7 +6,7 @@
 /*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:24:48 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/03/09 06:46:44 by mdarawsh         ###   ########.fr       */
+/*   Updated: 2025/03/10 01:39:18 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,8 @@ void	exec_cmd(char *line_read, t_cmd_path *path);
 void	init_cmds(t_cmd **cmd, char *line);
 t_cmd	**t_cmd_malloc(char *line_read);
 void	setup_command(t_cmd *cmd, t_cmd_path *path);
-void	ft_pwd(void);
+void	pwd_handle(void);
+void	export_handle(t_cmd **cmd ,t_cmd_path *path);
 
 
 #endif
