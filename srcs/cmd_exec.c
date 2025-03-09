@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/05 16:56:29 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/09 13:07:09 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,7 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 				dup2(fd, STDOUT_FILENO);
 				close(fd);
 			}
+			check_builtin(cmd[i], path);
 			execve(cmd[i]->cmd_path, cmd[i]->cmd_split, path->envp);
 			exit_error("Execve failed"); // Ensure this exits on error
 		}
