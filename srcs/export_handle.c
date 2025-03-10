@@ -6,7 +6,7 @@
 /*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 23:43:49 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/03/10 02:08:14 by mdarawsh         ###   ########.fr       */
+/*   Updated: 2025/03/10 03:44:58 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,6 @@ void	add_env(t_cmd_path *path , char *var)
 		free(tmp);
 		return;
 	}
-	printf("the var is %s\n", tmp);
 	path->envp[i] = ft_strdup(tmp);
 	if (!path->envp[i])
 	{
@@ -70,9 +69,48 @@ void	add_env(t_cmd_path *path , char *var)
 	free(tmp);
 }
 
+int check_env(t_cmd_path *path , char *var, int *i)
+{
+	int j;
+
+	j = 0;
+	while (var[j] != '=')
+		j++;
+	// printf("check var is %s\n", var + 7);
+	while (path->envp[*i])
+	{
+		if (ft_strncmp(path->envp[*i], var + 7 , j - 7) == 0)
+			return (*i);
+		(*i)++;
+	}
+	return (0);
+}
+
+// export VAR=VALUE
+void	edit_env(t_cmd_path *path , char *var, int *i)
+{
+	int j;
+	int k;
+
+	j = 0;
+	k = 0;
+	while (var[j] != '=')
+		j++;
+	while (path->envp[*i][k] != '=')
+		k++;
+	while (var[j])
+		path->envp[*i][k++] = var[j++];
+	path->envp[*i][k] = '\0';
+}
 
 
 void	export_handle(t_cmd **cmd ,t_cmd_path *path)
 {
-	add_env(path, cmd[0]->cmd);
+	int i;
+
+	i = 0;
+	if (check_env(path, cmd[0]->cmd, &i))
+		edit_env(path, cmd[0]->cmd, &i);
+	else
+		add_env(path, cmd[0]->cmd);
 }
