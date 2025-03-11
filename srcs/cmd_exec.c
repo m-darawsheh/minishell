@@ -6,7 +6,7 @@
 /*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/10 13:09:58 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/12 01:01:15 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,50 +24,50 @@ void	print_env(t_cmd_path *path)
 	}
 }
 
-void	bluitin_cheak(t_cmd **cmd)
-{
+// void	bluitin_cheak(t_cmd **cmd)
+// {
 
-	if (cmd[1] == NULL)
-	{
-		if (ft_strncmp(cmd[0]->cmd, "echo", 4) == 0)
-			cmd[0]->builtin = 1;
-		else if (ft_strncmp(cmd[0]->cmd, "cd", 2) == 0)
-			cmd[0]->builtin = 2;
-		else if (ft_strncmp(cmd[0]->cmd, "pwd", 3) == 0)
-			cmd[0]->builtin = 3;
-		else if (ft_strncmp(cmd[0]->cmd, "export", 6) == 0)
-			cmd[0]->builtin = 4;
-		else if (ft_strncmp(cmd[0]->cmd, "unset", 5) == 0)
-			cmd[0]->builtin = 5;
-		else if (ft_strncmp(cmd[0]->cmd, "env", 3) == 0)
-			cmd[0]->builtin = 6;
-		else if (ft_strncmp(cmd[0]->cmd, "exit", 4) == 0)
-			cmd[0]->builtin = 7;
-		else
-			cmd[0]->builtin = 0;
-	}
-}
+// 	if (cmd[1] == NULL)
+// 	{
+// 		if (ft_strncmp(cmd[0]->cmd, "echo", 4) == 0)
+// 			cmd[0]->builtin = 1;
+// 		else if (ft_strncmp(cmd[0]->cmd, "cd", 2) == 0)
+// 			cmd[0]->builtin = 2;
+// 		else if (ft_strncmp(cmd[0]->cmd, "pwd", 3) == 0)
+// 			cmd[0]->builtin = 3;
+// 		else if (ft_strncmp(cmd[0]->cmd, "export", 6) == 0)
+// 			cmd[0]->builtin = 4;
+// 		else if (ft_strncmp(cmd[0]->cmd, "unset", 5) == 0)
+// 			cmd[0]->builtin = 5;
+// 		else if (ft_strncmp(cmd[0]->cmd, "env", 3) == 0)
+// 			cmd[0]->builtin = 6;
+// 		else if (ft_strncmp(cmd[0]->cmd, "exit", 4) == 0)
+// 			cmd[0]->builtin = 7;
+// 		else
+// 			cmd[0]->builtin = 0;
+// 	}
+// }
 
 
 
-void	exec_builtin(t_cmd **cmd, t_cmd_path *path)
-{
-	(void ) path;
-	if (cmd[0]->builtin == 1)
-		return ;
-	else if (cmd[0]->builtin == 2)
-		return ;
-	else if (cmd[0]->builtin == 3)
-		pwd_handle();
-	else if (cmd[0]->builtin == 4)
-		export_handle(cmd, path);
-	else if (cmd[0]->builtin == 5)
-		return ;
-	else if (cmd[0]->builtin == 6)
-		print_env(path);
-	else if (cmd[0]->builtin == 7)
-		return ;
-}
+// void	exec_builtin(t_cmd **cmd, t_cmd_path *path)
+// {
+// 	(void ) path;
+// 	if (cmd[0]->builtin == 1)
+// 		return ;
+// 	else if (cmd[0]->builtin == 2)
+// 		return ;
+// 	else if (cmd[0]->builtin == 3)
+// 		pwd_handle();
+// 	else if (cmd[0]->builtin == 4)
+// 		export_handle(cmd, path);
+// 	else if (cmd[0]->builtin == 5)
+// 		return ;
+// 	else if (cmd[0]->builtin == 6)
+// 		print_env(path);
+// 	else if (cmd[0]->builtin == 7)
+// 		return ;
+// }
 
 
 void	exec_cmd(char *line_read, t_cmd_path *path)
@@ -89,20 +89,32 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 	init_cmds(cmd, line_read);
 
 
-	bluitin_cheak(cmd);
+	// bluitin_cheak(cmd);
 
 
-	if (cmd[0]->builtin)
-	{
-		exec_builtin(cmd, path);
-		return ;
-	}
+	// if (cmd[0]->builtin)
+	// {
+	// 	exec_builtin(cmd, path);
+	// 	return ;
+	// }
+
 	while (cmd[++i])
 	{
 		cmd[i]->cmd_split = ft_split (cmd[i]->cmd, ' ');
 		if (!ft_strncmp(cmd[i]->cmd_split[0], "cd", 2))
 		{
 			do_cd(cmd[i], path);
+			continue ;
+		}
+		// check if export not export {like this exporttttt}
+		if (!ft_strncmp(cmd[i]->cmd_split[0], "export", 6))
+		{
+			export_handle(cmd[i], path);
+			continue ;
+		}
+		if (!ft_strncmp(cmd[i]->cmd_split[0], "env", 3))
+		{
+			print_env(path);
 			continue ;
 		}
 		if (cmd[i]->has_pipe)

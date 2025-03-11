@@ -6,10 +6,10 @@
 /*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 13:37:31 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/09 05:22:31 by mdarawsh         ###   ########.fr       */
-/*   Updated: 2025/03/10 13:10:06 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/12 00:53:58 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #include "minishell.h"
 
@@ -108,4 +108,34 @@ void	init_cmds(t_cmd **cmd, char *line)
 			cmd[j]->cmd[k++] = line[i];
 	}
 	cmd[j]->cmd[k] = '\0';
+}
+
+
+char **realloc_2d(char **str , int old_size , int new_size)
+{
+	int i = 0;
+	char **new;
+
+	new = malloc(new_size * sizeof(char *));
+	if (!new)
+	{
+		free(str);
+		return (NULL);
+	}
+	while (i < old_size)
+	{
+		new[i] = malloc((ft_strlen(str[i]) + 1) * sizeof(char));
+		if (!new[i])
+		{
+			while (i-- > 0)
+				free(new[i]);
+			free(new);
+			free(str);
+			return (NULL);
+		}
+		ft_memcpy(new[i], str[i], ft_strlen(str[i]));
+		i++;
+	}
+	free(str);
+	return (new);
 }

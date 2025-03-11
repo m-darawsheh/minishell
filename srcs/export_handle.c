@@ -6,49 +6,22 @@
 /*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 23:43:49 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/03/10 03:44:58 by mdarawsh         ###   ########.fr       */
+/*   Updated: 2025/03/12 01:00:10 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #include "minishell.h"
 
-char **realloc_2d(char **str , int old_size , int new_size)
-{
-	int i = 0;
-	char **new;
 
-	new = malloc(new_size * sizeof(char *));
-	if (!new)
-	{
-		free(str);
-		return (NULL);
-	}
-	while (i < old_size)
-	{
-		new[i] = malloc((ft_strlen(str[i]) + 1) * sizeof(char));
-		if (!new[i])
-		{
-			while (i-- > 0)
-				free(new[i]);
-			free(new);
-			free(str);
-			return (NULL);
-		}
-		ft_memcpy(new[i], str[i], ft_strlen(str[i]));
-		i++;
-	}
-	free(str);
-	return (new);
-}
 
-void	add_env(t_cmd_path *path , char *var)
+void	add_env(t_cmd_path *path , t_cmd *cmd)
 {
 	int		i;
 	char	*tmp;
 
 	i = 0;
-	tmp = ft_substr(var, 7, ft_strlen(var) - 7);
+	tmp = ft_strdup(cmd->cmd_split[1]);
 	if (!tmp)
 		return;
 	while (path->envp[i])
@@ -68,49 +41,57 @@ void	add_env(t_cmd_path *path , char *var)
 	path->envp[i + 1] = NULL;
 	free(tmp);
 }
-
-int check_env(t_cmd_path *path , char *var, int *i)
+// export [0]
+// VAR=newVALUE [1]
+// VAR=oldValue
+int check_env(t_cmd_path *path , t_cmd *cmd, int *i)
 {
 	int j;
 
 	j = 0;
-	while (var[j] != '=')
+	while (cmd->cmd_split[1][j] != '=')
 		j++;
-	// printf("check var is %s\n", var + 7);
 	while (path->envp[*i])
 	{
-		if (ft_strncmp(path->envp[*i], var + 7 , j - 7) == 0)
+		if (ft_strncmp(path->envp[*i], cmd->cmd_split[1], j) == 0)
 			return (*i);
 		(*i)++;
 	}
 	return (0);
 }
 
-// export VAR=VALUE
-void	edit_env(t_cmd_path *path , char *var, int *i)
+
+void	edit_env(t_cmd_path *path , t_cmd *cmd, int *i)
 {
 	int j;
 	int k;
 
 	j = 0;
 	k = 0;
-	while (var[j] != '=')
+	while (cmd->cmd_split[1][j] != '=')
 		j++;
 	while (path->envp[*i][k] != '=')
 		k++;
-	while (var[j])
-		path->envp[*i][k++] = var[j++];
-	path->envp[*i][k] = '\0';
+	free(path->envp[*i]);
+	path->envp[*i] = ft_strdup(cmd->cmd_split[1]);
 }
 
+// export test= fasfdsh
+// test=space
 
-void	export_handle(t_cmd **cmd ,t_cmd_path *path)
+// export test= 3
+// error because of space
+
+
+void	export_handle( t_cmd *cmd ,t_cmd_path *path)
 {
 	int i;
 
 	i = 0;
-	if (check_env(path, cmd[0]->cmd, &i))
-		edit_env(path, cmd[0]->cmd, &i);
+	if (cmd->cmd_split[2] != NULL)
+		return ;
+	if (check_env(path, cmd, &i))
+		edit_env(path, cmd, &i);
 	else
-		add_env(path, cmd[0]->cmd);
+		add_env(path, cmd);
 }

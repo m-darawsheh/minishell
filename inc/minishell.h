@@ -6,10 +6,10 @@
 /*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:24:48 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/03/10 01:39:18 by mdarawsh         ###   ########.fr       */
-/*   Updated: 2025/03/10 12:15:40 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/12 00:59:35 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 
 # ifndef MINISHELL_H
@@ -76,9 +76,10 @@ void	init_cmds(t_cmd **cmd, char *line);
 t_cmd	**t_cmd_malloc(char *line_read);
 void	setup_command(t_cmd *cmd, t_cmd_path *path);
 void	pwd_handle(void);
-void	export_handle(t_cmd **cmd ,t_cmd_path *path);
+void	export_handle(t_cmd *cmd ,t_cmd_path *path);
 
 void	do_cd(t_cmd *cmd, t_cmd_path *path);
 int	is_builtin(t_cmd *cmd, t_cmd_path *path);
+char **realloc_2d(char **str , int old_size , int new_size);
 
 #endif
