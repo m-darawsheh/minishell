@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 12:02:07 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/10 13:13:49 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/12 01:28:49 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,41 @@ static char*	get_home_var(char **envp)
 		return (NULL);
 	return (rtn);
 }
+void	change_pwd(t_cmd_path *path)
+{
+	int		i;
+	char	*tmp;
+	char	*new_pwd;
 
+	i = 0;
+	while (path->envp[i] && ft_strncmp(path->envp[i], "PWD=", 4))
+		i++;
+	if (path->envp[i])
+	{
+		tmp = ft_strdup(path->envp[i] + 4);
+		free(path->envp[i]);
+		new_pwd = getcwd(NULL, 0);
+		if (!new_pwd)
+		{
+			ft_putstr_fd("cd: error retrieving current directory\n", STDERR_FILENO);
+			free(tmp);
+			return ;
+		}
+		path->envp[i] = ft_strjoin("PWD=", new_pwd);
+		free(new_pwd);
+	}
+	i = 0;
+	while (path->envp[i] && ft_strncmp(path->envp[i], "OLDPWD=", 7))
+		i++;
+	if (path->envp[i])
+	{
+		free(path->envp[i]);
+		path->envp[i] = ft_strjoin("OLDPWD=", tmp);
+	}
+	free(tmp);
+}
+
+// if new_path is set from the first (if) free it if not do nothing
 void	do_cd(t_cmd *cmd, t_cmd_path *path)
 {
 	char	*new_path;
@@ -56,4 +90,5 @@ void	do_cd(t_cmd *cmd, t_cmd_path *path)
 		ft_putstr_fd(": No such file or directiory\n", STDERR_FILENO);
 		exit (1);
 	}
+	change_pwd(path);
 }
