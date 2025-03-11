@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 13:37:31 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/05 17:30:51 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/10 13:10:06 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@ void	setup_command(t_cmd *cmd, t_cmd_path *path)
 	int		i;
 	char	*tmp;
 
-	cmd->cmd_split = ft_split(cmd->cmd, ' ');
 	cmd->path = path;
 	if (access (cmd->cmd_split[0], X_OK) == 0)
 	{
@@ -38,12 +37,13 @@ void	setup_command(t_cmd *cmd, t_cmd_path *path)
 		cmd->cmd_path = ft_strjoin(tmp, cmd->cmd_split[0]);
 		free(tmp);
 		if (access(cmd->cmd_path, X_OK) == 0)
-			break ;
+		break ;
 		free(cmd->cmd_path);
 		i++;
 	}
 	if (!path->path[i])
-		print_not_found(cmd);
+		if (!is_builtin(cmd, path))
+			print_not_found(cmd);
 }
 
 static void	get_file(t_cmd **cmd, char *line_read, int *i, int j, int type)
