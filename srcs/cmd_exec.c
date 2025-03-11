@@ -6,7 +6,7 @@
 /*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/10 01:56:10 by mdarawsh         ###   ########.fr       */
+/*   Updated: 2025/03/10 13:09:58 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,16 +99,21 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 	}
 	while (cmd[++i])
 	{
+		cmd[i]->cmd_split = ft_split (cmd[i]->cmd, ' ');
+		if (!ft_strncmp(cmd[i]->cmd_split[0], "cd", 2))
+		{
+			do_cd(cmd[i], path);
+			continue ;
+		}
 		if (cmd[i]->has_pipe)
 		{
 			if (pipe(pipe_fd) == -1)
-				exit_error("Pipe failed");
+			exit_error("Pipe failed");
 		}
 
 		pid = fork();
 		if (pid == 0)
 		{
-			setup_command(cmd[i], path);
 			// Redirect output to pipe if needed
 			if (cmd[i]->has_pipe)
 			{
@@ -128,7 +133,7 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 			{
 				int fd = open(cmd[i]->infile, O_RDONLY);
 				if (fd == -1)
-					exit_error("File not found");
+				exit_error("File not found");
 				dup2(fd, STDIN_FILENO);
 				close(fd);
 			}
@@ -137,14 +142,15 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 			{
 				int	fd;
 				if (cmd[i]->has_appendfile)
-					fd = open(cmd[i]->outfile, O_WRONLY | O_CREAT | O_APPEND, 0644);
+				fd = open(cmd[i]->outfile, O_WRONLY | O_CREAT | O_APPEND, 0644);
 				else
-					fd = open(cmd[i]->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+				fd = open(cmd[i]->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 				if (fd == -1)
-					exit_error("File not found");
+				exit_error("File not found");
 				dup2(fd, STDOUT_FILENO);
 				close(fd);
 			}
+			setup_command(cmd[i], path);
 			execve(cmd[i]->cmd_path, cmd[i]->cmd_split, path->envp);
 			exit_error("Execve failed"); // Ensure this exits on error
 		}
