@@ -1,30 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   signals.c                                          :+:      :+:    :+:   */
+/*   pwd_handle.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/26 15:17:16 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/09 23:41:53 by mdarawsh         ###   ########.fr       */
+/*   Created: 2025/03/09 03:55:12 by mdarawsh          #+#    #+#             */
+/*   Updated: 2025/03/10 01:37:33 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	sig_handler(int sig)
+void	pwd_handle(void)
 {
-	if (sig == SIGINT)
-	{
-		ft_putstr_fd("\n", 1);
-		rl_on_new_line();
-		rl_replace_line("", 0);
-		rl_redisplay();
-	}
-}
-
-void	setup_signals()
-{
-	signal(SIGINT, sig_handler);
-	signal(SIGQUIT,  SIG_IGN);
+	char *path;
+	path = getcwd(NULL, 0);
+	printf("%s\n", path);
+	free(path);
 }

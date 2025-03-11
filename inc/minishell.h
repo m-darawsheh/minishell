@@ -3,9 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:24:48 by mdarawsh          #+#    #+#             */
+/*   Updated: 2025/03/10 01:39:18 by mdarawsh         ###   ########.fr       */
 /*   Updated: 2025/03/10 12:15:40 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
@@ -54,6 +55,7 @@ typedef struct s_command
 	int						has_outfile;
 	int						has_appendfile;
 	int						has_heredoc;
+	int						builtin;
 	char					*cmd;
 	char					**cmd_split;
 	char					*infile;
@@ -73,6 +75,9 @@ void	exec_cmd(char *line_read, t_cmd_path *path);
 void	init_cmds(t_cmd **cmd, char *line);
 t_cmd	**t_cmd_malloc(char *line_read);
 void	setup_command(t_cmd *cmd, t_cmd_path *path);
+void	pwd_handle(void);
+void	export_handle(t_cmd **cmd ,t_cmd_path *path);
+
 void	do_cd(t_cmd *cmd, t_cmd_path *path);
 int	is_builtin(t_cmd *cmd, t_cmd_path *path);
 

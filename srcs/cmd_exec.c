@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_exec.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
 /*   Updated: 2025/03/10 13:09:58 by hassende         ###   ########.fr       */
@@ -11,6 +11,64 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+void	print_env(t_cmd_path *path)
+{
+	int	i;
+
+	i = 0;
+	while (path->envp[i])
+	{
+		printf("%s\n", path->envp[i]);
+		i++;
+	}
+}
+
+void	bluitin_cheak(t_cmd **cmd)
+{
+
+	if (cmd[1] == NULL)
+	{
+		if (ft_strncmp(cmd[0]->cmd, "echo", 4) == 0)
+			cmd[0]->builtin = 1;
+		else if (ft_strncmp(cmd[0]->cmd, "cd", 2) == 0)
+			cmd[0]->builtin = 2;
+		else if (ft_strncmp(cmd[0]->cmd, "pwd", 3) == 0)
+			cmd[0]->builtin = 3;
+		else if (ft_strncmp(cmd[0]->cmd, "export", 6) == 0)
+			cmd[0]->builtin = 4;
+		else if (ft_strncmp(cmd[0]->cmd, "unset", 5) == 0)
+			cmd[0]->builtin = 5;
+		else if (ft_strncmp(cmd[0]->cmd, "env", 3) == 0)
+			cmd[0]->builtin = 6;
+		else if (ft_strncmp(cmd[0]->cmd, "exit", 4) == 0)
+			cmd[0]->builtin = 7;
+		else
+			cmd[0]->builtin = 0;
+	}
+}
+
+
+
+void	exec_builtin(t_cmd **cmd, t_cmd_path *path)
+{
+	(void ) path;
+	if (cmd[0]->builtin == 1)
+		return ;
+	else if (cmd[0]->builtin == 2)
+		return ;
+	else if (cmd[0]->builtin == 3)
+		pwd_handle();
+	else if (cmd[0]->builtin == 4)
+		export_handle(cmd, path);
+	else if (cmd[0]->builtin == 5)
+		return ;
+	else if (cmd[0]->builtin == 6)
+		print_env(path);
+	else if (cmd[0]->builtin == 7)
+		return ;
+}
+
 
 void	exec_cmd(char *line_read, t_cmd_path *path)
 {
@@ -26,7 +84,19 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 	cmd = t_cmd_malloc(line_read);
 	if (!cmd)
 		exit_error("Malloc failed");
+
+
 	init_cmds(cmd, line_read);
+
+
+	bluitin_cheak(cmd);
+
+
+	if (cmd[0]->builtin)
+	{
+		exec_builtin(cmd, path);
+		return ;
+	}
 	while (cmd[++i])
 	{
 		cmd[i]->cmd_split = ft_split (cmd[i]->cmd, ' ');
@@ -40,6 +110,7 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 			if (pipe(pipe_fd) == -1)
 			exit_error("Pipe failed");
 		}
+
 		pid = fork();
 		if (pid == 0)
 		{
