@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:24:48 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/03/13 15:33:24 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/13 16:27:46 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@
 # include "libft.h"
 
 // Macros
-#define MAX_FILENAME 256	// Standard filename length
+#define MAX_FILENAME 4096	// 256 is the Standard filename length, but the evalutaor could give a full path
 #define MAX_CMD_LEN 4096	// if the evaluator can get a command more than this size, i'll jump
 
 // Enums
@@ -79,7 +79,8 @@ void	pwd_handle(void);
 void	export_handle(t_cmd *cmd ,t_cmd_path *path);
 int		do_exit(t_cmd *cmd);
 int		do_cd(t_cmd *cmd, t_cmd_path *path);
-int	is_builtin(t_cmd *cmd, t_cmd_path *path);
+int		is_builtin(t_cmd *cmd, t_cmd_path *path);
 char **realloc_2d(char **str , int old_size , int new_size);
+void	do_echo(t_cmd *cmd);
 
 #endif

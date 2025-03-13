@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/13 15:35:05 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/13 16:26:10 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,6 +115,11 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 
 		if (!is_child)
 		{
+			if (!ft_strncmp(cmd[i]->cmd_split[0], "echo", 4))
+			{
+				do_echo(cmd[i]);
+				continue ;
+			}
 			if (!ft_strncmp(cmd[i]->cmd_split[0], "exit", 4))
 				if(!do_exit(cmd[i]))
 					continue ;
@@ -180,12 +185,12 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 				dup2(fd, STDOUT_FILENO);
 				close(fd);
 			}
-			// if (!ft_strncmp(cmd[i]->cmd_split[0], "echo", 4))
-			// {
-			// 	do_echo(cmd[i]);
-			// 	continue ;
-			// }
 			// ? Handle builtins in child process when in a pipeline
+			if (!ft_strncmp(cmd[i]->cmd_split[0], "echo", 4))
+			{
+				do_echo(cmd[i]);
+				exit(0);
+			}
 			if (!ft_strncmp(cmd[i]->cmd_split[0], "exit", 4))
 			{
 				do_exit(cmd[i]);
