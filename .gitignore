@@ -2,6 +2,6 @@
 *.a
 objs
 minishell
-infile
-outfile
+*infile
+*outfile
 .vscode

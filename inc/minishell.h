@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:24:48 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/03/12 00:59:35 by mdarawsh         ###   ########.fr       */
+/*   Updated: 2025/03/13 14:13:07 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ t_cmd	**t_cmd_malloc(char *line_read);
 void	setup_command(t_cmd *cmd, t_cmd_path *path);
 void	pwd_handle(void);
 void	export_handle(t_cmd *cmd ,t_cmd_path *path);
-
+int		do_exit(t_cmd *cmd);
 void	do_cd(t_cmd *cmd, t_cmd_path *path);
 int	is_builtin(t_cmd *cmd, t_cmd_path *path);
 char **realloc_2d(char **str , int old_size , int new_size);
