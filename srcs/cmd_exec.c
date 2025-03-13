@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/13 15:22:04 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/13 15:35:05 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,19 +186,25 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 			// 	continue ;
 			// }
 			// ? Handle builtins in child process when in a pipeline
-			if (!ft_strncmp(cmd[i]->cmd_split[0], "exit", 4)) {
-				int exit_code = ft_atoi(cmd[i]->cmd_split[1] ? cmd[i]->cmd_split[1] : "0");
-				exit(exit_code % 256);
+			if (!ft_strncmp(cmd[i]->cmd_split[0], "exit", 4))
+			{
+				do_exit(cmd[i]);
+				exit (1);
 			}
-			if (!ft_strncmp(cmd[i]->cmd_split[0], "cd", 2)) {
-				do_cd(cmd[i], path);
+			if (!ft_strncmp(cmd[i]->cmd_split[0], "cd", 2))
+			{
+				int rtn_code = do_cd(cmd[i], path);
+				if (rtn_code)
+					exit (rtn_code);
 				exit(0);
 			}
-			if (!ft_strncmp(cmd[i]->cmd_split[0], "export", 6)) {
+			if (!ft_strncmp(cmd[i]->cmd_split[0], "export", 6))
+			{
 				export_handle(cmd[i], path);
 				exit(0);
 			}
-			if (!ft_strncmp(cmd[i]->cmd_split[0], "env", 3)) {
+			if (!ft_strncmp(cmd[i]->cmd_split[0], "env", 3))
+			{
 				print_env(path);
 				exit(0);
 			}
