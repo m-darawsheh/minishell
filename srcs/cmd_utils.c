@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 13:37:31 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/12 00:53:58 by mdarawsh         ###   ########.fr       */
+/*   Updated: 2025/03/15 15:05:47 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ static void	handle_redirections(t_cmd **cmd, char *line, int *i, int j)
 		get_file(cmd, line, i, j, OUTFILE);
 	}
 }
-// ls > j -la
+
 void	init_cmds(t_cmd **cmd, char *line)
 {
 	int	i;

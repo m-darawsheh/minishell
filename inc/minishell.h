@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:24:48 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/03/13 16:27:46 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/15 15:20:08 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,22 @@ enum	file_type
 	OUTFILE
 };
 
+typedef enum e_token_type {
+	TOKEN_WORD,	// Regular word or quoted string
+	TOKEN_PIPE,
+	TOKEN_REDIR_IN,
+	TOKEN_REDIR_OUT,
+	TOKEN_APPEND,
+	TOKEN_HEREDOC
+} t_token_type;
+
 // Structures
+
+typedef struct s_token {
+	char *value;
+	t_token_type type;
+} t_token;
+
 typedef struct s_cmd_path
 {
 	char		**path;

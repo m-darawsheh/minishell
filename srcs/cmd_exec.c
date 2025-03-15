@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/13 16:26:10 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/15 15:27:34 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,7 @@ void	print_env(t_cmd_path *path)
 void	exec_cmd(char *line_read, t_cmd_path *path)
 {
 	t_cmd	**cmd;
+	t_token	**tokens;
 	int		i;
 	int		is_child;
 	int		pipe_fd[2];
@@ -89,9 +90,13 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 	cmd = t_cmd_malloc(line_read);
 	if (!cmd)
 		exit_error("Malloc failed");
+	tokens = tokenize(line_read);
+	if (!tokens)
+		exit_error("Malloc failed");
 
-
-	init_cmds(cmd, line_read);
+	parse_tokens(tokens, cmd);
+	free_tokens(tokens);
+	// init_cmds(cmd, line_read);
 
 
 	// bluitin_cheak(cmd);
