@@ -1,28 +1,94 @@
 #include "minishell.h"
 
-// ? < infile echo | cat -e > outfile
-
-char	**tokenize(char *line_read)
+static void add_special_single_token(t_lexer *lexer)
 {
-	t_token	**tokens;
-	int		token_count;
-	int		i;
-	int		in_quote;
+	char special_buf[2];
 
-	tokens = malloc(sizeof(t_token *) * ft_strlen(line_read));
-	if (!tokens)
-		exit_error("Malloc failed");
-	token_count = 0;
-	i = 0;
-	in_quote = 0;
-	while (line_read[i])
+	special_buf[0] = lexer->line[lexer->i];
+	special_buf[1] = '\0';
+	lexer->i++;
+	if (special_buf[0] == '|')
+		add_token(lexer, special_buf, TOKEN_PIPE);
+	else if (special_buf[0] == '<')
+		add_token(lexer, special_buf, TOKEN_REDIR_IN);
+	else
+		add_token(lexer, special_buf, TOKEN_REDIR_OUT);
+}
+
+static int process_special(t_lexer *lexer)
+{
+	char	c;
+
+	c = lexer->line[lexer->i];
+	if (c == '|' || c == '<' || c == '>')
 	{
-		if (line_read[i] == '\'' || line_read[i] == '\"')
-		{
-			in_quote = !in_quote;
-			i++;
-			continue ;
-		}
-
+		// There could be a word before the special character
+		add_word_token(lexer);
+		if ((c == '>' || c == '<') && lexer->line[lexer->i + 1] == c)
+			add_special_double_token(lexer);
+		else
+			add_special_single_token(lexer);
+		return (1);
 	}
+	return (0);
+}
+
+static int process_whitespace(t_lexer *lexer)
+{
+	char	c;
+
+	c = lexer->line[lexer->i];
+	if (c == ' ' || c == '\t')
+	{
+		add_word_token(lexer);
+		lexer->i++;
+		return (1);
+	}
+	return (0);
+}
+
+static void process_normal_char(t_lexer *lexer)
+{
+	lexer->buffer[lexer->buffer_pos++] = lexer->line[lexer->i++];
+}
+
+t_token **tokenize(char *line_read)
+{
+	t_lexer	lexer;
+
+	init_lexer(&lexer, line_read);
+	if (!lexer.tokens)
+		return (NULL);
+	while (line_read[lexer.i])
+	{
+		if (process_quotes(&lexer))
+			continue;
+		if (process_special(&lexer))
+			continue;
+		if (process_whitespace(&lexer))
+			continue;
+		process_normal_char(&lexer);
+	}
+	add_word_token(&lexer);
+	if (lexer.in_quotes != 0)
+	{
+		free_tokens(lexer.tokens);
+		return (NULL);
+	}
+	return (lexer.tokens);
+}
+
+void free_tokens(t_token **tokens)
+{
+	int	i;
+
+	i = -1;
+	if (!tokens)
+		return;
+	while (tokens[++i])
+	{
+		free(tokens[i]->value);
+		free(tokens[i]);
+	}
+	free(tokens);
 }
