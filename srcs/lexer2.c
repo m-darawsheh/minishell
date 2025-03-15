@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   lexer2.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/15 18:49:26 by hassende          #+#    #+#             */
+/*   Updated: 2025/03/15 18:51:10 by hassende         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
 void	init_lexer(t_lexer *lexer, char *line)
@@ -15,16 +27,17 @@ int	process_quotes(t_lexer *lexer)
 	char	c;
 
 	c = lexer->line[lexer->i];
-	if ((c == '\'' || c == '\"') &&
-		(lexer->in_quotes == 0 ||
-		 (lexer->in_quotes == 1 && c == '\'') ||
-		 (lexer->in_quotes == 2 && c == '\"')))
+	if ((c == '\'' || c == '\"') && (lexer->in_quotes == 0
+			|| (lexer->in_quotes == 1 && c == '\'')
+			|| (lexer->in_quotes == 2 && c == '\"')))
 	{
 		if (lexer->in_quotes == 0)
+		{
 			if (c == '\'')
 				lexer->in_quotes = 1;
 			else
 				lexer->in_quotes = 2;
+		}
 		else
 			lexer->in_quotes = 0;
 		lexer->buffer[lexer->buffer_pos++] = lexer->line[lexer->i++];
@@ -61,13 +74,12 @@ void	add_word_token(t_lexer *lexer)
 
 void	add_special_double_token(t_lexer *lexer)
 {
-	char special_buf[3];
+	char	special_buf[3];
 
 	special_buf[0] = lexer->line[lexer->i];
 	special_buf[1] = lexer->line[lexer->i + 1];
 	special_buf[2] = '\0';
 	lexer->i += 2;
-
 	if (special_buf[0] == '>')
 		add_token(lexer, special_buf, TOKEN_APPEND);
 	else

@@ -1,8 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   lexer.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/03/15 18:46:05 by hassende          #+#    #+#             */
+/*   Updated: 2025/03/15 18:48:19 by hassende         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-static void add_special_single_token(t_lexer *lexer)
+static void	add_special_single_token(t_lexer *lexer)
 {
-	char special_buf[2];
+	char	special_buf[2];
 
 	special_buf[0] = lexer->line[lexer->i];
 	special_buf[1] = '\0';
@@ -15,7 +27,7 @@ static void add_special_single_token(t_lexer *lexer)
 		add_token(lexer, special_buf, TOKEN_REDIR_OUT);
 }
 
-static int process_special(t_lexer *lexer)
+static int	process_special(t_lexer *lexer)
 {
 	char	c;
 
@@ -33,7 +45,7 @@ static int process_special(t_lexer *lexer)
 	return (0);
 }
 
-static int process_whitespace(t_lexer *lexer)
+static int	process_whitespace(t_lexer *lexer)
 {
 	char	c;
 
@@ -47,12 +59,7 @@ static int process_whitespace(t_lexer *lexer)
 	return (0);
 }
 
-static void process_normal_char(t_lexer *lexer)
-{
-	lexer->buffer[lexer->buffer_pos++] = lexer->line[lexer->i++];
-}
-
-t_token **tokenize(char *line_read)
+t_token	**tokenize(char *line_read)
 {
 	t_lexer	lexer;
 
@@ -62,12 +69,12 @@ t_token **tokenize(char *line_read)
 	while (line_read[lexer.i])
 	{
 		if (process_quotes(&lexer))
-			continue;
+			continue ;
 		if (process_special(&lexer))
-			continue;
+			continue ;
 		if (process_whitespace(&lexer))
-			continue;
-		process_normal_char(&lexer);
+			continue ;
+		lexer.buffer[lexer.buffer_pos++] = lexer.line[lexer.i++];
 	}
 	add_word_token(&lexer);
 	if (lexer.in_quotes != 0)
@@ -78,13 +85,13 @@ t_token **tokenize(char *line_read)
 	return (lexer.tokens);
 }
 
-void free_tokens(t_token **tokens)
+void	free_tokens(t_token **tokens)
 {
 	int	i;
 
 	i = -1;
 	if (!tokens)
-		return;
+		return ;
 	while (tokens[++i])
 	{
 		free(tokens[i]->value);
