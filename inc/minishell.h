@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:24:48 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/03/16 14:22:30 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/16 15:00:38 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,10 @@ typedef enum e_token_type {
 } t_token_type;
 
 // Structures
+typedef struct s_token {
+	char *value;
+	t_token_type type;
+} t_token;
 
 typedef struct s_lexer {
 	t_token **tokens;
@@ -62,10 +66,6 @@ typedef struct s_lexer {
 	int		i;
 } t_lexer;
 
-typedef struct s_token {
-	char *value;
-	t_token_type type;
-} t_token;
 
 typedef struct s_cmd_path
 {
@@ -109,6 +109,7 @@ void	setup_command(t_cmd *cmd, t_cmd_path *path);
 void	pwd_handle(void);
 void	export_handle(t_cmd *cmd ,t_cmd_path *path);
 void	do_echo(t_cmd *cmd);
+void	free_cmds(t_cmd **cmd);
 
 
 // Lexer

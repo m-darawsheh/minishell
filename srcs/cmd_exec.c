@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/16 14:53:29 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/16 15:00:21 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 	tokens = tokenize(line_read);
 	if (!tokens)
 		return ;
-	if (!parse_tokens(tokens, cmd))
+	if (!parse_token(tokens, cmd))
 	{
 		free_tokens(tokens);
 		return ;

@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 13:06:27 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/16 14:52:20 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/16 15:06:26 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,14 +82,14 @@ int	parse_token(t_token **tokens, t_cmd **cmd)
 			cmd[cmd_i]->has_pipe = 1;
 			cmd[++cmd_i]->cmd[0] = '\0';
 		}
-		else if (tokens[i]->type == TOKEN_REDIR_IN
+		else if ((tokens[i]->type == TOKEN_REDIR_IN
 			|| tokens[i]->type == TOKEN_REDIR_OUT)
-			if (!handle_redir(tokens, cmd, &i, cmd_i))
-				return (0);
-		else if (tokens[i]->type == TOKEN_APPEND
+			&& !handle_redir(tokens, cmd, &i, cmd_i))
+			return (0);
+		else if ((tokens[i]->type == TOKEN_APPEND
 			|| tokens[i]->type == TOKEN_HEREDOC)
-			if (!handle_advanced_redir(tokens, cmd, &i, cmd_i))
-				return (0);
+			&& !handle_advanced_redir(tokens, cmd, &i, cmd_i))
+			return (0);
 	}
 	return (1);
 }

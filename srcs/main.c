@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:25:54 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/03/10 13:06:24 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/16 14:58:57 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@
 
 int	main(int argc, char **argv, char **envp)
 {
-	(void)argv;
 	char		*line_read;
 	t_cmd_path	path;
+	(void)argv;
 
 	if (argc > 1)
 		exit_error("Usage: ./minishell");
