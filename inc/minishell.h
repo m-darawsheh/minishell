@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:24:48 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/03/16 14:11:10 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/16 14:22:30 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,6 +98,7 @@ char	**find_path(char **envp);
 int		do_exit(t_cmd *cmd);
 int		do_cd(t_cmd *cmd, t_cmd_path *path);
 int		is_builtin(t_cmd *cmd, t_cmd_path *path);
+void	*print_and_null(char *str);
 void	exit_error(char *str);
 void	free_2d(char **str);
 void	struc_init(t_cmd_path *path, char **envp);
@@ -108,6 +109,7 @@ void	setup_command(t_cmd *cmd, t_cmd_path *path);
 void	pwd_handle(void);
 void	export_handle(t_cmd *cmd ,t_cmd_path *path);
 void	do_echo(t_cmd *cmd);
+
 
 // Lexer
 t_token	**tokenize(char *line_read);

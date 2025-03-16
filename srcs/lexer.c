@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/15 18:46:05 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/16 14:12:09 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/16 14:23:28 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ t_token	**tokenize(char *line_read)
 
 	init_lexer(&lexer, line_read);
 	if (!lexer.tokens)
-		return (NULL);
+		return (print_and_null("Malloc failed"));
 	while (line_read[lexer.i])
 	{
 		if (process_quotes(&lexer))
@@ -95,7 +95,7 @@ t_token	**tokenize(char *line_read)
 	if (lexer.in_quotes != 0)
 	{
 		free_tokens(lexer.tokens);
-		return (NULL);
+		return (print_and_null("Syntax error: unclosed quotes"));
 	}
 	return (lexer.tokens);
 }
