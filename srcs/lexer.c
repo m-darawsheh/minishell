@@ -6,11 +6,26 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/15 18:46:05 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/15 18:48:19 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/16 14:12:09 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+void	free_tokens(t_token **tokens)
+{
+	int	i;
+
+	i = -1;
+	if (!tokens)
+		return ;
+	while (tokens[++i])
+	{
+		free(tokens[i]->value);
+		free(tokens[i]);
+	}
+	free(tokens);
+}
 
 static void	add_special_single_token(t_lexer *lexer)
 {
@@ -85,17 +100,3 @@ t_token	**tokenize(char *line_read)
 	return (lexer.tokens);
 }
 
-void	free_tokens(t_token **tokens)
-{
-	int	i;
-
-	i = -1;
-	if (!tokens)
-		return ;
-	while (tokens[++i])
-	{
-		free(tokens[i]->value);
-		free(tokens[i]);
-	}
-	free(tokens);
-}

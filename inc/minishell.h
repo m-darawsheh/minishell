@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:24:48 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/03/16 14:04:20 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/16 14:11:10 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,6 +111,7 @@ void	do_echo(t_cmd *cmd);
 
 // Lexer
 t_token	**tokenize(char *line_read);
+int		parse_token(t_token **tokens, t_cmd **cmd);
 int		process_quotes(t_lexer *lexer);
 void	init_lexer(t_lexer *lexer, char *line);
 void	add_token(t_lexer *lexer, char *value, t_token_type type);
