@@ -6,13 +6,13 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 13:06:27 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/16 13:39:44 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/16 14:09:50 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	parse_token(t_token **tokens, t_cmd **cmd)
+int	parse_token(t_token **tokens, t_cmd **cmd)
 {
 	int	i;
 	int	cmd_i;
@@ -48,7 +48,7 @@ void	parse_token(t_token **tokens, t_cmd **cmd)
 			else
 			{
 				ft_putstr_fd("minishell: syntax error near unexpected token 'newline'\n", 2);
-				return;
+				return (0);
 			}
 		}
 		if (tokens[i]->type == TOKEN_REDIR_OUT)
@@ -63,7 +63,7 @@ void	parse_token(t_token **tokens, t_cmd **cmd)
 			else
 			{
 				ft_putstr_fd("minishell: syntax error near unexpected token `newline'\n", 2);
-				return;
+				return (0);
 			}
 		}
 		if (tokens[i]->type == TOKEN_APPEND)
@@ -78,13 +78,24 @@ void	parse_token(t_token **tokens, t_cmd **cmd)
 			else
 			{
 				ft_putstr_fd("minishell: syntax error near unexpected token `newline'\n", 2);
-				return;
+				return (0);
 			}
 		}
 		if (tokens[i]->type == TOKEN_HEREDOC)
 		{
 			cmd[cmd_i]->has_heredoc = 1;
-			ft_strlcpy(cmd[cmd_i]->infile, tokens[i]->value, MAX_FILENAME);
+			i++;
+			if (tokens[i] && tokens[i]->type == TOKEN_WORD)
+			{
+				ft_strlcpy(cmd[cmd_i]->delimiter, tokens[i]->value, MAX_FILENAME);
+				i++;
+			}
+			else
+			{
+				ft_putstr_fd("minishell: syntax error near unexpected token `newline'\n", 2);
+				return (0);
+			}
 		}
 	}
+	return (1);
 }

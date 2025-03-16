@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/15 18:40:41 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/16 14:08:49 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,11 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 	tokens = tokenize(line_read);
 	if (!tokens)
 		exit_error("Malloc failed");
-	parse_tokens(tokens, cmd);
+	if (!parse_tokens(tokens, cmd))
+	{
+		free_tokens(tokens);
+		return ;
+	}
 	free_tokens(tokens);
 	// init_cmds(cmd, line_read);
 

@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:24:48 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/03/15 18:39:55 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/16 14:04:20 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,7 @@ typedef struct s_cmd_path
 
 typedef struct s_command
 {
+	int						heredoc_fd;
 	int						has_pipe;
 	int						has_infile;
 	int						has_outfile;
@@ -86,6 +87,7 @@ typedef struct s_command
 	char					*infile;
 	char					*outfile;
 	char					*cmd_path;
+	char					*delimiter;
 	t_cmd_path				*path;
 }	t_cmd;
 
