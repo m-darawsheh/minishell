@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 13:06:27 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/16 14:09:50 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/16 14:32:04 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ int	parse_token(t_token **tokens, t_cmd **cmd)
 			i++;
 			if (tokens[i] && tokens[i]->type == TOKEN_WORD)
 			{
-				ft_strlcpy(cmd[cmd_i]->infile, tokens[i]->value, MAX_FILENAME);
+				ft_strlcpy(cmd[cmd_i]->outfile, tokens[i]->value, MAX_FILENAME);
 				i++;
 			}
 			else
