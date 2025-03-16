@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/16 14:29:02 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/16 14:53:29 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -213,5 +213,6 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 	}
 	// Wait for all child processes to finish
 	while (waitpid(-1, NULL, 0) > 0);
+	free_cmds(cmd);
 }
 
