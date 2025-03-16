@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 13:37:31 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/15 15:05:47 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/16 15:26:21 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,8 +42,7 @@ void	setup_command(t_cmd *cmd, t_cmd_path *path)
 		i++;
 	}
 	if (!path->path[i])
-		if (!is_builtin(cmd, path))
-			print_not_found(cmd);
+		print_not_found(cmd);
 }
 
 static void	get_file(t_cmd **cmd, char *line_read, int *i, int j, int type)

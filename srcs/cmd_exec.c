@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/16 15:00:21 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/16 15:51:18 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void	handle_heredoc(t_cmd *cmd)
 	if (pipe(fd) == -1)
 		exit_error("Pipe failed");
 	line = readline("> ");
-	while (line && ft_strncmp(line, cmd->delimiter, ft_strlen(cmd->delimiter) + 1) != 0)
+	while (line && ft_strncmp(line, cmd->delimiter, MAX_CMD_LEN) != 0)
 	{
 		ft_putendl_fd(line, fd[1]);
 		free(line);

@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 13:06:27 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/16 15:06:26 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/16 15:19:38 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,9 @@ static int	handle_advanced_redir(t_token **tokens, t_cmd **cmd,
 	{
 		cmd[cmd_i]->has_heredoc = 1;
 		(*i)++;
-		ft_strlcpy(cmd[cmd_i]->delimiter, tokens[*i]->value, MAX_FILENAME);
+		cmd[cmd_i]->delimiter = ft_strdup(tokens[*i]->value);
+		if (!cmd[cmd_i]->delimiter)
+			return (0);
 	}
 	return (1);
 }
