@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 13:57:52 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/16 16:11:06 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/16 16:24:22 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,7 @@ static void	init_cmd_struct(t_cmd *cmd)
 	cmd->has_outfile = 0;
 	cmd->has_appendfile = 0;
 	cmd->has_heredoc = 0;
+	cmd->heredoc_fd = -1;
 	cmd->cmd[0] = '\0';
 	cmd->infile[0] = '\0';
 	cmd->outfile[0] = '\0';

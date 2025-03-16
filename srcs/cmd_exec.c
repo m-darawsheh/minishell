@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/16 15:51:18 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/16 16:33:56 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,12 +33,12 @@ void	handle_heredoc(t_cmd *cmd)
 		return ;
 	if (pipe(fd) == -1)
 		exit_error("Pipe failed");
-	line = readline("> ");
+	line = readline("heredoc> ");
 	while (line && ft_strncmp(line, cmd->delimiter, MAX_CMD_LEN) != 0)
 	{
 		ft_putendl_fd(line, fd[1]);
 		free(line);
-		line = readline("> ");
+		line = readline("heredoc> ");
 	}
 	free(line);
 	close (fd[1]);
@@ -75,6 +75,12 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 	free_tokens(tokens);
 	while (cmd[++i])
 	{
+		if (cmd[i]->has_heredoc)
+			handle_heredoc(cmd[i]);
+	}
+	i = -1;
+	while (cmd[++i])
+	{
 		cmd[i]->cmd_split = ft_split (cmd[i]->cmd, ' ');
 		if (!cmd[i]->cmd_split)
 			exit_error("Malloc failed");
@@ -82,7 +88,6 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 		// ! you'll see that it printed hi and didn't exit bash
 		if (cmd[i] -> has_pipe || (i > 0 && cmd[i - 1]->has_pipe))
 			is_child = 1;
-
 		if (!is_child)
 		{
 			if (!ft_strncmp(cmd[i]->cmd_split[0], "echo", 4))
@@ -154,12 +159,6 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 				exit_error("File not found");
 				dup2(fd, STDOUT_FILENO);
 				close(fd);
-			}
-			if (cmd[i]->has_heredoc)
-			{
-				handle_heredoc(cmd[i]);
-				dup2(cmd[i]->heredoc_fd, STDIN_FILENO);
-				close(cmd[i]->heredoc_fd);
 			}
 			// ? Handle builtins in child process when in a pipeline
 			if (!ft_strncmp(cmd[i]->cmd_split[0], "echo", 4))
