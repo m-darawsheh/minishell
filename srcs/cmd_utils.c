@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 13:37:31 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/16 15:26:21 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/17 16:21:30 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 void	print_not_found(t_cmd *cmd)
 {
-	ft_putstr_fd(cmd->cmd, 2);
+	ft_putstr_fd(cmd->cmd_split[0], 2);
 	ft_putstr_fd(": command not found\n", 2);
 	exit(127);
 }
@@ -50,7 +50,9 @@ static void	get_file(t_cmd **cmd, char *line_read, int *i, int j, int type)
 	int	k;
 
 	k = 0;
-	while (line_read[*i] == ' ' || line_read[*i] == '\t' || line_read[*i] == '>')
+	while (line_read[*i] == ' ' || line_read[*i] == '\t'
+			|| (type == OUTFILE && line_read[*i] == '>')
+			|| (type == INFILE && line_read[*i] == '<'))
 		(*i)++;
 	while (line_read[*i] != ' ' && line_read[*i] != '|' && line_read[*i] != '\0')
 	{

@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/17 15:50:02 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/17 16:16:15 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,7 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 			handle_heredoc(cmd[i]);
 	}
 	i = -1;
+	printf("%d %s %s\n", cmd[0]->has_heredoc, cmd[0]->delimiter, cmd[0]->cmd);
 	while (cmd[++i])
 	{
 		cmd[i]->cmd_split = ft_split (cmd[i]->cmd, ' ');
@@ -143,17 +144,49 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 				continue ;
 			}
 			if (!ft_strncmp(cmd[i]->cmd_split[0], "exit", 4))
-				if(!do_exit(cmd[i]))
-					continue ;
+			{
+				do_exit(cmd[i]);
+				if (stdin_backup != -1)
+				{
+					dup2(stdin_backup, STDIN_FILENO);
+					close(stdin_backup);
+				}
+				if (stdout_backup != -1)
+				{
+					dup2(stdout_backup, STDOUT_FILENO);
+					close(stdout_backup);
+				}
+				continue ;
+			}
 			if (!ft_strncmp(cmd[i]->cmd_split[0], "cd", 2))
 			{
 				do_cd(cmd[i], path);
+				if (stdin_backup != -1)
+				{
+					dup2(stdin_backup, STDIN_FILENO);
+					close(stdin_backup);
+				}
+				if (stdout_backup != -1)
+				{
+					dup2(stdout_backup, STDOUT_FILENO);
+					close(stdout_backup);
+				}
 				continue ;
 			}
 			// check if export not export {like this exporttttt}
 			if (!ft_strncmp(cmd[i]->cmd_split[0], "export", 6))
 			{
 				export_handle(cmd[i], path);
+				if (stdin_backup != -1)
+				{
+					dup2(stdin_backup, STDIN_FILENO);
+					close(stdin_backup);
+				}
+				if (stdout_backup != -1)
+				{
+					dup2(stdout_backup, STDOUT_FILENO);
+					close(stdout_backup);
+				}
 				continue ;
 			}
 			if (!ft_strncmp(cmd[i]->cmd_split[0], "env", 3))
@@ -171,6 +204,7 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 				}
 				continue ;
 			}
+			//? unset is to come.
 		}
 		if (cmd[i]->has_pipe)
 		{
