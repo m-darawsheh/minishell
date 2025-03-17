@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/17 16:16:15 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/17 17:32:22 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,6 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 			handle_heredoc(cmd[i]);
 	}
 	i = -1;
-	printf("%d %s %s\n", cmd[0]->has_heredoc, cmd[0]->delimiter, cmd[0]->cmd);
 	while (cmd[++i])
 	{
 		cmd[i]->cmd_split = ft_split (cmd[i]->cmd, ' ');
@@ -214,6 +213,11 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 		pid = fork();
 		if (pid == 0)
 		{
+			if (cmd[i]->has_heredoc)
+			{
+				dup2(cmd[i]->heredoc_fd, STDIN_FILENO);
+				close(cmd[i]->heredoc_fd);
+			}
 			// Redirect output to pipe if needed
 			if (cmd[i]->has_pipe)
 			{
