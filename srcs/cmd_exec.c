@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/16 16:33:56 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/17 15:50:02 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,9 +90,56 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 			is_child = 1;
 		if (!is_child)
 		{
+			int	stdout_backup = -1;
+			int	stdin_backup = -1;
+
+			if (cmd[i]->has_appendfile || cmd[i]->has_infile || cmd[i]->has_outfile || cmd[i]->has_heredoc)
+			{
+				stdout_backup = dup(STDOUT_FILENO);
+				stdin_backup = dup(STDIN_FILENO);
+			}
+			if (cmd[i]->has_infile)
+			{
+				int fd = open(cmd[i]->infile, O_RDONLY);
+				if (fd == -1)
+					exit_error("File not found");
+				dup2(fd, STDIN_FILENO);
+				close(fd);
+			}
+			if (cmd[i]->has_outfile)
+			{
+				int fd = open(cmd[i]->outfile, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+				if (fd == -1)
+					exit_error("File not found");
+				dup2(fd, STDOUT_FILENO);
+				close(fd);
+			}
+			if (cmd[i]->has_appendfile)
+			{
+				int fd = open(cmd[i]->outfile, O_CREAT | O_WRONLY | O_APPEND, 0644);
+				if (fd == -1)
+					exit_error("File not found");
+				dup2(fd, STDOUT_FILENO);
+				close(fd);
+			}
+			if (cmd[i]->has_heredoc)
+			{
+				dup2(cmd[i]->heredoc_fd, STDIN_FILENO);
+				close(cmd[i]->heredoc_fd);
+			}
 			if (!ft_strncmp(cmd[i]->cmd_split[0], "echo", 4))
 			{
 				do_echo(cmd[i]);
+				if (stdin_backup != -1)
+				{
+					dup2(stdin_backup, STDIN_FILENO);
+					close(stdin_backup);
+				}
+				if (stdout_backup != -1)
+				{
+					dup2(stdout_backup, STDOUT_FILENO);
+					close(stdout_backup);
+				}
 				continue ;
 			}
 			if (!ft_strncmp(cmd[i]->cmd_split[0], "exit", 4))
@@ -112,15 +159,24 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 			if (!ft_strncmp(cmd[i]->cmd_split[0], "env", 3))
 			{
 				print_env(path);
+				if (stdin_backup != -1)
+				{
+					dup2(stdin_backup, STDIN_FILENO);
+					close(stdin_backup);
+				}
+				if (stdout_backup != -1)
+				{
+					dup2(stdout_backup, STDOUT_FILENO);
+					close(stdout_backup);
+				}
 				continue ;
 			}
 		}
 		if (cmd[i]->has_pipe)
 		{
 			if (pipe(pipe_fd) == -1)
-			exit_error("Pipe failed");
+				exit_error("Pipe failed");
 		}
-
 		pid = fork();
 		if (pid == 0)
 		{
@@ -143,7 +199,7 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 			{
 				int fd = open(cmd[i]->infile, O_RDONLY);
 				if (fd == -1)
-				exit_error("File not found");
+					exit_error("File not found");
 				dup2(fd, STDIN_FILENO);
 				close(fd);
 			}
@@ -151,12 +207,17 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 			if (cmd[i]->has_outfile)
 			{
 				int	fd;
-				if (cmd[i]->has_appendfile)
-				fd = open(cmd[i]->outfile, O_WRONLY | O_CREAT | O_APPEND, 0644);
-				else
 				fd = open(cmd[i]->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 				if (fd == -1)
-				exit_error("File not found");
+					exit_error("File not found");
+				dup2(fd, STDOUT_FILENO);
+				close(fd);
+			}
+			if (cmd[i]->has_appendfile)
+			{
+				int fd = open(cmd[i]->outfile, O_WRONLY | O_CREAT | O_APPEND, 0644);
+				if (fd == -1)
+					exit_error("File not found");
 				dup2(fd, STDOUT_FILENO);
 				close(fd);
 			}
