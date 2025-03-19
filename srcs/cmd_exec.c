@@ -6,7 +6,7 @@
 /*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/19 16:16:27 by mdarawsh         ###   ########.fr       */
+/*   Updated: 2025/03/19 16:18:19 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,7 +125,7 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 			int	stdout_backup = -1;
 			int	stdin_backup = -1;
 
-			if (cmd[i]->has_appendfile || cmd[i]->has_infile || cmd[i]->has_outfile || cmd[i]->has_heredoc)
+			if (cmd[i]->has_appendfile || cmd[i]->has_infile || cmd[i]->has_outfile)
 			{
 				stdout_backup = dup(STDOUT_FILENO);
 				stdin_backup = dup(STDIN_FILENO);
@@ -154,11 +154,11 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 				dup2(fd, STDOUT_FILENO);
 				close(fd);
 			}
-			if (cmd[i]->has_heredoc)
-			{
-				dup2(cmd[i]->heredoc_fd, STDIN_FILENO);
-				close(cmd[i]->heredoc_fd);
-			}
+			// if (cmd[i]->has_heredoc)
+			// {
+			// 	dup2(cmd[i]->heredoc_fd, STDIN_FILENO);
+			// 	close(cmd[i]->heredoc_fd);
+			// }
 			if (!ft_strncmp(cmd[i]->cmd_split[0], "echo", 4))
 			{
 				do_echo(cmd[i]);
