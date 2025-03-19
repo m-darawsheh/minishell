@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_exec.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/17 17:32:22 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/19 16:16:27 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,26 +24,58 @@ void	print_env(t_cmd_path *path)
 	}
 }
 
-void	handle_heredoc(t_cmd *cmd)
+int	handle_heredoc(t_cmd *cmd)
 {
-	int		fd[2];
-	char	*line;
+	char *line_read;
 
-	if (!cmd->has_heredoc)
-		return ;
-	if (pipe(fd) == -1)
-		exit_error("Pipe failed");
-	line = readline("heredoc> ");
-	while (line && ft_strncmp(line, cmd->delimiter, MAX_CMD_LEN) != 0)
+	cmd->heredoc_fd = open("heredoc.txt", O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (cmd->heredoc_fd == -1)
 	{
-		ft_putendl_fd(line, fd[1]);
-		free(line);
-		line = readline("heredoc> ");
+		perror("Heredoc failed");
+		return (1);
 	}
-	free(line);
-	close (fd[1]);
-	cmd->heredoc_fd = fd[0];
+	while (1)
+	{
+		line_read = readline("> ");
+		if (!line_read)
+			break ;
+		if (ft_strncmp(line_read, cmd->delimiter, ft_strlen(cmd->delimiter)) == 0 || ft_strlen(line_read - 1) == ft_strlen(cmd->delimiter))
+			break;
+		write(cmd->heredoc_fd, line_read, ft_strlen(line_read));
+		write(cmd->heredoc_fd, "\n", 1);
+		free(line_read);
+	}
+	free(line_read);
+	close(cmd->heredoc_fd);
+	cmd->heredoc_fd = open("heredoc.txt", O_RDONLY);
+	if (cmd->heredoc_fd == -1)
+	{
+		perror("Heredoc failed");
+		return (1);
+	}
+	return (0);
 }
+
+// void	handle_heredoc(t_cmd *cmd)
+// {
+// 	int		fd[2];
+// 	char	*line;
+
+// 	if (!cmd->has_heredoc)
+// 		return ;
+// 	if (pipe(fd) == -1)
+// 		exit_error("Pipe failed");
+// 	line = readline("heredoc> ");
+// 	while (line && ft_strncmp(line, cmd->delimiter, MAX_CMD_LEN) != 0)
+// 	{
+// 		ft_putendl_fd(line, fd[1]);
+// 		free(line);
+// 		line = readline("heredoc> ");
+// 	}
+// 	free(line);
+// 	close (fd[1]);
+// 	cmd->heredoc_fd = fd[0];
+// }
 
 //TODO heredoc - <<
 
