@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_exec.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/12 01:01:15 by mdarawsh         ###   ########.fr       */
+/*   Updated: 2025/03/13 16:26:10 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,15 +69,20 @@ void	print_env(t_cmd_path *path)
 // 		return ;
 // }
 
+//TODO exit - builtin command
+//TODO echo - with -n flag
+//TODO heredoc - <<
 
 void	exec_cmd(char *line_read, t_cmd_path *path)
 {
 	t_cmd	**cmd;
 	int		i;
+	int		is_child;
 	int		pipe_fd[2];
 	int		prev_pipe[2];
 	pid_t	pid;
 
+	is_child = 0;
 	i = -1;
 	prev_pipe[0] = -1;
 	prev_pipe[1] = -1;
@@ -101,21 +106,39 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 	while (cmd[++i])
 	{
 		cmd[i]->cmd_split = ft_split (cmd[i]->cmd, ' ');
-		if (!ft_strncmp(cmd[i]->cmd_split[0], "cd", 2))
+		if (!cmd[i]->cmd_split)
+			exit_error("Malloc failed");
+		// ! each command in the pipeline should be a child proccess, run this " exit 123 | echo hi "
+		// ! you'll see that it printed hi and didn't exit minishell
+		if (cmd[i] -> has_pipe || (i > 0 && cmd[i - 1]->has_pipe))
+			is_child = 1;
+
+		if (!is_child)
 		{
-			do_cd(cmd[i], path);
-			continue ;
-		}
-		// check if export not export {like this exporttttt}
-		if (!ft_strncmp(cmd[i]->cmd_split[0], "export", 6))
-		{
-			export_handle(cmd[i], path);
-			continue ;
-		}
-		if (!ft_strncmp(cmd[i]->cmd_split[0], "env", 3))
-		{
-			print_env(path);
-			continue ;
+			if (!ft_strncmp(cmd[i]->cmd_split[0], "echo", 4))
+			{
+				do_echo(cmd[i]);
+				continue ;
+			}
+			if (!ft_strncmp(cmd[i]->cmd_split[0], "exit", 4))
+				if(!do_exit(cmd[i]))
+					continue ;
+			if (!ft_strncmp(cmd[i]->cmd_split[0], "cd", 2))
+			{
+				do_cd(cmd[i], path);
+				continue ;
+			}
+			// check if export not export {like this exporttttt}
+			if (!ft_strncmp(cmd[i]->cmd_split[0], "export", 6))
+			{
+				export_handle(cmd[i], path);
+				continue ;
+			}
+			if (!ft_strncmp(cmd[i]->cmd_split[0], "env", 3))
+			{
+				print_env(path);
+				continue ;
+			}
 		}
 		if (cmd[i]->has_pipe)
 		{
@@ -162,9 +185,38 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 				dup2(fd, STDOUT_FILENO);
 				close(fd);
 			}
+			// ? Handle builtins in child process when in a pipeline
+			if (!ft_strncmp(cmd[i]->cmd_split[0], "echo", 4))
+			{
+				do_echo(cmd[i]);
+				exit(0);
+			}
+			if (!ft_strncmp(cmd[i]->cmd_split[0], "exit", 4))
+			{
+				do_exit(cmd[i]);
+				exit (1);
+			}
+			if (!ft_strncmp(cmd[i]->cmd_split[0], "cd", 2))
+			{
+				int rtn_code = do_cd(cmd[i], path);
+				if (rtn_code)
+					exit (rtn_code);
+				exit(0);
+			}
+			if (!ft_strncmp(cmd[i]->cmd_split[0], "export", 6))
+			{
+				export_handle(cmd[i], path);
+				exit(0);
+			}
+			if (!ft_strncmp(cmd[i]->cmd_split[0], "env", 3))
+			{
+				print_env(path);
+				exit(0);
+			}
+			// For external commands
 			setup_command(cmd[i], path);
 			execve(cmd[i]->cmd_path, cmd[i]->cmd_split, path->envp);
-			exit_error("Execve failed"); // Ensure this exits on error
+			exit_error("Execve failed");
 		}
 		// Parent closes previous pipe and manages current pipe
 		if (i > 0 && cmd[i-1]->has_pipe)

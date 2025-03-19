@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_init.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 13:57:52 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/09 04:20:31 by mdarawsh         ###   ########.fr       */
+/*   Updated: 2025/03/13 16:13:40 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,9 @@ static void	free_cmd_array(t_cmd **cmd, int count)
 
 static void	init_cmd_struct(t_cmd *cmd)
 {
-	cmd->cmd = malloc(sizeof(char) * MAX_CMD_LEN); // if the evaluator puts a command longer than this size, i'll jump
+	cmd->cmd = malloc(sizeof(char) * MAX_CMD_LEN);
 	cmd->infile = malloc(sizeof(char) * MAX_FILENAME);
-	cmd->outfile = malloc(sizeof(char) * MAX_FILENAME);;
+	cmd->outfile = malloc(sizeof(char) * MAX_FILENAME);
 	if (!cmd->cmd || !cmd->infile || !cmd->outfile)
 	{
 		free(cmd->cmd);
@@ -61,7 +61,7 @@ static int	init_all_cmd_structs(t_cmd **cmd, int cmd_count)
 	{
 		init_cmd_struct(cmd[i]);
 		if (!cmd[i]->cmd || !cmd[i]->infile || !cmd[i]->outfile)
-			return (0);
+			return (0); // ! should call some sort of free-exit function
 		i++;
 	}
 	return (1);

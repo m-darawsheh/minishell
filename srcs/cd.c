@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 12:02:07 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/12 01:28:49 by mdarawsh         ###   ########.fr       */
+/*   Updated: 2025/03/13 15:34:53 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ void	change_pwd(t_cmd_path *path)
 }
 
 // if new_path is set from the first (if) free it if not do nothing
-void	do_cd(t_cmd *cmd, t_cmd_path *path)
+int	do_cd(t_cmd *cmd, t_cmd_path *path)
 {
 	char	*new_path;
 
@@ -74,12 +74,12 @@ void	do_cd(t_cmd *cmd, t_cmd_path *path)
 	{
 		new_path = get_home_var(path->envp);
 		if (!new_path)
-			return ;
+			return (0);
 	}
 	else if (cmd->cmd_split[2] != NULL)
 	{
 		ft_putstr_fd("cd: too many arguments\n", STDERR_FILENO);
-		return ;
+		return (1);
 	}
 	else
 		new_path = cmd->cmd_split[1];
@@ -88,7 +88,8 @@ void	do_cd(t_cmd *cmd, t_cmd_path *path)
 		ft_putstr_fd("cd: ", STDERR_FILENO);
 		ft_putstr_fd(new_path, STDERR_FILENO);
 		ft_putstr_fd(": No such file or directiory\n", STDERR_FILENO);
-		exit (1);
+		return (1);
 	}
 	change_pwd(path);
+	return (0);
 }
