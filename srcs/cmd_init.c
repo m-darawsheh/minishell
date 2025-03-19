@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 13:57:52 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/13 16:13:40 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/16 16:24:22 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,11 @@ static void	free_cmd_array(t_cmd **cmd, int count)
 
 static void	init_cmd_struct(t_cmd *cmd)
 {
-	cmd->cmd = malloc(sizeof(char) * MAX_CMD_LEN);
-	cmd->infile = malloc(sizeof(char) * MAX_FILENAME);
-	cmd->outfile = malloc(sizeof(char) * MAX_FILENAME);
+	cmd->cmd = ft_calloc(MAX_CMD_LEN, sizeof(char));
+	cmd->infile = ft_calloc(MAX_FILENAME, sizeof(char));
+	cmd->outfile = ft_calloc(MAX_FILENAME, sizeof(char));
+	cmd->cmd_path = NULL;
+	cmd->delimiter = NULL;
 	if (!cmd->cmd || !cmd->infile || !cmd->outfile)
 	{
 		free(cmd->cmd);
@@ -47,6 +49,8 @@ static void	init_cmd_struct(t_cmd *cmd)
 	cmd->has_infile = 0;
 	cmd->has_outfile = 0;
 	cmd->has_appendfile = 0;
+	cmd->has_heredoc = 0;
+	cmd->heredoc_fd = -1;
 	cmd->cmd[0] = '\0';
 	cmd->infile[0] = '\0';
 	cmd->outfile[0] = '\0';
@@ -61,7 +65,10 @@ static int	init_all_cmd_structs(t_cmd **cmd, int cmd_count)
 	{
 		init_cmd_struct(cmd[i]);
 		if (!cmd[i]->cmd || !cmd[i]->infile || !cmd[i]->outfile)
-			return (0); // ! should call some sort of free-exit function
+		{
+			free_cmd_array(cmd, i);
+			return (0);
+		}
 		i++;
 	}
 	return (1);

@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/13 16:26:10 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/17 17:32:22 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,58 +24,33 @@ void	print_env(t_cmd_path *path)
 	}
 }
 
-// void	bluitin_cheak(t_cmd **cmd)
-// {
+void	handle_heredoc(t_cmd *cmd)
+{
+	int		fd[2];
+	char	*line;
 
-// 	if (cmd[1] == NULL)
-// 	{
-// 		if (ft_strncmp(cmd[0]->cmd, "echo", 4) == 0)
-// 			cmd[0]->builtin = 1;
-// 		else if (ft_strncmp(cmd[0]->cmd, "cd", 2) == 0)
-// 			cmd[0]->builtin = 2;
-// 		else if (ft_strncmp(cmd[0]->cmd, "pwd", 3) == 0)
-// 			cmd[0]->builtin = 3;
-// 		else if (ft_strncmp(cmd[0]->cmd, "export", 6) == 0)
-// 			cmd[0]->builtin = 4;
-// 		else if (ft_strncmp(cmd[0]->cmd, "unset", 5) == 0)
-// 			cmd[0]->builtin = 5;
-// 		else if (ft_strncmp(cmd[0]->cmd, "env", 3) == 0)
-// 			cmd[0]->builtin = 6;
-// 		else if (ft_strncmp(cmd[0]->cmd, "exit", 4) == 0)
-// 			cmd[0]->builtin = 7;
-// 		else
-// 			cmd[0]->builtin = 0;
-// 	}
-// }
+	if (!cmd->has_heredoc)
+		return ;
+	if (pipe(fd) == -1)
+		exit_error("Pipe failed");
+	line = readline("heredoc> ");
+	while (line && ft_strncmp(line, cmd->delimiter, MAX_CMD_LEN) != 0)
+	{
+		ft_putendl_fd(line, fd[1]);
+		free(line);
+		line = readline("heredoc> ");
+	}
+	free(line);
+	close (fd[1]);
+	cmd->heredoc_fd = fd[0];
+}
 
-
-
-// void	exec_builtin(t_cmd **cmd, t_cmd_path *path)
-// {
-// 	(void ) path;
-// 	if (cmd[0]->builtin == 1)
-// 		return ;
-// 	else if (cmd[0]->builtin == 2)
-// 		return ;
-// 	else if (cmd[0]->builtin == 3)
-// 		pwd_handle();
-// 	else if (cmd[0]->builtin == 4)
-// 		export_handle(cmd, path);
-// 	else if (cmd[0]->builtin == 5)
-// 		return ;
-// 	else if (cmd[0]->builtin == 6)
-// 		print_env(path);
-// 	else if (cmd[0]->builtin == 7)
-// 		return ;
-// }
-
-//TODO exit - builtin command
-//TODO echo - with -n flag
 //TODO heredoc - <<
 
 void	exec_cmd(char *line_read, t_cmd_path *path)
 {
 	t_cmd	**cmd;
+	t_token	**tokens;
 	int		i;
 	int		is_child;
 	int		pipe_fd[2];
@@ -88,67 +63,161 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 	prev_pipe[1] = -1;
 	cmd = t_cmd_malloc(line_read);
 	if (!cmd)
-		exit_error("Malloc failed");
-
-
-	init_cmds(cmd, line_read);
-
-
-	// bluitin_cheak(cmd);
-
-
-	// if (cmd[0]->builtin)
-	// {
-	// 	exec_builtin(cmd, path);
-	// 	return ;
-	// }
-
+		return ;
+	tokens = tokenize(line_read);
+	if (!tokens)
+		return ;
+	if (!parse_token(tokens, cmd))
+	{
+		free_tokens(tokens);
+		return ;
+	}
+	free_tokens(tokens);
+	while (cmd[++i])
+	{
+		if (cmd[i]->has_heredoc)
+			handle_heredoc(cmd[i]);
+	}
+	i = -1;
 	while (cmd[++i])
 	{
 		cmd[i]->cmd_split = ft_split (cmd[i]->cmd, ' ');
 		if (!cmd[i]->cmd_split)
 			exit_error("Malloc failed");
 		// ! each command in the pipeline should be a child proccess, run this " exit 123 | echo hi "
-		// ! you'll see that it printed hi and didn't exit minishell
+		// ! you'll see that it printed hi and didn't exit bash
 		if (cmd[i] -> has_pipe || (i > 0 && cmd[i - 1]->has_pipe))
 			is_child = 1;
-
 		if (!is_child)
 		{
+			int	stdout_backup = -1;
+			int	stdin_backup = -1;
+
+			if (cmd[i]->has_appendfile || cmd[i]->has_infile || cmd[i]->has_outfile || cmd[i]->has_heredoc)
+			{
+				stdout_backup = dup(STDOUT_FILENO);
+				stdin_backup = dup(STDIN_FILENO);
+			}
+			if (cmd[i]->has_infile)
+			{
+				int fd = open(cmd[i]->infile, O_RDONLY);
+				if (fd == -1)
+					exit_error("File not found");
+				dup2(fd, STDIN_FILENO);
+				close(fd);
+			}
+			if (cmd[i]->has_outfile)
+			{
+				int fd = open(cmd[i]->outfile, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+				if (fd == -1)
+					exit_error("File not found");
+				dup2(fd, STDOUT_FILENO);
+				close(fd);
+			}
+			if (cmd[i]->has_appendfile)
+			{
+				int fd = open(cmd[i]->outfile, O_CREAT | O_WRONLY | O_APPEND, 0644);
+				if (fd == -1)
+					exit_error("File not found");
+				dup2(fd, STDOUT_FILENO);
+				close(fd);
+			}
+			if (cmd[i]->has_heredoc)
+			{
+				dup2(cmd[i]->heredoc_fd, STDIN_FILENO);
+				close(cmd[i]->heredoc_fd);
+			}
 			if (!ft_strncmp(cmd[i]->cmd_split[0], "echo", 4))
 			{
 				do_echo(cmd[i]);
+				if (stdin_backup != -1)
+				{
+					dup2(stdin_backup, STDIN_FILENO);
+					close(stdin_backup);
+				}
+				if (stdout_backup != -1)
+				{
+					dup2(stdout_backup, STDOUT_FILENO);
+					close(stdout_backup);
+				}
 				continue ;
 			}
 			if (!ft_strncmp(cmd[i]->cmd_split[0], "exit", 4))
-				if(!do_exit(cmd[i]))
-					continue ;
+			{
+				do_exit(cmd[i]);
+				if (stdin_backup != -1)
+				{
+					dup2(stdin_backup, STDIN_FILENO);
+					close(stdin_backup);
+				}
+				if (stdout_backup != -1)
+				{
+					dup2(stdout_backup, STDOUT_FILENO);
+					close(stdout_backup);
+				}
+				continue ;
+			}
 			if (!ft_strncmp(cmd[i]->cmd_split[0], "cd", 2))
 			{
 				do_cd(cmd[i], path);
+				if (stdin_backup != -1)
+				{
+					dup2(stdin_backup, STDIN_FILENO);
+					close(stdin_backup);
+				}
+				if (stdout_backup != -1)
+				{
+					dup2(stdout_backup, STDOUT_FILENO);
+					close(stdout_backup);
+				}
 				continue ;
 			}
 			// check if export not export {like this exporttttt}
 			if (!ft_strncmp(cmd[i]->cmd_split[0], "export", 6))
 			{
 				export_handle(cmd[i], path);
+				if (stdin_backup != -1)
+				{
+					dup2(stdin_backup, STDIN_FILENO);
+					close(stdin_backup);
+				}
+				if (stdout_backup != -1)
+				{
+					dup2(stdout_backup, STDOUT_FILENO);
+					close(stdout_backup);
+				}
 				continue ;
 			}
 			if (!ft_strncmp(cmd[i]->cmd_split[0], "env", 3))
 			{
 				print_env(path);
+				if (stdin_backup != -1)
+				{
+					dup2(stdin_backup, STDIN_FILENO);
+					close(stdin_backup);
+				}
+				if (stdout_backup != -1)
+				{
+					dup2(stdout_backup, STDOUT_FILENO);
+					close(stdout_backup);
+				}
 				continue ;
 			}
+			//? unset is to come.
 		}
 		if (cmd[i]->has_pipe)
 		{
 			if (pipe(pipe_fd) == -1)
-			exit_error("Pipe failed");
+				exit_error("Pipe failed");
 		}
-
 		pid = fork();
 		if (pid == 0)
 		{
+			if (cmd[i]->has_heredoc)
+			{
+				dup2(cmd[i]->heredoc_fd, STDIN_FILENO);
+				close(cmd[i]->heredoc_fd);
+			}
 			// Redirect output to pipe if needed
 			if (cmd[i]->has_pipe)
 			{
@@ -168,7 +237,7 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 			{
 				int fd = open(cmd[i]->infile, O_RDONLY);
 				if (fd == -1)
-				exit_error("File not found");
+					exit_error("File not found");
 				dup2(fd, STDIN_FILENO);
 				close(fd);
 			}
@@ -176,12 +245,17 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 			if (cmd[i]->has_outfile)
 			{
 				int	fd;
-				if (cmd[i]->has_appendfile)
-				fd = open(cmd[i]->outfile, O_WRONLY | O_CREAT | O_APPEND, 0644);
-				else
 				fd = open(cmd[i]->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 				if (fd == -1)
-				exit_error("File not found");
+					exit_error("File not found");
+				dup2(fd, STDOUT_FILENO);
+				close(fd);
+			}
+			if (cmd[i]->has_appendfile)
+			{
+				int fd = open(cmd[i]->outfile, O_WRONLY | O_CREAT | O_APPEND, 0644);
+				if (fd == -1)
+					exit_error("File not found");
 				dup2(fd, STDOUT_FILENO);
 				close(fd);
 			}
@@ -237,5 +311,6 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 	}
 	// Wait for all child processes to finish
 	while (waitpid(-1, NULL, 0) > 0);
+	free_cmds(cmd);
 }
 

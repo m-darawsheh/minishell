@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   path_init.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 18:23:27 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/10 00:29:46 by mdarawsh         ###   ########.fr       */
+/*   Updated: 2025/03/16 14:20:01 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,5 +60,8 @@ void	struc_init(t_cmd_path *path, char **envp)
 	path-> envp = get_envp(envp);
 	path->path = find_path(path->envp);
 	if (!path->path)
+	{
+		free_2d(path->envp);
 		exit_error("PATH not found in envp");
+	}
 }

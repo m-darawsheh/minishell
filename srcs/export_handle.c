@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export_handle.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 23:43:49 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/03/12 01:00:10 by mdarawsh         ###   ########.fr       */
+/*   Updated: 2025/03/16 16:50:13 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ int check_env(t_cmd_path *path , t_cmd *cmd, int *i)
 	int j;
 
 	j = 0;
-	while (cmd->cmd_split[1][j] != '=')
+	while (cmd->cmd_split[1][j] != '=') // you should handle where the user doesn't put an equal "=" sign
 		j++;
 	while (path->envp[*i])
 	{
