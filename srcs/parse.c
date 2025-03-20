@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 13:06:27 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/20 14:16:10 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/20 14:26:49 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ static int	handle_advanced_redir(t_token **tokens, t_cmd **cmd,
 {
 	if (!tokens[*i + 1] || tokens[*i + 1]->type != TOKEN_WORD)
 	{
-		ft_putstr_fd("minishell: syntax error near token `newline'\n", 2);
+		ft_putstr_fd("minishell: syntax error near token \'>> / <<\'\n", 2);
 		return (0);
 	}
 	if (tokens[*i]->type == TOKEN_APPEND)
@@ -84,6 +84,18 @@ static int	handle_advanced_redir(t_token **tokens, t_cmd **cmd,
 	return (1);
 }
 
+int	handle_pipe(t_token **tokens, t_cmd **cmd, int *i, int *cmd_i)
+{
+	if (tokens[*i + 1]->type != TOKEN_WORD)
+	{
+		ft_putstr_fd("minishell: syntax error near token `newline'\n", 2);
+		return (0);
+	}
+	cmd[*cmd_i]->has_pipe = 1;
+	cmd[++*cmd_i]->cmd[0] = '\0';
+	return (1);
+}
+
 int	parse_token(t_token **tokens, t_cmd **cmd)
 {
 	int	i;
@@ -98,8 +110,8 @@ int	parse_token(t_token **tokens, t_cmd **cmd)
 			handle_word(tokens, cmd, i, cmd_i);
 		else if (tokens[i]->type == TOKEN_PIPE)
 		{
-			cmd[cmd_i]->has_pipe = 1;
-			cmd[++cmd_i]->cmd[0] = '\0';
+			if(!handle_pipe(tokens, cmd, &i, &cmd_i))
+				return (0);
 		}
 		else if ((tokens[i]->type == TOKEN_REDIR_IN
 			|| tokens[i]->type == TOKEN_REDIR_OUT)
