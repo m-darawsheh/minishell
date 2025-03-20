@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:24:48 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/03/20 13:04:06 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/20 14:48:18 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,7 @@ typedef struct s_command
 	int						has_appendfile;
 	int						has_heredoc;
 	int						builtin;
+	int						skip_exec;
 	char					*cmd;
 	char					**cmd_split;
 	char					*infile;
