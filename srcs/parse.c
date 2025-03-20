@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 13:06:27 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/16 15:19:38 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/20 13:31:47 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,13 @@ static int	handle_redir(t_token **tokens, t_cmd **cmd,
 	}
 	else if (tokens[*i]->type == TOKEN_REDIR_OUT)
 	{
+		int fd = open(tokens[*i + 1]->value, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		if (fd == -1)
+			return (0);
 		cmd[cmd_i]->has_outfile = 1;
 		(*i)++;
 		ft_strlcpy(cmd[cmd_i]->outfile, tokens[*i]->value, MAX_FILENAME);
+		close(fd);
 	}
 	return (1);
 }
