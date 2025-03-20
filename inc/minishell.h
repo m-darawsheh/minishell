@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:24:48 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/03/16 15:00:38 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/20 15:26:32 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,6 +110,7 @@ void	pwd_handle(void);
 void	export_handle(t_cmd *cmd ,t_cmd_path *path);
 void	do_echo(t_cmd *cmd);
 void	free_cmds(t_cmd **cmd);
+void	print_env(t_cmd_path *path);
 
 
 // Lexer
