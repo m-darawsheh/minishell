@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:24:48 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/03/16 15:00:38 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/20 13:04:06 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ char	**realloc_2d(char **str , int old_size , int new_size);
 char	**find_path(char **envp);
 int		do_exit(t_cmd *cmd);
 int		do_cd(t_cmd *cmd, t_cmd_path *path);
-int		is_builtin(t_cmd *cmd, t_cmd_path *path);
+int		is_builtin(t_cmd *cmd);
 void	*print_and_null(char *str);
 void	exit_error(char *str);
 void	free_2d(char **str);
