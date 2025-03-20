@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 13:07:20 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/20 13:03:56 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/20 13:59:44 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 
 int	is_builtin(t_cmd *cmd)
 {
+	if (cmd->cmd_split[0] == NULL)
+		return (0);
 	if (!ft_strncmp(cmd->cmd_split[0], "echo", 4))
 		return (1);
 	if (!ft_strncmp(cmd->cmd_split[0], "pwd", 3))

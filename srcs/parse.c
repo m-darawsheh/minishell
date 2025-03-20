@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 13:06:27 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/20 13:31:47 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/20 14:16:10 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,15 @@ static int	handle_redir(t_token **tokens, t_cmd **cmd,
 	}
 	if (tokens[*i]->type == TOKEN_REDIR_IN)
 	{
+		int fd = open(tokens[*i + 1]->value, O_RDONLY);
+		if (fd == -1)
+		{
+			ft_putstr_fd("minishell: ", 2);
+			ft_putstr_fd(tokens[*i + 1]->value, 2);
+			ft_putstr_fd(": No such file or directory\n", 2);
+			return (0);
+		}
+		close(fd);
 		cmd[cmd_i]->has_infile = 1;
 		(*i)++;
 		ft_strlcpy(cmd[cmd_i]->infile, tokens[*i]->value, MAX_FILENAME);
@@ -56,9 +65,13 @@ static int	handle_advanced_redir(t_token **tokens, t_cmd **cmd,
 	}
 	if (tokens[*i]->type == TOKEN_APPEND)
 	{
+		int fd = open(tokens[*i + 1]->value, O_WRONLY | O_CREAT | O_APPEND, 0644);
+		if (fd == -1)
+			return (0);
 		cmd[cmd_i]->has_appendfile = 1;
 		(*i)++;
 		ft_strlcpy(cmd[cmd_i]->outfile, tokens[*i]->value, MAX_FILENAME);
+		close(fd);
 	}
 	else if (tokens[*i]->type == TOKEN_HEREDOC)
 	{
@@ -99,5 +112,3 @@ int	parse_token(t_token **tokens, t_cmd **cmd)
 	}
 	return (1);
 }
-
-// ! yen3n al norm

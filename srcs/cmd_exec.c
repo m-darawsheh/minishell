@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/20 13:03:45 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/20 14:03:03 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,9 +102,11 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 	i = -1;
 	while (cmd[++i])
 	{
-		cmd[i]->cmd_split = ft_split (cmd[i]->cmd, ' ');
+		cmd[i]->cmd_split = ft_split(cmd[i]->cmd, ' ');
 		if (!cmd[i]->cmd_split)
 			exit_error("Malloc failed");
+		if (cmd[i]->cmd_split[0] == NULL)
+			return ;
 		// ! each command in the pipeline should be a child proccess, run this " exit 123 | echo hi "
 		// ! you'll see that it printed hi and didn't exit bash
 		if (cmd[i] -> has_pipe || (i > 0 && cmd[i - 1]->has_pipe))
@@ -114,12 +116,12 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 			int	stdout_backup = -1;
 			int	stdin_backup = -1;
 
-			if (cmd[i]->has_appendfile || cmd[i]->has_infile || cmd[i]->has_outfile)
+			if ((cmd[i]->has_appendfile || cmd[i]->has_infile || cmd[i]->has_outfile) && (is_builtin(cmd[i])))
 			{
 				stdout_backup = dup(STDOUT_FILENO);
 				stdin_backup = dup(STDIN_FILENO);
 			}
-			if (cmd[i]->has_infile)
+			if (cmd[i]->has_infile && is_builtin(cmd[i]))
 			{
 				int fd = open(cmd[i]->infile, O_RDONLY);
 				if (fd == -1)
@@ -127,7 +129,7 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 				dup2(fd, STDIN_FILENO);
 				close(fd);
 			}
-			if (cmd[i]->has_outfile)
+			if (cmd[i]->has_outfile && is_builtin(cmd[i]))
 			{
 				int fd = open(cmd[i]->outfile, O_CREAT | O_WRONLY | O_TRUNC, 0644);
 				if (fd == -1)
@@ -135,7 +137,7 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 				dup2(fd, STDOUT_FILENO);
 				close(fd);
 			}
-			if (cmd[i]->has_appendfile)
+			if (cmd[i]->has_appendfile && is_builtin(cmd[i]))
 			{
 				int fd = open(cmd[i]->outfile, O_CREAT | O_WRONLY | O_APPEND, 0644);
 				if (fd == -1)
