@@ -6,7 +6,7 @@
 /*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 23:43:49 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/03/20 15:43:30 by mdarawsh         ###   ########.fr       */
+/*   Updated: 2025/03/21 15:05:25 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,25 +41,7 @@ void	add_env(t_cmd_path *path , t_cmd *cmd)
 	path->envp[i + 1] = NULL;
 	free(tmp);
 }
-// export [0]
-// VAR=newVALUE [1]
-// VAR=oldValue
-int check_env(t_cmd_path *path , t_cmd *cmd, int *i)
-{
-	int j;
 
-	j = 0;
-
-	while (cmd->cmd_split[1][j] != '=') // you should handle where the user doesn't put an equal "=" sign
-		j++;
-	while (path->envp[*i])
-	{
-		if (ft_strncmp(path->envp[*i], cmd->cmd_split[1], j) == 0)
-			return (*i);
-		(*i)++;
-	}
-	return (0);
-}
 
 int	there_is_equal(t_cmd *cmd)
 {
@@ -75,21 +57,29 @@ int	there_is_equal(t_cmd *cmd)
 	return (0);
 }
 
-void	append_var(t_cmd_path *path , t_cmd *cmd)
+// export [0]
+// VAR=newVALUE [1]
+// VAR=oldValue
+int check_env(t_cmd_path *path , t_cmd *cmd, int *i)
 {
-	int i;
+	int j;
 
-	i = 0;
-	if (there_is_equal(cmd))
+	j = 0;
+	if (!there_is_equal(cmd))
 	{
-
+		printf("please put an equal sign\n");
+		return (-1);
 	}
-	else
+	while (cmd->cmd_split[1][j] != '=') // you should handle where the user doesn't put an equal "=" sign
+		j++;
+	while (path->envp[*i])
 	{
-		
+		if (ft_strncmp(path->envp[*i], cmd->cmd_split[1], j) == 0)
+			return (*i);
+		(*i)++;
 	}
+	return (0);
 }
-
 
 void	edit_env(t_cmd_path *path , t_cmd *cmd, int *i)
 {
@@ -140,6 +130,8 @@ void	export_handle( t_cmd *cmd ,t_cmd_path *path)
 		printf("minishell: export: %s: not a valid identifier\n", cmd->cmd_split[2]);
 		return ;
 	}
+	if (check_env(path, cmd, &i) == -1)
+		return ;
 	if (check_env(path, cmd, &i))
 		edit_env(path, cmd, &i);
 	else
