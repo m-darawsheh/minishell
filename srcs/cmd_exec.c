@@ -6,7 +6,7 @@
 /*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/20 15:22:27 by mdarawsh         ###   ########.fr       */
+/*   Updated: 2025/03/22 11:15:35 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -223,6 +223,21 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 			if (!ft_strncmp(cmd[i]->cmd_split[0], "env", 3))
 			{
 				print_env(path);
+				if (stdin_backup != -1)
+				{
+					dup2(stdin_backup, STDIN_FILENO);
+					close(stdin_backup);
+				}
+				if (stdout_backup != -1)
+				{
+					dup2(stdout_backup, STDOUT_FILENO);
+					close(stdout_backup);
+				}
+				continue ;
+			}
+			if (!ft_strncmp(cmd[i]->cmd_split[0], "unset", 5))
+			{
+				handle_unset(cmd[i], path);
 				if (stdin_backup != -1)
 				{
 					dup2(stdin_backup, STDIN_FILENO);
