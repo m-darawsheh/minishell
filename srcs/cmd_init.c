@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 13:57:52 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/20 14:55:27 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/23 15:48:20 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ static void	init_cmd_struct(t_cmd *cmd)
 	cmd->cmd = ft_calloc(MAX_CMD_LEN, sizeof(char));
 	cmd->infile = ft_calloc(MAX_FILENAME, sizeof(char));
 	cmd->outfile = ft_calloc(MAX_FILENAME, sizeof(char));
+	cmd->cmd_split = NULL;
 	cmd->cmd_path = NULL;
 	cmd->delimiter = NULL;
 	if (!cmd->cmd || !cmd->infile || !cmd->outfile)
