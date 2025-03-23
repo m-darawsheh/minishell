@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:24:48 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/03/23 15:17:16 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/23 16:11:30 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@
 // Macros
 #define MAX_FILENAME 4096	// 256 is the Standard filename length, but the evalutaor could give a full path
 #define MAX_CMD_LEN 4096	// if the evaluator can get a command more than this size, i'll jump
+#define MAX_ENV_NAME 512	// 256 is the length limit for an ENV variable name, but just to be safe :D.
 
 // Enums
 enum	file_type
@@ -113,6 +114,7 @@ void	export_handle(t_cmd *cmd ,t_cmd_path *path);
 void	do_echo(t_cmd *cmd);
 void	free_cmds(t_cmd **cmd);
 void	handle_heredoc(t_cmd *cmd);
+void	expander(t_token **tokens, t_cmd_path *path);
 
 
 // Lexer
