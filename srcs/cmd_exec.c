@@ -6,13 +6,11 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/20 15:52:45 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/23 15:38:01 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-volatile sig_atomic_t	g_heredoc_interrupted = 0;
 
 void	print_env(t_cmd_path *path)
 {
@@ -25,68 +23,6 @@ void	print_env(t_cmd_path *path)
 		i++;
 	}
 }
-
-void	heredoc_signal_handler(int sig)
-{
-	if (sig == SIGINT)
-	{
-		g_heredoc_interrupted = 1;
-		write(1, "\n", 1);
-		close(0);
-	}
-}
-
-void handle_heredoc(t_cmd *cmd)
-{
-	int fd[2];
-	char *line;
-
-	g_heredoc_interrupted = 0;
-	if (pipe(fd) == -1)
-		exit_error("Pipe failed");
-	signal(SIGINT, heredoc_signal_handler);
-	line = readline("heredoc> ");
-	while (line && ft_strncmp(line, cmd->delimiter, MAX_CMD_LEN) != 0)
-	{
-		ft_putendl_fd(line, fd[1]);
-		free(line);
-		line = readline("heredoc> ");
-	}
-	if (!line && g_heredoc_interrupted)
-	{
-		int new_stdin = open("/dev/tty", O_RDONLY);
-		if (new_stdin != -1)
-			dup2(new_stdin, STDIN_FILENO);
-		cmd->skip_exec = 1;
-	}
-	setup_signals();
-	free(line);
-	close(fd[1]);
-	cmd->heredoc_fd = fd[0];
-}
-
-// void	handle_heredoc(t_cmd *cmd)
-// {
-// 	int		fd[2];
-// 	char	*line;
-
-// 	if (!cmd->has_heredoc)
-// 		return ;
-// 	if (pipe(fd) == -1)
-// 		exit_error("Pipe failed");
-// 	line = readline("heredoc> ");
-// 	while (line && ft_strncmp(line, cmd->delimiter, MAX_CMD_LEN) != 0)
-// 	{
-// 		ft_putendl_fd(line, fd[1]);
-// 		free(line);
-// 		line = readline("heredoc> ");
-// 	}
-// 	free(line);
-// 	close (fd[1]);
-// 	cmd->heredoc_fd = fd[0];
-// }
-
-//TODO heredoc - <<
 
 void	exec_cmd(char *line_read, t_cmd_path *path)
 {
@@ -120,7 +56,10 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 		if (cmd[i]->has_heredoc)
 			handle_heredoc(cmd[i]);
 		if (cmd[i]->skip_exec)
+		{
+			free_cmds(cmd);
 			return ;
+		}
 	}
 	i = -1;
 	while (cmd[++i])
