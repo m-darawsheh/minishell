@@ -6,7 +6,7 @@
 /*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/24 11:48:32 by mdarawsh         ###   ########.fr       */
+/*   Updated: 2025/03/24 12:41:33 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,6 +105,7 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 		printf("the token is %s \t", tokens[l]->value);
 		printf("the type is %d \n", tokens[l]->type);
 	}
+	handle_expander( path, tokens);
 	if (!parse_token(tokens, cmd))
 	{
 		free_tokens(tokens);

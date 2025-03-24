@@ -6,7 +6,7 @@
 /*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:24:48 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/03/22 11:15:20 by mdarawsh         ###   ########.fr       */
+/*   Updated: 2025/03/24 12:26:59 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,4 +122,5 @@ void	add_token(t_lexer *lexer, char *value, t_token_type type);
 void	add_word_token(t_lexer *lexer);
 void	add_special_double_token(t_lexer *lexer);
 void	free_tokens(t_token **tokens);
+void	handle_expander(t_cmd_path *path, t_token **tokens);
 #endif
