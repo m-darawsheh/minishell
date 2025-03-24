@@ -6,7 +6,7 @@
 /*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/19 16:18:19 by mdarawsh         ###   ########.fr       */
+/*   Updated: 2025/03/24 11:48:32 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,6 +99,12 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 	tokens = tokenize(line_read);
 	if (!tokens)
 		return ;
+	int l 	= -1;
+	while (tokens[++l])
+	{
+		printf("the token is %s \t", tokens[l]->value);
+		printf("the type is %d \n", tokens[l]->type);
+	}
 	if (!parse_token(tokens, cmd))
 	{
 		free_tokens(tokens);
@@ -223,6 +229,21 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 			if (!ft_strncmp(cmd[i]->cmd_split[0], "env", 3))
 			{
 				print_env(path);
+				if (stdin_backup != -1)
+				{
+					dup2(stdin_backup, STDIN_FILENO);
+					close(stdin_backup);
+				}
+				if (stdout_backup != -1)
+				{
+					dup2(stdout_backup, STDOUT_FILENO);
+					close(stdout_backup);
+				}
+				continue ;
+			}
+			if (!ft_strncmp(cmd[i]->cmd_split[0], "unset", 5))
+			{
+				handle_unset(cmd[i], path);
 				if (stdin_backup != -1)
 				{
 					dup2(stdin_backup, STDIN_FILENO);

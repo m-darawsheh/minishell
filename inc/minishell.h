@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:24:48 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/03/16 15:00:38 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/22 11:15:20 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,8 @@ void	pwd_handle(void);
 void	export_handle(t_cmd *cmd ,t_cmd_path *path);
 void	do_echo(t_cmd *cmd);
 void	free_cmds(t_cmd **cmd);
-
+void	print_env(t_cmd_path *path);
+void	handle_unset(t_cmd *cmd, t_cmd_path *path);
 
 // Lexer
 t_token	**tokenize(char *line_read);
@@ -121,5 +122,4 @@ void	add_token(t_lexer *lexer, char *value, t_token_type type);
 void	add_word_token(t_lexer *lexer);
 void	add_special_double_token(t_lexer *lexer);
 void	free_tokens(t_token **tokens);
-
 #endif

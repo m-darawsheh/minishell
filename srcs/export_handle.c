@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export_handle.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 23:43:49 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/03/16 16:50:13 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/21 15:05:25 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,22 @@ void	add_env(t_cmd_path *path , t_cmd *cmd)
 	path->envp[i + 1] = NULL;
 	free(tmp);
 }
+
+
+int	there_is_equal(t_cmd *cmd)
+{
+	int i;
+
+	i = 0;
+	while (cmd->cmd_split[1][i])
+	{
+		if (cmd->cmd_split[1][i] == '=')
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
 // export [0]
 // VAR=newVALUE [1]
 // VAR=oldValue
@@ -49,6 +65,11 @@ int check_env(t_cmd_path *path , t_cmd *cmd, int *i)
 	int j;
 
 	j = 0;
+	if (!there_is_equal(cmd))
+	{
+		printf("please put an equal sign\n");
+		return (-1);
+	}
 	while (cmd->cmd_split[1][j] != '=') // you should handle where the user doesn't put an equal "=" sign
 		j++;
 	while (path->envp[*i])
@@ -59,7 +80,6 @@ int check_env(t_cmd_path *path , t_cmd *cmd, int *i)
 	}
 	return (0);
 }
-
 
 void	edit_env(t_cmd_path *path , t_cmd *cmd, int *i)
 {
@@ -82,13 +102,35 @@ void	edit_env(t_cmd_path *path , t_cmd *cmd, int *i)
 // export test= 3
 // error because of space
 
+void	print_export(t_cmd_path *path)
+{
+	int	i;
+
+	i = 0;
+	while (path->envp[i])
+	{
+		printf("declare -x %s\n", path->envp[i]);
+		i++;
+	}
+}
+
 
 void	export_handle( t_cmd *cmd ,t_cmd_path *path)
 {
 	int i;
 
 	i = 0;
+	if (cmd->cmd_split[1] == NULL)
+	{
+		print_export(path);
+		return ;
+	}
 	if (cmd->cmd_split[2] != NULL)
+	{
+		printf("minishell: export: %s: not a valid identifier\n", cmd->cmd_split[2]);
+		return ;
+	}
+	if (check_env(path, cmd, &i) == -1)
 		return ;
 	if (check_env(path, cmd, &i))
 		edit_env(path, cmd, &i);
