@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 23:43:49 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/03/16 16:50:13 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/25 13:37:49 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,7 @@ void	edit_env(t_cmd_path *path , t_cmd *cmd, int *i)
 	while (path->envp[*i][k] != '=')
 		k++;
 	free(path->envp[*i]);
+	printf("cmd->cmd_split[1] = %s\n", cmd->cmd_split[1]);
 	path->envp[*i] = ft_strdup(cmd->cmd_split[1]);
 }
 

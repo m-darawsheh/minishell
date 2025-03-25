@@ -6,11 +6,40 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 14:28:49 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/24 13:44:46 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/25 14:24:36 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+static void	remove_quotes(t_token *token)
+{
+	char	new_value[ft_strlen(token->value) + 1];
+	int		i;
+	int		j;
+	int		quote_state;
+
+	i = 0;
+	j = 0;
+	quote_state = 0;
+	while (token->value[i])
+	{
+		if (token->value[i] == '\'' && quote_state == 0)
+			quote_state = 1;
+		else if (token->value[i] == '\'' && quote_state == 1)
+			quote_state = 0;
+		else if (token->value[i] == '\"' && quote_state == 0)
+			quote_state = 2;
+		else if (token->value[i] == '\"' && quote_state == 2)
+			quote_state = 0;
+		else
+			new_value[j++] = token->value[i];
+		i++;
+	}
+	new_value[j] = '\0';
+	free(token->value);
+	token->value = ft_strdup(new_value);
+}
 
 static char	*get_env_value(const char *name, t_cmd_path *path)
 {
@@ -60,54 +89,66 @@ static void	change_value(t_token *token, int start, int end, char *env_var)
 	token->value = new_value;
 	free(env_var);
 }
-
 static void	expand(t_token *token, int i, t_cmd_path *path)
 {
-	char	tmp_buffer[MAX_ENV_NAME];
+	char	var_name[MAX_ENV_NAME];
 	int		j;
-	int		tmp;
+	int		start;
 
-	tmp = i;
-	j = 0;
+	start = i;
 	i++;
-	while (token->value[i] != '\0' && !ft_strchr(" \t$", token->value[i]))
-		tmp_buffer[j++] = token->value[i++];
-	tmp_buffer[j] = '\0';
-	change_value(token, tmp, i, get_env_value(tmp_buffer, path));
+	j = 0;
+	if (token->value[i] == '?')
+	{
+		var_name[j++] = token->value[i++];
+		var_name[j] = '\0';
+		change_value(token, start, i, ft_itoa(path->exit_status));  // Default to 0 for now
+	}
+	else
+	{
+		while (token->value[i] && (ft_isalnum(token->value[i])
+				|| token->value[i] == '_'))
+			var_name[j++] = token->value[i++];
+		var_name[j] = '\0';
+		if (j > 0)
+			change_value(token, start, i, get_env_value(var_name, path));
+	}
 }
 
 static void	check_for_expansion(t_token *token, t_cmd_path *path)
 {
 	int	i;
-	int	in_quote;
+	int	quote_state;
 
 	i = 0;
-	in_quote = 0;
-	if (token->value[i] == '\'')
-	{
-		in_quote = 1;
-		i++;
-	}
-	if (token->value[i] == '\"')
-	{
-		i++;
-		in_quote = 2;
-	}
-	// if (in_quote)
-	// 	remove_quotes(token);
+	quote_state = 0;
 	while (token->value[i])
 	{
-		if (token->value[i] == '$' && (in_quote == 0 || in_quote == 2))
+		if (token->value[i] == '\'' && quote_state == 0)
+			quote_state = 1;
+		else if (token->value[i] == '\'' && quote_state == 1)
+			quote_state = 0;
+		else if (token->value[i] == '\"' && quote_state == 0)
+			quote_state = 2;
+		else if (token->value[i] == '\"' && quote_state == 2)
+			quote_state = 0;
+		else if (token->value[i] == '$' && quote_state != 1)
+		{
 			expand(token, i, path);
+			i = 0;
+			continue;
+		}
 		i++;
 	}
+	remove_quotes(token);
 }
 
-void	expander(t_token **tokens, t_cmd_path *path)
+void expander(t_token **tokens, t_cmd_path *path)
 {
-	int	i;
+	int i;
 
 	i = -1;
-	while (tokens[++i] && tokens[i]->type == TOKEN_WORD)
-		check_for_expansion(tokens[i], path);
+	while (tokens[++i])
+		if (tokens[i]->type == TOKEN_WORD)
+			check_for_expansion(tokens[i], path);
 }

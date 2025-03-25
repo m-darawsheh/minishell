@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:24:48 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/03/23 16:11:30 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/25 14:18:42 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,7 @@ typedef struct s_cmd_path
 {
 	char		**path;
 	char		**envp;
+	int			exit_status;
 }	t_cmd_path;
 
 typedef struct s_command

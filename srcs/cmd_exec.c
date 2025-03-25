@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/23 16:18:58 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/25 14:42:11 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -275,7 +275,7 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 			// For external commands
 			setup_command(cmd[i], path);
 			execve(cmd[i]->cmd_path, cmd[i]->cmd_split, path->envp);
-			exit_error("Execve failed");
+			exit(127);
 		}
 		// Parent closes previous pipe and manages current pipe
 		if (i > 0 && cmd[i-1]->has_pipe)
@@ -295,7 +295,13 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 		}
 	}
 	// Wait for all child processes to finish
-	while (waitpid(-1, NULL, 0) > 0);
+	while (waitpid(-1, &path->exit_status, 0) > 0)
+	{
+		if (WIFEXITED(path->exit_status))
+			path->exit_status = WEXITSTATUS(path->exit_status);
+		else if (WIFSIGNALED(path->exit_status))
+			path->exit_status = 128 + WTERMSIG(path->exit_status);
+	}
 	free_cmds(cmd);
 }
 
