@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_itoa.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 14:22:53 by hassende          #+#    #+#             */
-/*   Updated: 2024/08/27 15:11:28 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/26 13:40:02 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ char	*ft_itoa(int n)
 	char	*str;
 
 	i = nblen(n);
-	str = malloc(sizeof(char) * (i + 1));
+	str = ft_calloc(i + 1, sizeof(char));
 	if (!str)
 		return (0);
 	str[i--] = '\0';

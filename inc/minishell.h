@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:24:48 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/03/25 14:18:42 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/26 13:35:05 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,7 @@ typedef struct s_command
 }	t_cmd;
 
 // Function Prototypes
-t_cmd	**t_cmd_malloc(char *line_read);
+t_cmd	**t_cmd_malloc(char *line_read, t_cmd_path *path);
 char	**realloc_2d(char **str , int old_size , int new_size);
 char	**find_path(char **envp);
 int		do_exit(t_cmd *cmd);
