@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:24:48 by mdarawsh          #+#    #+#             */
 /*   Updated: 2025/03/26 13:35:05 by hassende         ###   ########.fr       */
@@ -116,6 +116,8 @@ void	do_echo(t_cmd *cmd);
 void	free_cmds(t_cmd **cmd);
 void	handle_heredoc(t_cmd *cmd);
 void	expander(t_token **tokens, t_cmd_path *path);
+void	print_env(t_cmd_path *path);
+void	handle_unset(t_cmd *cmd, t_cmd_path *path);
 
 
 // Lexer
@@ -127,5 +129,4 @@ void	add_token(t_lexer *lexer, char *value, t_token_type type);
 void	add_word_token(t_lexer *lexer);
 void	add_special_double_token(t_lexer *lexer);
 void	free_tokens(t_token **tokens);
-
 #endif
