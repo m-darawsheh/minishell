@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expander.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 14:28:49 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/25 14:24:36 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/06 14:43:18 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,11 +133,7 @@ static void	check_for_expansion(t_token *token, t_cmd_path *path)
 		else if (token->value[i] == '\"' && quote_state == 2)
 			quote_state = 0;
 		else if (token->value[i] == '$' && quote_state != 1)
-		{
 			expand(token, i, path);
-			i = 0;
-			continue;
-		}
 		i++;
 	}
 	remove_quotes(token);
