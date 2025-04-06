@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_exec.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/26 13:34:08 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/06 15:27:54 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,6 @@ void exec_cmd(char *line_read, t_cmd_path *path)
 	cmd = parse_and_prepare(line_read, path);
 	if (!cmd)
 		return;
-
 	process_heredocs(cmd);
 	prepare_command_splits(cmd);
 	execute_command(cmd, path);
@@ -49,26 +48,23 @@ void exec_cmd(char *line_read, t_cmd_path *path)
 	free_cmds(cmd);
 }
 
-static t_cmd **parse_and_prepare(char *line_read, t_cmd_path *path)
+static t_cmd	**parse_and_prepare(char *line_read, t_cmd_path *path)
 {
-	t_cmd **cmd;
-	t_token **tokens;
+	t_cmd	**cmd;
+	t_token	**tokens;
 
 	cmd = t_cmd_malloc(line_read, path);
 	if (!cmd)
 		return (NULL);
-
 	tokens = tokenize(line_read);
 	if (!tokens)
 		return (NULL);
-
 	expander(tokens, path);
 	if (!parse_token(tokens, cmd))
 	{
 		free_tokens(tokens);
 		return (NULL);
 	}
-
 	free_tokens(tokens);
 	return (cmd);
 }
@@ -107,7 +103,7 @@ static void prepare_command_splits(t_cmd **cmd)
 }
 
 static void execute_builtin(t_cmd *cmd, t_cmd_path *path,
-						   int stdin_backup, int stdout_backup)
+							int stdin_backup, int stdout_backup)
 {
 	if (!ft_strncmp(cmd->cmd_split[0], "echo", 4))
 	{
@@ -132,7 +128,16 @@ static void execute_builtin(t_cmd *cmd, t_cmd_path *path,
 		path->exit_status = 0;
 		print_env(path);
 	}
-
+	else if (!ft_strncmp(cmd->cmd_split[0], "pwd", 3))
+	{
+		path->exit_status = 0;
+		pwd_handle(path);
+	}
+	else if (!ft_strncmp(cmd->cmd_split[0], "unset", 5))
+	{
+		path->exit_status = 0;
+		handle_unset(cmd, path);
+	}
 	if (stdin_backup != -1)
 	{
 		dup2(stdin_backup, STDIN_FILENO);
@@ -338,7 +343,6 @@ static void execute_command(t_cmd **cmd, t_cmd_path *path)
 		}
 		handle_pipes(pipe_fd, prev_pipe, cmd, i);
 	}
-
 	wait_for_children(path);
 }
 
