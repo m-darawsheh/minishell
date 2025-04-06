@@ -3,14 +3,25 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_exec.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/24 11:48:32 by mdarawsh         ###   ########.fr       */
+/*   Updated: 2025/03/26 13:34:08 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+static t_cmd **parse_and_prepare(char *line_read, t_cmd_path *path);
+static void process_heredocs(t_cmd **cmd);
+static void prepare_command_splits(t_cmd **cmd);
+static void execute_builtin(t_cmd *cmd, t_cmd_path *path, int stdin_backup, int stdout_backup);
+static void setup_io_redirections(t_cmd *cmd);
+static void setup_io_redirections_child(t_cmd *cmd, int *pipe_fd, int *prev_pipe, int i);
+static void execute_builtin_child(t_cmd *cmd, t_cmd_path *path);
+static void execute_command(t_cmd **cmd, t_cmd_path *path);
+static void handle_pipes(int *pipe_fd, int *prev_pipe, t_cmd **cmd, int i);
+static void wait_for_children(t_cmd_path *path);
 
 void	print_env(t_cmd_path *path)
 {
@@ -23,240 +34,295 @@ void	print_env(t_cmd_path *path)
 		i++;
 	}
 }
-
-int	handle_heredoc(t_cmd *cmd)
+void exec_cmd(char *line_read, t_cmd_path *path)
 {
-	char *line_read;
+	t_cmd **cmd;
 
-	cmd->heredoc_fd = open("heredoc.txt", O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (cmd->heredoc_fd == -1)
-	{
-		perror("Heredoc failed");
-		return (1);
-	}
-	while (1)
-	{
-		line_read = readline("> ");
-		if (!line_read)
-			break ;
-		if (ft_strncmp(line_read, cmd->delimiter, ft_strlen(cmd->delimiter)) == 0 || ft_strlen(line_read - 1) == ft_strlen(cmd->delimiter))
-			break;
-		write(cmd->heredoc_fd, line_read, ft_strlen(line_read));
-		write(cmd->heredoc_fd, "\n", 1);
-		free(line_read);
-	}
-	free(line_read);
-	close(cmd->heredoc_fd);
-	cmd->heredoc_fd = open("heredoc.txt", O_RDONLY);
-	if (cmd->heredoc_fd == -1)
-	{
-		perror("Heredoc failed");
-		return (1);
-	}
-	return (0);
+	cmd = parse_and_prepare(line_read, path);
+	if (!cmd)
+		return;
+
+	process_heredocs(cmd);
+	prepare_command_splits(cmd);
+	execute_command(cmd, path);
+
+	free_cmds(cmd);
 }
 
-// void	handle_heredoc(t_cmd *cmd)
-// {
-// 	int		fd[2];
-// 	char	*line;
-
-// 	if (!cmd->has_heredoc)
-// 		return ;
-// 	if (pipe(fd) == -1)
-// 		exit_error("Pipe failed");
-// 	line = readline("heredoc> ");
-// 	while (line && ft_strncmp(line, cmd->delimiter, MAX_CMD_LEN) != 0)
-// 	{
-// 		ft_putendl_fd(line, fd[1]);
-// 		free(line);
-// 		line = readline("heredoc> ");
-// 	}
-// 	free(line);
-// 	close (fd[1]);
-// 	cmd->heredoc_fd = fd[0];
-// }
-
-//TODO heredoc - <<
-
-void	exec_cmd(char *line_read, t_cmd_path *path)
+static t_cmd **parse_and_prepare(char *line_read, t_cmd_path *path)
 {
-	t_cmd	**cmd;
-	t_token	**tokens;
-	int		i;
-	int		is_child;
-	int		pipe_fd[2];
-	int		prev_pipe[2];
-	pid_t	pid;
+	t_cmd **cmd;
+	t_token **tokens;
 
-	is_child = 0;
-	i = -1;
-	prev_pipe[0] = -1;
-	prev_pipe[1] = -1;
-	cmd = t_cmd_malloc(line_read);
+	cmd = t_cmd_malloc(line_read, path);
 	if (!cmd)
-		return ;
+		return (NULL);
+
 	tokens = tokenize(line_read);
 	if (!tokens)
-		return ;
-	int l 	= -1;
-	while (tokens[++l])
-	{
-		printf("the token is %s \t", tokens[l]->value);
-		printf("the type is %d \n", tokens[l]->type);
-	}
+		return (NULL);
+
+	expander(tokens, path);
 	if (!parse_token(tokens, cmd))
 	{
 		free_tokens(tokens);
-		return ;
+		return (NULL);
 	}
+
 	free_tokens(tokens);
+	return (cmd);
+}
+
+static void process_heredocs(t_cmd **cmd)
+{
+	int i;
+
+	i = -1;
 	while (cmd[++i])
 	{
 		if (cmd[i]->has_heredoc)
 			handle_heredoc(cmd[i]);
+
+		if (cmd[i]->skip_exec)
+		{
+			free_cmds(cmd);
+			return;
+		}
 	}
+}
+
+static void prepare_command_splits(t_cmd **cmd)
+{
+	int i;
+
 	i = -1;
 	while (cmd[++i])
 	{
-		cmd[i]->cmd_split = ft_split (cmd[i]->cmd, ' ');
+		cmd[i]->cmd_split = ft_split(cmd[i]->cmd, ' ');
 		if (!cmd[i]->cmd_split)
 			exit_error("Malloc failed");
-		// ! each command in the pipeline should be a child proccess, run this " exit 123 | echo hi "
-		// ! you'll see that it printed hi and didn't exit bash
-		if (cmd[i] -> has_pipe || (i > 0 && cmd[i - 1]->has_pipe))
-			is_child = 1;
+		if (cmd[i]->cmd_split[0] == NULL)
+			return;
+	}
+}
+
+static void execute_builtin(t_cmd *cmd, t_cmd_path *path,
+						   int stdin_backup, int stdout_backup)
+{
+	if (!ft_strncmp(cmd->cmd_split[0], "echo", 4))
+	{
+		path->exit_status = 0;
+		do_echo(cmd);
+	}
+	else if (!ft_strncmp(cmd->cmd_split[0], "exit", 4))
+	{
+		path->exit_status = do_exit(cmd);
+	}
+	else if (!ft_strncmp(cmd->cmd_split[0], "cd", 2))
+	{
+		path->exit_status = do_cd(cmd, path);
+	}
+	else if (!ft_strncmp(cmd->cmd_split[0], "export", 6))
+	{
+		path->exit_status = 0;
+		export_handle(cmd, path);
+	}
+	else if (!ft_strncmp(cmd->cmd_split[0], "env", 3))
+	{
+		path->exit_status = 0;
+		print_env(path);
+	}
+
+	if (stdin_backup != -1)
+	{
+		dup2(stdin_backup, STDIN_FILENO);
+		close(stdin_backup);
+	}
+	if (stdout_backup != -1)
+	{
+		dup2(stdout_backup, STDOUT_FILENO);
+		close(stdout_backup);
+	}
+}
+
+static void	setup_io_redirections(t_cmd *cmd)
+{
+	int	fd;
+
+	if (cmd->has_infile)
+	{
+		fd = open(cmd->infile, O_RDONLY);
+		if (fd == -1)
+			exit_error("File not found");
+		dup2(fd, STDIN_FILENO);
+		close(fd);
+	}
+	if (cmd->has_outfile)
+	{
+		fd = open(cmd->outfile, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+		if (fd == -1)
+			exit_error("File not found");
+		dup2(fd, STDOUT_FILENO);
+		close(fd);
+	}
+	if (cmd->has_appendfile)
+	{
+		fd = open(cmd->outfile, O_CREAT | O_WRONLY | O_APPEND, 0644);
+		if (fd == -1)
+			exit_error("File not found");
+		dup2(fd, STDOUT_FILENO);
+		close(fd);
+	}
+	if (cmd->has_heredoc)
+	{
+		dup2(cmd->heredoc_fd, STDIN_FILENO);
+		close(cmd->heredoc_fd);
+	}
+}
+
+static void setup_io_redirections_child(t_cmd *cmd, int *pipe_fd,
+									   int *prev_pipe, int i)
+{
+	int	fd;
+
+	if (cmd->has_heredoc)
+	{
+		dup2(cmd->heredoc_fd, STDIN_FILENO);
+		close(cmd->heredoc_fd);
+	}
+	if (cmd->has_pipe)
+	{
+		dup2(pipe_fd[1], STDOUT_FILENO);
+		close(pipe_fd[0]);
+		close(pipe_fd[1]);
+	}
+	if (i > 0 && prev_pipe[0] != -1)
+	{
+		dup2(prev_pipe[0], STDIN_FILENO);
+		close(prev_pipe[0]);
+		close(prev_pipe[1]);
+	}
+	if (cmd->has_infile)
+	{
+		fd = open(cmd->infile, O_RDONLY);
+		if (fd == -1)
+			exit_error("File not found");
+		dup2(fd, STDIN_FILENO);
+		close(fd);
+	}
+	if (cmd->has_outfile)
+	{
+		fd = open(cmd->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		if (fd == -1)
+			exit_error("File not found");
+		dup2(fd, STDOUT_FILENO);
+		close(fd);
+	}
+	if (cmd->has_appendfile)
+	{
+		fd = open(cmd->outfile, O_WRONLY | O_CREAT | O_APPEND, 0644);
+		if (fd == -1)
+			exit_error("File not found");
+		dup2(fd, STDOUT_FILENO);
+		close(fd);
+	}
+}
+
+static void execute_builtin_child(t_cmd *cmd, t_cmd_path *path)
+{
+	if (!ft_strncmp(cmd->cmd_split[0], "echo", 4))
+	{
+		do_echo(cmd);
+		exit(0);
+	}
+	else if (!ft_strncmp(cmd->cmd_split[0], "exit", 4))
+	{
+		do_exit(cmd);
+		exit(1);
+	}
+	else if (!ft_strncmp(cmd->cmd_split[0], "cd", 2))
+	{
+		int rtn_code = do_cd(cmd, path);
+		if (rtn_code)
+			exit(rtn_code);
+		exit(0);
+	}
+	else if (!ft_strncmp(cmd->cmd_split[0], "export", 6))
+	{
+		export_handle(cmd, path);
+		exit(0);
+	}
+	else if (!ft_strncmp(cmd->cmd_split[0], "env", 3))
+	{
+		print_env(path);
+		exit(0);
+	}
+	setup_command(cmd, path);
+	execve(cmd->cmd_path, cmd->cmd_split, path->envp);
+	exit(127);
+}
+
+static void handle_pipes(int *pipe_fd, int *prev_pipe, t_cmd **cmd, int i)
+{
+	if (i > 0 && cmd[i-1]->has_pipe)
+	{
+		close(prev_pipe[0]);
+		close(prev_pipe[1]);
+	}
+	if (cmd[i]->has_pipe)
+	{
+		if (cmd[i+1] && (cmd[i+1]->has_infile || cmd[i+1]->has_heredoc))
+		{
+			close(pipe_fd[1]);
+			prev_pipe[0] = pipe_fd[0];
+			prev_pipe[1] = -1;
+		}
+		else
+		{
+			prev_pipe[0] = pipe_fd[0];
+			prev_pipe[1] = pipe_fd[1];
+		}
+	}
+	else
+	{
+		prev_pipe[0] = -1;
+		prev_pipe[1] = -1;
+	}
+}
+
+static void execute_command(t_cmd **cmd, t_cmd_path *path)
+{
+	int		i;
+	int		is_child;
+	int		pipe_fd[2];
+	int		prev_pipe[2];
+	int		stdin_backup;
+	int		stdout_backup;
+	pid_t	pid;
+
+	i = -1;
+	prev_pipe[0] = -1;
+	prev_pipe[1] = -1;
+
+	while (cmd[++i])
+	{
+		is_child = cmd[i]->has_pipe || (i > 0 && cmd[i-1]->has_pipe);
 		if (!is_child)
 		{
-			int	stdout_backup = -1;
-			int	stdin_backup = -1;
-
-			if (cmd[i]->has_appendfile || cmd[i]->has_infile || cmd[i]->has_outfile)
+			stdin_backup = -1;
+			stdout_backup = -1;
+			if ((cmd[i]->has_appendfile || cmd[i]->has_infile ||
+				 cmd[i]->has_outfile) && is_builtin(cmd[i]))
 			{
 				stdout_backup = dup(STDOUT_FILENO);
 				stdin_backup = dup(STDIN_FILENO);
+				setup_io_redirections(cmd[i]);
 			}
-			if (cmd[i]->has_infile)
+			if (is_builtin(cmd[i]))
 			{
-				int fd = open(cmd[i]->infile, O_RDONLY);
-				if (fd == -1)
-					exit_error("File not found");
-				dup2(fd, STDIN_FILENO);
-				close(fd);
+				execute_builtin(cmd[i], path, stdin_backup, stdout_backup);
+				continue;
 			}
-			if (cmd[i]->has_outfile)
-			{
-				int fd = open(cmd[i]->outfile, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-				if (fd == -1)
-					exit_error("File not found");
-				dup2(fd, STDOUT_FILENO);
-				close(fd);
-			}
-			if (cmd[i]->has_appendfile)
-			{
-				int fd = open(cmd[i]->outfile, O_CREAT | O_WRONLY | O_APPEND, 0644);
-				if (fd == -1)
-					exit_error("File not found");
-				dup2(fd, STDOUT_FILENO);
-				close(fd);
-			}
-			// if (cmd[i]->has_heredoc)
-			// {
-			// 	dup2(cmd[i]->heredoc_fd, STDIN_FILENO);
-			// 	close(cmd[i]->heredoc_fd);
-			// }
-			if (!ft_strncmp(cmd[i]->cmd_split[0], "echo", 4))
-			{
-				do_echo(cmd[i]);
-				if (stdin_backup != -1)
-				{
-					dup2(stdin_backup, STDIN_FILENO);
-					close(stdin_backup);
-				}
-				if (stdout_backup != -1)
-				{
-					dup2(stdout_backup, STDOUT_FILENO);
-					close(stdout_backup);
-				}
-				continue ;
-			}
-			if (!ft_strncmp(cmd[i]->cmd_split[0], "exit", 4))
-			{
-				do_exit(cmd[i]);
-				if (stdin_backup != -1)
-				{
-					dup2(stdin_backup, STDIN_FILENO);
-					close(stdin_backup);
-				}
-				if (stdout_backup != -1)
-				{
-					dup2(stdout_backup, STDOUT_FILENO);
-					close(stdout_backup);
-				}
-				continue ;
-			}
-			if (!ft_strncmp(cmd[i]->cmd_split[0], "cd", 2))
-			{
-				do_cd(cmd[i], path);
-				if (stdin_backup != -1)
-				{
-					dup2(stdin_backup, STDIN_FILENO);
-					close(stdin_backup);
-				}
-				if (stdout_backup != -1)
-				{
-					dup2(stdout_backup, STDOUT_FILENO);
-					close(stdout_backup);
-				}
-				continue ;
-			}
-			// check if export not export {like this exporttttt}
-			if (!ft_strncmp(cmd[i]->cmd_split[0], "export", 6))
-			{
-				export_handle(cmd[i], path);
-				if (stdin_backup != -1)
-				{
-					dup2(stdin_backup, STDIN_FILENO);
-					close(stdin_backup);
-				}
-				if (stdout_backup != -1)
-				{
-					dup2(stdout_backup, STDOUT_FILENO);
-					close(stdout_backup);
-				}
-				continue ;
-			}
-			if (!ft_strncmp(cmd[i]->cmd_split[0], "env", 3))
-			{
-				print_env(path);
-				if (stdin_backup != -1)
-				{
-					dup2(stdin_backup, STDIN_FILENO);
-					close(stdin_backup);
-				}
-				if (stdout_backup != -1)
-				{
-					dup2(stdout_backup, STDOUT_FILENO);
-					close(stdout_backup);
-				}
-				continue ;
-			}
-			if (!ft_strncmp(cmd[i]->cmd_split[0], "unset", 5))
-			{
-				handle_unset(cmd[i], path);
-				if (stdin_backup != -1)
-				{
-					dup2(stdin_backup, STDIN_FILENO);
-					close(stdin_backup);
-				}
-				if (stdout_backup != -1)
-				{
-					dup2(stdout_backup, STDOUT_FILENO);
-					close(stdout_backup);
-				}
-				continue ;
-			}
-			//? unset is to come.
 		}
 		if (cmd[i]->has_pipe)
 		{
@@ -266,104 +332,25 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 		pid = fork();
 		if (pid == 0)
 		{
-			if (cmd[i]->has_heredoc)
-			{
-				dup2(cmd[i]->heredoc_fd, STDIN_FILENO);
-				close(cmd[i]->heredoc_fd);
-			}
-			// Redirect output to pipe if needed
-			if (cmd[i]->has_pipe)
-			{
-				dup2(pipe_fd[1], STDOUT_FILENO);
-				close(pipe_fd[0]);
-				close(pipe_fd[1]);
-			}
-			// Redirect input from previous pipe if needed (BEFORE infile)
-			if (i > 0 && cmd[i-1]->has_pipe)
-			{
-				dup2(prev_pipe[0], STDIN_FILENO);
-				close(prev_pipe[0]);
-				close(prev_pipe[1]); // Close both ends in child
-			}
-			// Redirect input from infile (overrides previous pipe if needed)
-			if (cmd[i]->has_infile)
-			{
-				int fd = open(cmd[i]->infile, O_RDONLY);
-				if (fd == -1)
-					exit_error("File not found");
-				dup2(fd, STDIN_FILENO);
-				close(fd);
-			}
-			// Redirect output to outfile (overrides pipe if needed)
-			if (cmd[i]->has_outfile)
-			{
-				int	fd;
-				fd = open(cmd[i]->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-				if (fd == -1)
-					exit_error("File not found");
-				dup2(fd, STDOUT_FILENO);
-				close(fd);
-			}
-			if (cmd[i]->has_appendfile)
-			{
-				int fd = open(cmd[i]->outfile, O_WRONLY | O_CREAT | O_APPEND, 0644);
-				if (fd == -1)
-					exit_error("File not found");
-				dup2(fd, STDOUT_FILENO);
-				close(fd);
-			}
-			// ? Handle builtins in child process when in a pipeline
-			if (!ft_strncmp(cmd[i]->cmd_split[0], "echo", 4))
-			{
-				do_echo(cmd[i]);
-				exit(0);
-			}
-			if (!ft_strncmp(cmd[i]->cmd_split[0], "exit", 4))
-			{
-				do_exit(cmd[i]);
-				exit (1);
-			}
-			if (!ft_strncmp(cmd[i]->cmd_split[0], "cd", 2))
-			{
-				int rtn_code = do_cd(cmd[i], path);
-				if (rtn_code)
-					exit (rtn_code);
-				exit(0);
-			}
-			if (!ft_strncmp(cmd[i]->cmd_split[0], "export", 6))
-			{
-				export_handle(cmd[i], path);
-				exit(0);
-			}
-			if (!ft_strncmp(cmd[i]->cmd_split[0], "env", 3))
-			{
-				print_env(path);
-				exit(0);
-			}
-			// For external commands
-			setup_command(cmd[i], path);
-			execve(cmd[i]->cmd_path, cmd[i]->cmd_split, path->envp);
-			exit_error("Execve failed");
+			setup_io_redirections_child(cmd[i], pipe_fd, prev_pipe, i);
+			execute_builtin_child(cmd[i], path);
+			// Never reaches here
 		}
-		// Parent closes previous pipe and manages current pipe
-		if (i > 0 && cmd[i-1]->has_pipe)
-		{
-			close(prev_pipe[0]);
-			close(prev_pipe[1]);
-		}
-		if (cmd[i]->has_pipe)
-		{
-			prev_pipe[0] = pipe_fd[0];
-			prev_pipe[1] = pipe_fd[1];
-		}
-		else
-		{
-			prev_pipe[0] = -1;
-			prev_pipe[1] = -1;
-		}
+		handle_pipes(pipe_fd, prev_pipe, cmd, i);
 	}
-	// Wait for all child processes to finish
-	while (waitpid(-1, NULL, 0) > 0);
-	free_cmds(cmd);
+
+	wait_for_children(path);
 }
 
+static void wait_for_children(t_cmd_path *path)
+{
+	int status;
+
+	while (waitpid(-1, &status, 0) > 0)
+	{
+		if (WIFEXITED(status))
+			path->exit_status = WEXITSTATUS(status);
+		else if (WIFSIGNALED(status))
+			path->exit_status = 128 + WTERMSIG(status);
+	}
+}

@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 13:57:52 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/16 16:24:22 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/26 13:34:47 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,11 +31,13 @@ static void	free_cmd_array(t_cmd **cmd, int count)
 	free(cmd);
 }
 
-static void	init_cmd_struct(t_cmd *cmd)
+static void	init_cmd_struct(t_cmd *cmd, t_cmd_path *path)
 {
 	cmd->cmd = ft_calloc(MAX_CMD_LEN, sizeof(char));
 	cmd->infile = ft_calloc(MAX_FILENAME, sizeof(char));
 	cmd->outfile = ft_calloc(MAX_FILENAME, sizeof(char));
+	cmd->path = path;
+	cmd->cmd_split = NULL;
 	cmd->cmd_path = NULL;
 	cmd->delimiter = NULL;
 	if (!cmd->cmd || !cmd->infile || !cmd->outfile)
@@ -50,20 +52,21 @@ static void	init_cmd_struct(t_cmd *cmd)
 	cmd->has_outfile = 0;
 	cmd->has_appendfile = 0;
 	cmd->has_heredoc = 0;
+	cmd->skip_exec = 0;
 	cmd->heredoc_fd = -1;
 	cmd->cmd[0] = '\0';
 	cmd->infile[0] = '\0';
 	cmd->outfile[0] = '\0';
 }
 
-static int	init_all_cmd_structs(t_cmd **cmd, int cmd_count)
+static int	init_all_cmd_structs(t_cmd **cmd, int cmd_count, t_cmd_path *path)
 {
 	int	i;
 
 	i = 0;
 	while (i < cmd_count + 1)
 	{
-		init_cmd_struct(cmd[i]);
+		init_cmd_struct(cmd[i], path);
 		if (!cmd[i]->cmd || !cmd[i]->infile || !cmd[i]->outfile)
 		{
 			free_cmd_array(cmd, i);
@@ -90,7 +93,7 @@ static int	count_commands(char *line_read)
 	return (count);
 }
 
-t_cmd	**t_cmd_malloc(char *line_read)
+t_cmd	**t_cmd_malloc(char *line_read, t_cmd_path *path)
 {
 	t_cmd	**cmd;
 	int		cmd_count;
@@ -111,7 +114,7 @@ t_cmd	**t_cmd_malloc(char *line_read)
 		}
 	}
 	cmd[i] = NULL;
-	if (!init_all_cmd_structs(cmd, cmd_count))
+	if (!init_all_cmd_structs(cmd, cmd_count, path))
 	{
 		free_cmd_array(cmd, i);
 		return (NULL);

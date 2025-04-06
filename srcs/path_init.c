@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 18:23:27 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/16 14:20:01 by hassende         ###   ########.fr       */
+/*   Updated: 2025/03/25 14:19:20 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ char	**get_envp (char **envp)
 void	struc_init(t_cmd_path *path, char **envp)
 {
 	// path->envp = envp;
+	path->exit_status = 0;
 	path-> envp = get_envp(envp);
 	path->path = find_path(path->envp);
 	if (!path->path)
