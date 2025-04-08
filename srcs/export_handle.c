@@ -6,27 +6,24 @@
 /*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 23:43:49 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/03/25 13:37:49 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/08 16:48:13 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "minishell.h"
 
-
-
-void	add_env(t_cmd_path *path , t_cmd *cmd)
+void add_env(t_cmd_path *path, t_cmd *cmd, int index)
 {
-	int		i;
-	char	*tmp;
+	int i;
+	char *tmp;
 
 	i = 0;
-	tmp = ft_strdup(cmd->cmd_split[1]);
+	tmp = ft_strdup(cmd->cmd_split[index]);
 	if (!tmp)
 		return;
 	while (path->envp[i])
 		i++;
-	path->envp = realloc_2d(path->envp, i , i + 1);
+	path->envp = realloc_2d(path->envp, i, i + 1);
 	if (!path->envp)
 	{
 		free(tmp);
@@ -42,70 +39,43 @@ void	add_env(t_cmd_path *path , t_cmd *cmd)
 	free(tmp);
 }
 
-
-int	there_is_equal(t_cmd *cmd)
-{
-	int i;
-
-	i = 0;
-	while (cmd->cmd_split[1][i])
-	{
-		if (cmd->cmd_split[1][i] == '=')
-			return (1);
-		i++;
-	}
-	return (0);
-}
-
 // export [0]
 // VAR=newVALUE [1]
 // VAR=oldValue
-int check_env(t_cmd_path *path , t_cmd *cmd, int *i)
+int check_env(t_cmd_path *path, t_cmd *cmd, int *i, int index)
 {
 	int j;
 
 	j = 0;
-	if (!there_is_equal(cmd))
-	{
-		printf("please put an equal sign\n");
-		return (-1);
-	}
-	while (cmd->cmd_split[1][j] != '=') // you should handle where the user doesn't put an equal "=" sign
+	while (cmd->cmd_split[index][j] != '=')
 		j++;
 	while (path->envp[*i])
 	{
-		if (ft_strncmp(path->envp[*i], cmd->cmd_split[1], j) == 0)
+		if (ft_strncmp(path->envp[*i], cmd->cmd_split[index], j) == 0)
 			return (*i);
 		(*i)++;
 	}
 	return (0);
 }
 
-void	edit_env(t_cmd_path *path , t_cmd *cmd, int *i)
+void edit_env(t_cmd_path *path, t_cmd *cmd, int *i, int index)
 {
 	int j;
 	int k;
 
 	j = 0;
 	k = 0;
-	while (cmd->cmd_split[1][j] != '=')
+	while (cmd->cmd_split[index][j] != '=')
 		j++;
 	while (path->envp[*i][k] != '=')
 		k++;
 	free(path->envp[*i]);
-	printf("cmd->cmd_split[1] = %s\n", cmd->cmd_split[1]);
-	path->envp[*i] = ft_strdup(cmd->cmd_split[1]);
+	path->envp[*i] = ft_strdup(cmd->cmd_split[index]);
 }
 
-// export test= fasfdsh
-// test=space
-
-// export test= 3
-// error because of space
-
-void	print_export(t_cmd_path *path)
+void print_export(t_cmd_path *path)
 {
-	int	i;
+	int i;
 
 	i = 0;
 	while (path->envp[i])
@@ -115,26 +85,69 @@ void	print_export(t_cmd_path *path)
 	}
 }
 
-
-void	export_handle( t_cmd *cmd ,t_cmd_path *path)
+int valid_input(t_cmd *cmd, int index)
 {
 	int i;
 
 	i = 0;
+	while (cmd->cmd_split[index][i])
+	{
+		while (cmd->cmd_split[index][i] && cmd->cmd_split[index][i] != '=')
+		{
+			// printf("salam\n");
+			if (!(ft_isalpha(cmd->cmd_split[index][i]) || ft_isdigit(cmd->cmd_split[index][i]) || cmd->cmd_split[index][i] == '_'))
+			{
+				printf("export: `%s': not a valid identifier\n", cmd->cmd_split[index]);
+				return (0);
+			}
+			i++;
+		}
+		if (cmd->cmd_split[index][i])
+		{
+			i++;
+			while (cmd->cmd_split[index][i])
+			{
+				if (!(ft_isalpha(cmd->cmd_split[index][i]) || ft_isdigit(cmd->cmd_split[index][i]) || cmd->cmd_split[index][i] == '_'))
+					return (0);
+				i++;
+			}
+			if (cmd->cmd_split[index][i - 1] == '=')
+				return (0);
+			return (1);
+		}
+		else
+		{
+			printf("return al else\n");
+			return (0);
+		}
+	}
+	return (1);
+}
+
+void export_handle(t_cmd *cmd, t_cmd_path *path)
+{
+	int i;
+	int index;
+
+	i = 0;
+	index = 1;
 	if (cmd->cmd_split[1] == NULL)
 	{
 		print_export(path);
-		return ;
+		return;
 	}
-	if (cmd->cmd_split[2] != NULL)
+	while (cmd->cmd_split[index])
 	{
-		printf("minishell: export: %s: not a valid identifier\n", cmd->cmd_split[2]);
-		return ;
+		if (!valid_input(cmd, index))
+		{
+			printf("somthing wrong with\n");
+			index++;
+			continue;
+		}
+		if (check_env(path, cmd, &i, index))
+			edit_env(path, cmd, &i, index);
+		else
+			add_env(path, cmd, index);
+		index++;
 	}
-	if (check_env(path, cmd, &i) == -1)
-		return ;
-	if (check_env(path, cmd, &i))
-		edit_env(path, cmd, &i);
-	else
-		add_env(path, cmd);
 }
