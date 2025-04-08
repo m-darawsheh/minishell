@@ -6,7 +6,7 @@
 /*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 23:43:49 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/04/08 16:48:13 by mdarawsh         ###   ########.fr       */
+/*   Updated: 2025/04/08 17:02:48 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,6 +105,8 @@ int valid_input(t_cmd *cmd, int index)
 		if (cmd->cmd_split[index][i])
 		{
 			i++;
+			if (cmd->cmd_split[index][0] == '=')
+				return (0);
 			while (cmd->cmd_split[index][i])
 			{
 				if (!(ft_isalpha(cmd->cmd_split[index][i]) || ft_isdigit(cmd->cmd_split[index][i]) || cmd->cmd_split[index][i] == '_'))
