@@ -6,7 +6,7 @@
 /*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 23:43:49 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/04/08 17:02:48 by mdarawsh         ###   ########.fr       */
+/*   Updated: 2025/04/09 15:18:28 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,6 @@ int valid_input(t_cmd *cmd, int index)
 	{
 		while (cmd->cmd_split[index][i] && cmd->cmd_split[index][i] != '=')
 		{
-			// printf("salam\n");
 			if (!(ft_isalpha(cmd->cmd_split[index][i]) || ft_isdigit(cmd->cmd_split[index][i]) || cmd->cmd_split[index][i] == '_'))
 			{
 				printf("export: `%s': not a valid identifier\n", cmd->cmd_split[index]);
@@ -109,6 +108,18 @@ int valid_input(t_cmd *cmd, int index)
 				return (0);
 			while (cmd->cmd_split[index][i])
 			{
+				printf("%c", cmd->cmd_split[index][i]);
+				// if the value in quotes we need skip  the  spaces
+				if (cmd->cmd_split[index][i] == '"' || cmd->cmd_split[index][i] == '\'')
+				{
+					printf("\n\n\n\n\ni inter\n\n\n\n\n\n");
+					while (cmd->cmd_split[index][i] && cmd->cmd_split[index][i] != '"' && cmd->cmd_split[index][i] != '\'')
+					{
+						printf("export: `%s': not a valid identifier\n", cmd->cmd_split[index]);
+						i++;
+					}
+					return (1);
+				}
 				if (!(ft_isalpha(cmd->cmd_split[index][i]) || ft_isdigit(cmd->cmd_split[index][i]) || cmd->cmd_split[index][i] == '_'))
 					return (0);
 				i++;
@@ -118,10 +129,7 @@ int valid_input(t_cmd *cmd, int index)
 			return (1);
 		}
 		else
-		{
-			printf("return al else\n");
 			return (0);
-		}
 	}
 	return (1);
 }
@@ -142,7 +150,7 @@ void export_handle(t_cmd *cmd, t_cmd_path *path)
 	{
 		if (!valid_input(cmd, index))
 		{
-			printf("somthing wrong with\n");
+			printf("somthing wrong with must put valid input like this -> name=value\n");
 			index++;
 			continue;
 		}
