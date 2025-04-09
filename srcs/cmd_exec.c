@@ -3,23 +3,23 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_exec.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/06 15:27:54 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/09 15:36:55 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static t_cmd **parse_and_prepare(char *line_read, t_cmd_path *path);
+static t_cmd **parse_and_prepare(char *line_read, t_cmd_path *path, t_token **tokens);
 static void process_heredocs(t_cmd **cmd);
 static void prepare_command_splits(t_cmd **cmd);
-static void execute_builtin(t_cmd *cmd, t_cmd_path *path, int stdin_backup, int stdout_backup);
+static void execute_builtin(t_cmd *cmd, t_cmd_path *path, int stdin_backup, int stdout_backup, t_token **tokens);
 static void setup_io_redirections(t_cmd *cmd);
 static void setup_io_redirections_child(t_cmd *cmd, int *pipe_fd, int *prev_pipe, int i);
-static void execute_builtin_child(t_cmd *cmd, t_cmd_path *path);
-static void execute_command(t_cmd **cmd, t_cmd_path *path);
+static void execute_builtin_child(t_cmd *cmd, t_cmd_path *path, t_token **tokens);
+static void execute_command(t_cmd **cmd, t_cmd_path *path, t_token **tokens);
 static void handle_pipes(int *pipe_fd, int *prev_pipe, t_cmd **cmd, int i);
 static void wait_for_children(t_cmd_path *path);
 
@@ -37,35 +37,35 @@ void	print_env(t_cmd_path *path)
 void exec_cmd(char *line_read, t_cmd_path *path)
 {
 	t_cmd **cmd;
+	t_token	**tokens;
 
-	cmd = parse_and_prepare(line_read, path);
+	tokens = tokenize(line_read);
+
+	cmd = parse_and_prepare(line_read, path, tokens);
 	if (!cmd)
 		return;
 	process_heredocs(cmd);
 	prepare_command_splits(cmd);
-	execute_command(cmd, path);
+	execute_command(cmd, path, tokens);
 
 	free_cmds(cmd);
 }
 
-static t_cmd	**parse_and_prepare(char *line_read, t_cmd_path *path)
+static t_cmd	**parse_and_prepare(char *line_read, t_cmd_path *path, t_token **tokens)
 {
 	t_cmd	**cmd;
-	t_token	**tokens;
 
 	cmd = t_cmd_malloc(line_read, path);
 	if (!cmd)
 		return (NULL);
-	tokens = tokenize(line_read);
-	if (!tokens)
-		return (NULL);
 	expander(tokens, path);
-	if (!parse_token(tokens, cmd))
-	{
-		free_tokens(tokens);
-		return (NULL);
-	}
-	free_tokens(tokens);
+	// if (!)
+	parse_token(tokens, cmd);
+	// {
+		// free_tokens(tokens);
+		// return (NULL);
+	// }
+	// free_tokens(tokens);
 	return (cmd);
 }
 
@@ -103,7 +103,7 @@ static void prepare_command_splits(t_cmd **cmd)
 }
 
 static void execute_builtin(t_cmd *cmd, t_cmd_path *path,
-							int stdin_backup, int stdout_backup)
+							int stdin_backup, int stdout_backup, t_token **tokens)
 {
 	if (!ft_strncmp(cmd->cmd_split[0], "echo", 4))
 	{
@@ -121,7 +121,7 @@ static void execute_builtin(t_cmd *cmd, t_cmd_path *path,
 	else if (!ft_strncmp(cmd->cmd_split[0], "export", 6))
 	{
 		path->exit_status = 0;
-		export_handle(cmd, path);
+		export_handle(cmd, path, tokens);
 	}
 	else if (!ft_strncmp(cmd->cmd_split[0], "env", 3))
 	{
@@ -233,7 +233,7 @@ static void setup_io_redirections_child(t_cmd *cmd, int *pipe_fd,
 	}
 }
 
-static void execute_builtin_child(t_cmd *cmd, t_cmd_path *path)
+static void execute_builtin_child(t_cmd *cmd, t_cmd_path *path, t_token **tokens)
 {
 	if (!ft_strncmp(cmd->cmd_split[0], "echo", 4))
 	{
@@ -254,7 +254,7 @@ static void execute_builtin_child(t_cmd *cmd, t_cmd_path *path)
 	}
 	else if (!ft_strncmp(cmd->cmd_split[0], "export", 6))
 	{
-		export_handle(cmd, path);
+		export_handle(cmd, path, tokens);
 		exit(0);
 	}
 	else if (!ft_strncmp(cmd->cmd_split[0], "env", 3))
@@ -295,7 +295,7 @@ static void handle_pipes(int *pipe_fd, int *prev_pipe, t_cmd **cmd, int i)
 	}
 }
 
-static void execute_command(t_cmd **cmd, t_cmd_path *path)
+static void execute_command(t_cmd **cmd, t_cmd_path *path, t_token **tokens)
 {
 	int		i;
 	int		is_child;
@@ -325,7 +325,7 @@ static void execute_command(t_cmd **cmd, t_cmd_path *path)
 			}
 			if (is_builtin(cmd[i]))
 			{
-				execute_builtin(cmd[i], path, stdin_backup, stdout_backup);
+				execute_builtin(cmd[i], path, stdin_backup, stdout_backup, tokens);
 				continue;
 			}
 		}
@@ -338,7 +338,7 @@ static void execute_command(t_cmd **cmd, t_cmd_path *path)
 		if (pid == 0)
 		{
 			setup_io_redirections_child(cmd[i], pipe_fd, prev_pipe, i);
-			execute_builtin_child(cmd[i], path);
+			execute_builtin_child(cmd[i], path, tokens);
 			// Never reaches here
 		}
 		handle_pipes(pipe_fd, prev_pipe, cmd, i);

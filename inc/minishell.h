@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:24:48 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/04/06 15:29:45 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/09 15:58:13 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,7 @@ void	exec_cmd(char *line_read, t_cmd_path *path);
 void	init_cmds(t_cmd **cmd, char *line);
 void	setup_command(t_cmd *cmd, t_cmd_path *path);
 void	pwd_handle(t_cmd_path *path);
-void	export_handle(t_cmd *cmd ,t_cmd_path *path);
+void	export_handle(t_cmd *cmd ,t_cmd_path *path, t_token **tokens);
 void	do_echo(t_cmd *cmd);
 void	free_cmds(t_cmd **cmd);
 void	handle_heredoc(t_cmd *cmd);
