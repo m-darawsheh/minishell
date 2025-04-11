@@ -6,7 +6,7 @@
 /*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/09 15:36:55 by mdarawsh         ###   ########.fr       */
+/*   Updated: 2025/04/11 17:09:04 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,10 +133,10 @@ static void execute_builtin(t_cmd *cmd, t_cmd_path *path,
 		path->exit_status = 0;
 		pwd_handle(path);
 	}
-	else if (!ft_strncmp(cmd->cmd_split[0], "unset", 5))
+	else if (!ft_strncmp(tokens[0]->value, "unset", 5))
 	{
 		path->exit_status = 0;
-		handle_unset(cmd, path);
+		handle_unset(path, tokens);
 	}
 	if (stdin_backup != -1)
 	{

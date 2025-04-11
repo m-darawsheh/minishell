@@ -6,7 +6,7 @@
 /*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 23:43:49 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/04/11 15:39:46 by mdarawsh         ###   ########.fr       */
+/*   Updated: 2025/04/11 16:56:48 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,12 +173,12 @@ void export_handle(t_cmd *cmd, t_cmd_path *path, t_token **tokens)
 
 	i = 0;
 	index = 1;
-	int token_index = 0;
-	while (tokens[token_index])
-	{
-		printf("token[%d]: %s\n", token_index, tokens[token_index]->value);
-		token_index++;
-	}
+	// int token_index = 0;
+	// while (tokens[token_index])
+	// {
+	// 	printf("token[%d]: %s\n", token_index, tokens[token_index]->value);
+	// 	token_index++;
+	// }
 	if (cmd->cmd_split[1] == NULL)
 	{
 		print_export(path);
