@@ -6,7 +6,7 @@
 /*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/22 10:53:56 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/04/11 18:01:23 by mdarawsh         ###   ########.fr       */
+/*   Updated: 2025/04/12 14:57:23 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,14 @@
 
 void	shift_envp(t_cmd_path *path, int index)
 {
-	int i;
-
-	i = 0;
-	while (path->envp[i])
-		i++;
-	while ()
+	free(path->envp[index]);
+	path->envp[index] = NULL;
+	while (path->envp[index + 1])
 	{
-		
+		path->envp[index] = path->envp[index + 1];
+		index++;
 	}
+	path->envp[index] = NULL;
 
 }
 
@@ -47,9 +46,7 @@ void	handle_unset(t_cmd_path *path, t_token **tokens)
 			{
 				if (ft_strncmp(tokens[j]->value, path->envp[i], ft_strlen(tokens[j]->value)) == 0)
 				{
-					printf("sadda\n");
-					free(path->envp[i]);
-					path->envp[i] = NULL;
+					shift_envp(path, i);
 					break;
 				}
 				i++;
