@@ -12,23 +12,25 @@ static int	check_all_n(char *str)
 	return (0);
 }
 
-void	do_echo(t_cmd *cmd)
+void	do_echo(t_cmd *cmd, t_token **tokens)
 {
+	(void)cmd;
 	int i;
 	int	n_flag;
 
 	i = 1;
 	n_flag = 0;
-	while (cmd->cmd_split[i] && cmd->cmd_split[i][0] == '-' &&
-		cmd->cmd_split[i][1] == 'n' && check_all_n(cmd->cmd_split[i]))
+
+	while (tokens[i]->value && tokens[i]->value[0] == '-' &&
+		tokens[i]->value[1] == 'n' && check_all_n(tokens[i]->value))
  	{
 		n_flag = 1;
 		i++;
  	}
-	while (cmd->cmd_split[i])
+	while (tokens[i] && tokens[i]->value)
 	{
-		ft_putstr_fd(cmd->cmd_split[i], STDOUT_FILENO);
-		if (cmd->cmd_split[i + 1]) /* If not last argument */
+		ft_putstr_fd(tokens[i]->value, STDOUT_FILENO);
+		if ( tokens[i + 1] && tokens[i + 1]->value) /* If not last argument */
 			ft_putchar_fd(' ', STDOUT_FILENO);
 		i++;
 	}

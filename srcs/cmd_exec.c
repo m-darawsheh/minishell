@@ -6,7 +6,7 @@
 /*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/11 17:09:04 by mdarawsh         ###   ########.fr       */
+/*   Updated: 2025/04/12 17:47:53 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,9 @@ void exec_cmd(char *line_read, t_cmd_path *path)
 	free_cmds(cmd);
 }
 
+
+
+
 static t_cmd	**parse_and_prepare(char *line_read, t_cmd_path *path, t_token **tokens)
 {
 	t_cmd	**cmd;
@@ -94,6 +97,7 @@ static void prepare_command_splits(t_cmd **cmd)
 	i = -1;
 	while (cmd[++i])
 	{
+
 		cmd[i]->cmd_split = ft_split(cmd[i]->cmd, ' ');
 		if (!cmd[i]->cmd_split)
 			exit_error("Malloc failed");
@@ -108,7 +112,7 @@ static void execute_builtin(t_cmd *cmd, t_cmd_path *path,
 	if (!ft_strncmp(cmd->cmd_split[0], "echo", 4))
 	{
 		path->exit_status = 0;
-		do_echo(cmd);
+		do_echo(cmd, tokens);
 	}
 	else if (!ft_strncmp(cmd->cmd_split[0], "exit", 4))
 	{
@@ -237,7 +241,7 @@ static void execute_builtin_child(t_cmd *cmd, t_cmd_path *path, t_token **tokens
 {
 	if (!ft_strncmp(cmd->cmd_split[0], "echo", 4))
 	{
-		do_echo(cmd);
+		do_echo(cmd, tokens);
 		exit(0);
 	}
 	else if (!ft_strncmp(cmd->cmd_split[0], "exit", 4))

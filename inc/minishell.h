@@ -6,7 +6,7 @@
 /*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:24:48 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/04/11 17:07:49 by mdarawsh         ###   ########.fr       */
+/*   Updated: 2025/04/12 16:57:06 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,7 @@ void	init_cmds(t_cmd **cmd, char *line);
 void	setup_command(t_cmd *cmd, t_cmd_path *path);
 void	pwd_handle(t_cmd_path *path);
 void	export_handle(t_cmd *cmd ,t_cmd_path *path, t_token **tokens);
-void	do_echo(t_cmd *cmd);
+void	do_echo(t_cmd *cmd, t_token **tokens);
 void	free_cmds(t_cmd **cmd);
 void	handle_heredoc(t_cmd *cmd);
 void	expander(t_token **tokens, t_cmd_path *path);
