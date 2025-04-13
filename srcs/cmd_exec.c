@@ -14,7 +14,7 @@
 
 static t_cmd **parse_and_prepare(char *line_read, t_cmd_path *path, t_token **tokens);
 static void process_heredocs(t_cmd **cmd);
-static void prepare_command_splits(t_cmd **cmd);
+static void prepare_command_splits(t_cmd **cmd, t_token **tokens);
 static void execute_builtin(t_cmd *cmd, t_cmd_path *path, int stdin_backup, int stdout_backup, t_token **tokens);
 static void setup_io_redirections(t_cmd *cmd);
 static void setup_io_redirections_child(t_cmd *cmd, int *pipe_fd, int *prev_pipe, int i);
@@ -45,7 +45,7 @@ void exec_cmd(char *line_read, t_cmd_path *path)
 	if (!cmd)
 		return;
 	process_heredocs(cmd);
-	prepare_command_splits(cmd);
+	prepare_command_splits(cmd, tokens);
 	execute_command(cmd, path, tokens);
 
 	free_cmds(cmd);
@@ -90,19 +90,56 @@ static void process_heredocs(t_cmd **cmd)
 	}
 }
 
-static void prepare_command_splits(t_cmd **cmd)
+char **ft_realloc(char **str, char *new_str, int old_size)
 {
-	int i;
+	int i = 0;
+	char **new;
 
-	i = -1;
+	new = malloc((old_size + 2) * sizeof(char *));
+	if (!new)
+	{
+		free(str);
+		return (NULL);
+	}
+	while (i < old_size)
+	{
+		new[i] = ft_strdup(str[i]);
+		if (!new[i])
+		{
+			while (i-- > 0)
+				free(new[i]);
+			free(new);
+			free(str);
+			return (NULL);
+		}
+		i++;
+	}
+	new[i++] = ft_strdup(new_str); // Duplicate it safely
+	new[i] = NULL;
+	free(str);
+	return (new);
+}
+
+static void prepare_command_splits(t_cmd **cmd, t_token **tokens)
+{
+	int i = -1;
+	int j = 0;
+	int count;
+
 	while (cmd[++i])
 	{
-
-		cmd[i]->cmd_split = ft_split(cmd[i]->cmd, ' ');
-		if (!cmd[i]->cmd_split)
-			exit_error("Malloc failed");
-		if (cmd[i]->cmd_split[0] == NULL)
-			return;
+		count = 0;
+		while (tokens[j] && tokens[j]->type != TOKEN_PIPE)
+		{
+			if (tokens[j]->type == TOKEN_WORD)
+			{
+				if (count == 0 || (tokens[j - 1]->type != TOKEN_APPEND && tokens[j - 1]->type != TOKEN_HEREDOC && tokens[j - 1]->type != TOKEN_REDIR_IN && tokens[j - 1]->type != TOKEN_REDIR_OUT))
+					cmd[i]->cmd_split = ft_realloc(cmd[i]->cmd_split, tokens[j]->value, count);
+				count++;
+			}
+			j++;
+		}
+		j++;
 	}
 }
 

@@ -12,6 +12,25 @@
 
 #include "minishell.h"
 
+int ft_is_space(char c)
+{
+	return (c == ' ' || c == '\t' || c == '\n' || c == '\v' || c == '\f' || c == '\r');
+}
+
+int empty_input(char *line_read)
+{
+	int	i;
+
+	i = 0;
+	while (line_read[i])
+	{
+		if (!ft_is_space(line_read[i]))
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
 int	main(int argc, char **argv, char **envp)
 {
 	char		*line_read;
@@ -27,6 +46,11 @@ int	main(int argc, char **argv, char **envp)
 		line_read = readline("minishell$ ");
 		if (!line_read)
 			break ;
+		if (empty_input(line_read))
+		{
+			free(line_read);
+			continue ;
+		}
 		if (*line_read)
 			add_history(line_read);
 		exec_cmd(line_read, &path);
