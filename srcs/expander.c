@@ -6,7 +6,7 @@
 /*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 14:28:49 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/14 15:58:44 by mdarawsh         ###   ########.fr       */
+/*   Updated: 2025/04/14 19:26:54 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,7 +151,7 @@ static void	check_for_expansion(t_token ***tokens, t_token *token, int index_tok
 
 	i = 0;
 	quote_state = 0;
-	while (token->value[i])
+	while (token && token->value[i])
 	{
 		if (token->value[i] == '\'' && quote_state == 0)
 			quote_state = 1;

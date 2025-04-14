@@ -6,7 +6,7 @@
 /*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 13:07:20 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/12 16:58:34 by mdarawsh         ###   ########.fr       */
+/*   Updated: 2025/04/14 19:31:02 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,19 +14,19 @@
 
 int	is_builtin(t_cmd *cmd)
 {
-	if (cmd->cmd_split[0] == NULL)
+	if (cmd->cmd_split && cmd->cmd_split[0] == NULL)
 		return (0);
-	if (!ft_strncmp(cmd->cmd_split[0], "echo", 4))
+	if (cmd->cmd_split && !ft_strncmp(cmd->cmd_split[0], "echo", 4))
 		return (1);
-	if (!ft_strncmp(cmd->cmd_split[0], "pwd", 3))
+	if (cmd->cmd_split && !ft_strncmp(cmd->cmd_split[0], "pwd", 3))
 		return (1);
-	if (!ft_strncmp(cmd->cmd_split[0], "export", 6))
+	if (cmd->cmd_split && !ft_strncmp(cmd->cmd_split[0], "export", 6))
 		return (1);
-	if (!ft_strncmp(cmd->cmd_split[0], "unset", 5))
+	if (cmd->cmd_split && !ft_strncmp(cmd->cmd_split[0], "unset", 5))
 		return (1);
-	if (!ft_strncmp(cmd->cmd_split[0], "env", 3))
+	if (cmd->cmd_split && !ft_strncmp(cmd->cmd_split[0], "env", 3))
 		return (1);
-	if (!ft_strncmp(cmd->cmd_split[0], "exit", 4))
+	if (cmd->cmd_split && !ft_strncmp(cmd->cmd_split[0], "exit", 4))
 		return (1);
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/22 10:53:56 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/04/14 14:47:47 by mdarawsh         ###   ########.fr       */
+/*   Updated: 2025/04/14 19:25:19 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ void	handle_unset(t_cmd_path *path, t_token **tokens)
 	int	j;
 
 	j = 0;
-	if (tokens[1]->value == NULL)
+	if (tokens[1] == NULL)
 	{
 		printf("minishell: unset: not enough arguments\n");
 		return ;

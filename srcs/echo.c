@@ -21,7 +21,7 @@ void	do_echo(t_cmd *cmd, t_token **tokens)
 	i = 1;
 	n_flag = 0;
 
-	while (tokens[i]->value && tokens[i]->value[0] == '-' &&
+	while (tokens[i] && tokens[i]->value[0] == '-' &&
 		tokens[i]->value[1] == 'n' && check_all_n(tokens[i]->value))
  	{
 		n_flag = 1;
