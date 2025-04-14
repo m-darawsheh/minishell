@@ -6,7 +6,7 @@
 /*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/22 10:53:56 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/04/12 14:57:23 by mdarawsh         ###   ########.fr       */
+/*   Updated: 2025/04/14 14:47:47 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,25 @@ void	shift_envp(t_cmd_path *path, int index)
 	path->envp[index] = NULL;
 
 }
+
+// echo $USER
+// echo "$USER"
+// echo '$USER'
+// echo "'$USER'"
+// echo '"$USER"'
+// echo ~
+// echo $EMPTY
+// export test=" echo 1 2        3 | ls "
+// $test
+// "$test"
+// echo $test
+// echo "$test"
+// echo $test+$EMPTY+$USER
+// echo $1USER
+// echo $1USER$PWD$!
+// echo $USER1
+// echo $USER_
+
 
 
 void	handle_unset(t_cmd_path *path, t_token **tokens)

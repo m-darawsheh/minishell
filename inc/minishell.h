@@ -6,7 +6,7 @@
 /*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:24:48 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/04/12 16:57:06 by mdarawsh         ###   ########.fr       */
+/*   Updated: 2025/04/14 15:44:59 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,8 @@ typedef enum e_token_type {
 // Structures
 typedef struct s_token {
 	char *value;
+	int was_in_double_quotes;
+	int the_index_must_be_split_on_space;
 	t_token_type type;
 } t_token;
 
@@ -115,14 +117,15 @@ void	export_handle(t_cmd *cmd ,t_cmd_path *path, t_token **tokens);
 void	do_echo(t_cmd *cmd, t_token **tokens);
 void	free_cmds(t_cmd **cmd);
 void	handle_heredoc(t_cmd *cmd);
-void	expander(t_token **tokens, t_cmd_path *path);
+void	expander(t_token ***tokens, t_cmd_path *path);
 void	print_env(t_cmd_path *path);
 void	handle_unset(t_cmd_path *path, t_token **tokens);
+void	split_for_expand2(t_cmd **cmd, t_token **tokens);
 
 
 // Lexer
 t_token	**tokenize(char *line_read);
-int		parse_token(t_token **tokens, t_cmd **cmd);
+int		parse_token(t_token ***tokens, t_cmd **cmd);
 int		process_quotes(t_lexer *lexer);
 void	init_lexer(t_lexer *lexer, char *line);
 void	add_token(t_lexer *lexer, char *value, t_token_type type);

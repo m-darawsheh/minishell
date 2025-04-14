@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 13:06:27 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/26 13:41:23 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/14 16:20:49 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,18 +88,34 @@ static int	handle_advanced_redir(t_token **tokens, t_cmd **cmd,
 
 int	handle_pipe(t_token **tokens, t_cmd **cmd, int *i, int *cmd_i)
 {
-	if (tokens[*i + 1] == NULL || tokens[*i + 1]->type != TOKEN_WORD)
+    if (tokens[*i + 1] == NULL || tokens[*i + 1]->type != TOKEN_WORD)
+    {
+        ft_putstr_fd("minishell: syntax error near token `newline'\n", 2);
+        cmd[*cmd_i]->path->exit_status = 2;
+        return (0);
+    }
+    cmd[*cmd_i]->has_pipe = 1;
+	if (!cmd[++*cmd_i])
 	{
-		ft_putstr_fd("minishell: syntax error near token `newline'\n", 2);
-		cmd[*cmd_i]->path->exit_status = 2;
-		return (0);
+		cmd[*cmd_i] = malloc(sizeof(t_cmd));
+		if (!cmd[*cmd_i])
+		{
+			ft_putstr_fd("minishell: memory allocation error\n", 2);
+			return (0);
+		}
+		cmd[*cmd_i]->cmd = malloc(MAX_CMD_LEN);
+		if (!cmd[*cmd_i]->cmd)
+		{
+			ft_putstr_fd("minishell: memory allocation error\n", 2);
+			free(cmd[*cmd_i]);
+			return (0);
+		}
+		cmd[*cmd_i]->cmd[0] = '\0';
 	}
-	cmd[*cmd_i]->has_pipe = 1;
-	cmd[++*cmd_i]->cmd[0] = '\0';
-	return (1);
+    return (1);
 }
 
-int	parse_token(t_token **tokens, t_cmd **cmd)
+int	parse_token(t_token ***tokens, t_cmd **cmd)
 {
 	int	i;
 	int	cmd_i;
@@ -107,22 +123,22 @@ int	parse_token(t_token **tokens, t_cmd **cmd)
 	i = -1;
 	cmd_i = 0;
 	cmd[0]->cmd[0] = '\0';
-	while (tokens[++i])
+	while (tokens[0][++i])
 	{
-		if (tokens[i]->type == TOKEN_WORD)
-			handle_word(tokens, cmd, i, cmd_i);
-		else if (tokens[i]->type == TOKEN_PIPE)
+		if (tokens[0][i]->type == TOKEN_WORD)
+			handle_word(*tokens, cmd, i, cmd_i);
+		else if (tokens[0][i]->type == TOKEN_PIPE)
 		{
-			if(!handle_pipe(tokens, cmd, &i, &cmd_i))
+			if(!handle_pipe(*tokens, cmd, &i, &cmd_i))
 				return (0);
 		}
-		else if ((tokens[i]->type == TOKEN_REDIR_IN
-			|| tokens[i]->type == TOKEN_REDIR_OUT)
-			&& !handle_redir(tokens, cmd, &i, cmd_i))
+		else if ((tokens[0][i]->type == TOKEN_REDIR_IN
+			|| tokens[0][i]->type == TOKEN_REDIR_OUT)
+			&& !handle_redir(*tokens, cmd, &i, cmd_i))
 			return (0);
-		else if ((tokens[i]->type == TOKEN_APPEND
-			|| tokens[i]->type == TOKEN_HEREDOC)
-			&& !handle_advanced_redir(tokens, cmd, &i, cmd_i))
+		else if ((tokens[0][i]->type == TOKEN_APPEND
+			|| tokens[0][i]->type == TOKEN_HEREDOC)
+			&& !handle_advanced_redir(*tokens, cmd, &i, cmd_i))
 			return (0);
 	}
 	return (1);

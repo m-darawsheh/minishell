@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expander.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 14:28:49 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/06 14:43:18 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/14 15:58:44 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,36 @@ static void	expand(t_token *token, int i, t_cmd_path *path)
 	}
 }
 
-static void	check_for_expansion(t_token *token, t_cmd_path *path)
+char *join_all_tokens(t_token **tokens)
+{
+	int		i;
+	char *str;
+
+	i = 0;
+	str = ft_strdup("");
+	while (tokens[i])
+	{
+		str = ft_strjoin(str, tokens[i]->value);
+		str = ft_strjoin(str, " ");
+		i++;
+	}
+	return (str);
+}
+
+void expand_2(t_token ***tokens,t_token *token, int index_token, int i,t_cmd_path *path)
+{
+	(void)path;
+	token->was_in_double_quotes = 0;
+	token->the_index_must_be_split_on_space = index_token;
+	char *str;
+	expand(token, i, path);
+	str = join_all_tokens(*tokens);
+	// must free tokens
+	// here must call tokenizer
+	*tokens = tokenize(str);
+}
+
+static void	check_for_expansion(t_token ***tokens, t_token *token, int index_token, t_cmd_path *path)
 {
 	int	i;
 	int	quote_state;
@@ -133,18 +162,27 @@ static void	check_for_expansion(t_token *token, t_cmd_path *path)
 		else if (token->value[i] == '\"' && quote_state == 2)
 			quote_state = 0;
 		else if (token->value[i] == '$' && quote_state != 1)
-			expand(token, i, path);
+		{
+			if (quote_state == 2)
+			{
+				token->was_in_double_quotes = 1;
+				token->the_index_must_be_split_on_space = -1;
+				expand(token, i, path);
+			}
+			else
+				expand_2(tokens,token, index_token, i,path);
+		}
 		i++;
 	}
 	remove_quotes(token);
 }
 
-void expander(t_token **tokens, t_cmd_path *path)
+void expander(t_token ***tokens, t_cmd_path *path)
 {
 	int i;
 
 	i = -1;
-	while (tokens[++i])
-		if (tokens[i]->type == TOKEN_WORD)
-			check_for_expansion(tokens[i], path);
+	while (tokens[0][++i])
+		if (tokens[0][i]->type == TOKEN_WORD)
+			check_for_expansion(tokens, tokens[0][i], i, path);
 }

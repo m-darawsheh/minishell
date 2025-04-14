@@ -6,13 +6,13 @@
 /*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/12 17:47:53 by mdarawsh         ###   ########.fr       */
+/*   Updated: 2025/04/14 16:22:52 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static t_cmd **parse_and_prepare(char *line_read, t_cmd_path *path, t_token **tokens);
+static t_cmd **parse_and_prepare(char *line_read, t_cmd_path *path, t_token ***tokens);
 static void process_heredocs(t_cmd **cmd);
 static void prepare_command_splits(t_cmd **cmd, t_token **tokens);
 static void execute_builtin(t_cmd *cmd, t_cmd_path *path, int stdin_backup, int stdout_backup, t_token **tokens);
@@ -41,7 +41,7 @@ void exec_cmd(char *line_read, t_cmd_path *path)
 
 	tokens = tokenize(line_read);
 
-	cmd = parse_and_prepare(line_read, path, tokens);
+	cmd = parse_and_prepare(line_read, path, &tokens);
 	if (!cmd)
 		return;
 	process_heredocs(cmd);
@@ -54,7 +54,7 @@ void exec_cmd(char *line_read, t_cmd_path *path)
 
 
 
-static t_cmd	**parse_and_prepare(char *line_read, t_cmd_path *path, t_token **tokens)
+static t_cmd	**parse_and_prepare(char *line_read, t_cmd_path *path, t_token ***tokens)
 {
 	t_cmd	**cmd;
 
@@ -120,23 +120,55 @@ char **ft_realloc(char **str, char *new_str, int old_size)
 	return (new);
 }
 
+// void  split_for_expand2(t_cmd **cmd, t_token **tokens)
+// {
+// 	int	i;
+
+// 	i = 0;
+// 	while (tokens[i])
+// 	{
+// 		if (tokens[i]->type == TOKEN_WORD && !(tokens[i]->was_in_double_quotes) && tokens[i]->the_index_must_be_split_on_space != -1)
+// 		{
+
+// 		}
+// 		i++;
+// 	}
+
+
+// }
+
+
+
+
 static void prepare_command_splits(t_cmd **cmd, t_token **tokens)
 {
 	int i = -1;
 	int j = 0;
 	int count;
 
+
+	// for(int k = 0; tokens[k]; k++)
+	// {
+	// 	printf("tokens[%d]: %s\n", k, tokens[k]->value);
+	// }
+
+
 	while (cmd[++i])
 	{
 		count = 0;
 		while (tokens[j] && tokens[j]->type != TOKEN_PIPE)
 		{
+
 			if (tokens[j]->type == TOKEN_WORD)
 			{
 				if (count == 0 || (tokens[j - 1]->type != TOKEN_APPEND && tokens[j - 1]->type != TOKEN_HEREDOC && tokens[j - 1]->type != TOKEN_REDIR_IN && tokens[j - 1]->type != TOKEN_REDIR_OUT))
 					cmd[i]->cmd_split = ft_realloc(cmd[i]->cmd_split, tokens[j]->value, count);
 				count++;
 			}
+			// if (tokens[j]-> type == TOKEN_WORD && !(tokens[j]->was_in_double_quotes) && tokens[j]->the_index_must_be_split_on_space != -1)
+			// {
+			// 	// split_for_expand2
+			// }
 			j++;
 		}
 		j++;
