@@ -6,7 +6,7 @@
 /*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/14 16:22:52 by mdarawsh         ###   ########.fr       */
+/*   Updated: 2025/04/15 15:10:42 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,10 @@ char **ft_realloc(char **str, char *new_str, int old_size)
 		if (!new[i])
 		{
 			while (i-- > 0)
+			{
+				free(str);
 				free(new[i]);
+			}
 			free(new);
 			free(str);
 			return (NULL);
@@ -231,7 +234,7 @@ static void	setup_io_redirections(t_cmd *cmd)
 	{
 		fd = open(cmd->infile, O_RDONLY);
 		if (fd == -1)
-			exit_error("File not found");
+			exit_error("File not found1");
 		dup2(fd, STDIN_FILENO);
 		close(fd);
 	}
@@ -239,7 +242,7 @@ static void	setup_io_redirections(t_cmd *cmd)
 	{
 		fd = open(cmd->outfile, O_CREAT | O_WRONLY | O_TRUNC, 0644);
 		if (fd == -1)
-			exit_error("File not found");
+			exit_error("File not found2");
 		dup2(fd, STDOUT_FILENO);
 		close(fd);
 	}
@@ -247,7 +250,7 @@ static void	setup_io_redirections(t_cmd *cmd)
 	{
 		fd = open(cmd->outfile, O_CREAT | O_WRONLY | O_APPEND, 0644);
 		if (fd == -1)
-			exit_error("File not found");
+			exit_error("File not found3");
 		dup2(fd, STDOUT_FILENO);
 		close(fd);
 	}
@@ -280,27 +283,31 @@ static void setup_io_redirections_child(t_cmd *cmd, int *pipe_fd,
 		close(prev_pipe[0]);
 		close(prev_pipe[1]);
 	}
-	if (cmd->has_infile)
+	if (cmd->has_infile && cmd->infile)
 	{
 		fd = open(cmd->infile, O_RDONLY);
+		for(int k = 0; cmd->cmd_split[k]; k++)
+		{
+			printf("cmd->cmd_split[%d]: %s\n", k, cmd->cmd_split[k]);
+		}
 		if (fd == -1)
-			exit_error("File not found");
+			exit_error("File not foun4");
 		dup2(fd, STDIN_FILENO);
 		close(fd);
 	}
-	if (cmd->has_outfile)
+	if (cmd->has_outfile && cmd->outfile)
 	{
 		fd = open(cmd->outfile, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		if (fd == -1)
-			exit_error("File not found");
+			exit_error("File not found5");
 		dup2(fd, STDOUT_FILENO);
 		close(fd);
 	}
-	if (cmd->has_appendfile)
+	if (cmd->has_appendfile && cmd->outfile)
 	{
 		fd = open(cmd->outfile, O_WRONLY | O_CREAT | O_APPEND, 0644);
 		if (fd == -1)
-			exit_error("File not found");
+			exit_error("File not found6");
 		dup2(fd, STDOUT_FILENO);
 		close(fd);
 	}
@@ -336,6 +343,10 @@ static void execute_builtin_child(t_cmd *cmd, t_cmd_path *path, t_token **tokens
 		exit(0);
 	}
 	setup_command(cmd, path);
+	// for (int k = 0; cmd->cmd_split[k]; k++)
+	// {
+	// 	printf("cmd->cmd_split[%d]: %s\n", k, cmd->cmd_split[k]);
+	// }
 	execve(cmd->cmd_path, cmd->cmd_split, path->envp);
 	exit(127);
 }
