@@ -6,11 +6,25 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:25:54 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/03/20 15:50:37 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/16 18:22:05 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+int	check_if_empty(char *line_read)
+{
+	int	i;
+
+	i = 0;
+	while (line_read[i])
+	{
+		if (line_read[i] != ' ' && line_read[i] != '\t')
+			return (0);
+		i++;
+	}
+	return (1);
+}
 
 int	main(int argc, char **argv, char **envp)
 {
@@ -27,6 +41,11 @@ int	main(int argc, char **argv, char **envp)
 		line_read = readline("minishell$ ");
 		if (!line_read)
 			break ;
+		if (*line_read == '\0' || check_if_empty(line_read))
+		{
+			free(line_read);
+			continue ;
+		}
 		if (*line_read)
 			add_history(line_read);
 		exec_cmd(line_read, &path);

@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_exec.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/06 15:27:54 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/16 18:23:30 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 static t_cmd **parse_and_prepare(char *line_read, t_cmd_path *path);
-static void process_heredocs(t_cmd **cmd);
+static int	process_heredocs(t_cmd **cmd);
 static void prepare_command_splits(t_cmd **cmd);
 static void execute_builtin(t_cmd *cmd, t_cmd_path *path, int stdin_backup, int stdout_backup);
 static void setup_io_redirections(t_cmd *cmd);
@@ -36,12 +36,16 @@ void	print_env(t_cmd_path *path)
 }
 void exec_cmd(char *line_read, t_cmd_path *path)
 {
-	t_cmd **cmd;
+	t_cmd	**cmd;
 
 	cmd = parse_and_prepare(line_read, path);
 	if (!cmd)
 		return;
-	process_heredocs(cmd);
+	if (!process_heredocs(cmd))
+	{
+		path->exit_status = 130;
+		return ;
+	}
 	prepare_command_splits(cmd);
 	execute_command(cmd, path);
 
@@ -69,7 +73,7 @@ static t_cmd	**parse_and_prepare(char *line_read, t_cmd_path *path)
 	return (cmd);
 }
 
-static void process_heredocs(t_cmd **cmd)
+static int	process_heredocs(t_cmd **cmd)
 {
 	int i;
 
@@ -82,9 +86,10 @@ static void process_heredocs(t_cmd **cmd)
 		if (cmd[i]->skip_exec)
 		{
 			free_cmds(cmd);
-			return;
+			return (0);
 		}
 	}
+	return (1);
 }
 
 static void prepare_command_splits(t_cmd **cmd)
