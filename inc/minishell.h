@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:24:48 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/04/06 15:29:45 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/16 18:47:57 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,6 +118,13 @@ void	handle_heredoc(t_cmd *cmd);
 void	expander(t_token **tokens, t_cmd_path *path);
 void	print_env(t_cmd_path *path);
 void	handle_unset(t_cmd *cmd, t_cmd_path *path);
+void	setup_io_redirections(t_cmd *cmd);
+void	setup_io_redirections_child(t_cmd *cmd, int *pipe_fd, int *prev_pipe, int i);
+void	handle_pipes(int *pipe_fd, int *prev_pipe, t_cmd **cmd, int i);
+void	execute_builtin(t_cmd *cmd, t_cmd_path *path, int stdin_backup, int stdout_backup);
+void	execute_builtin_child(t_cmd *cmd, t_cmd_path *path);
+void	execute_command(t_cmd **cmd, t_cmd_path *path);
+void	wait_for_children(t_cmd_path *path);
 
 
 // Lexer

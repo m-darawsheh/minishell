@@ -6,11 +6,23 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 18:23:27 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/25 14:19:20 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/16 18:45:17 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+void	print_env(t_cmd_path *path)
+{
+	int	i;
+
+	i = 0;
+	while (path->envp[i])
+	{
+		printf("%s\n", path->envp[i]);
+		i++;
+	}
+}
 
 char	**find_path(char **envp)
 {
