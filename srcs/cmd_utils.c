@@ -6,27 +6,24 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 13:37:31 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/17 16:21:30 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/16 19:02:22 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #include "minishell.h"
 
-void	print_not_found(t_cmd *cmd)
-{
-	ft_putstr_fd(cmd->cmd_split[0], 2);
-	ft_putstr_fd(": command not found\n", 2);
-	exit(127);
-}
-
 void	setup_command(t_cmd *cmd, t_cmd_path *path)
 {
-	int		i;
-	char	*tmp;
+	int			i;
+	char		*tmp;
+	struct stat	path_stat;
+
 	cmd->path = path;
 	if (access (cmd->cmd_split[0], X_OK) == 0)
 	{
+		if (stat(cmd->cmd_split[0], &path_stat) == 0 && S_ISDIR(path_stat.st_mode))
+			print_dir_error(cmd->cmd_split[0]);
 		cmd->cmd_path = ft_strdup(cmd->cmd_split[0]);
 		return ;
 	}

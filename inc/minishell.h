@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:24:48 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/04/16 18:47:57 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/16 19:02:59 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,12 @@
 
 // System Libraries
 # include <unistd.h>
-# include <sys/types.h>
-# include <sys/stat.h>
 # include <fcntl.h>
 # include <stdio.h>
 # include <stdlib.h>
 # include <signal.h>
+# include <sys/types.h>
+# include <sys/stat.h>
 # include <sys/wait.h>
 # include <sys/ioctl.h>
 # include <readline/readline.h>
@@ -125,6 +125,11 @@ void	execute_builtin(t_cmd *cmd, t_cmd_path *path, int stdin_backup, int stdout_
 void	execute_builtin_child(t_cmd *cmd, t_cmd_path *path);
 void	execute_command(t_cmd **cmd, t_cmd_path *path);
 void	wait_for_children(t_cmd_path *path);
+
+
+// print errors
+void	print_not_found(t_cmd *cmd);
+void	print_dir_error(char *cmd);
 
 
 // Lexer
