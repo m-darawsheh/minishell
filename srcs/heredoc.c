@@ -6,13 +6,11 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/23 15:16:37 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/23 15:20:40 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/16 19:22:53 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-volatile sig_atomic_t	g_heredoc_interrupted = 0;
 
 static void	heredoc_signal_handler(int sig)
 {

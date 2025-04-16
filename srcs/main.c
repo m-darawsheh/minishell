@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:25:54 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/04/16 18:22:05 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/16 19:29:13 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,24 @@ int	check_if_empty(char *line_read)
 	return (1);
 }
 
+void process_command_line(char *line_read, t_cmd_path *path)
+{
+	if (g_heredoc_interrupted == 130)
+	{
+		path->exit_status = 130;
+		g_heredoc_interrupted = 0;
+	}
+	if (*line_read == '\0' || check_if_empty(line_read))
+	{
+		free(line_read);
+		return ;
+	}
+	if (*line_read)
+		add_history(line_read);
+	exec_cmd(line_read, path);
+	free(line_read);
+}
+
 int	main(int argc, char **argv, char **envp)
 {
 	char		*line_read;
@@ -41,15 +59,7 @@ int	main(int argc, char **argv, char **envp)
 		line_read = readline("minishell$ ");
 		if (!line_read)
 			break ;
-		if (*line_read == '\0' || check_if_empty(line_read))
-		{
-			free(line_read);
-			continue ;
-		}
-		if (*line_read)
-			add_history(line_read);
-		exec_cmd(line_read, &path);
-		free(line_read);
+		process_command_line(line_read, &path);
 	}
 	free_2d(path.envp);
 	free_2d(path.path);

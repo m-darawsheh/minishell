@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:24:48 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/04/16 19:02:59 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/16 19:37:09 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,9 @@
 #define MAX_FILENAME 4096	// 256 is the Standard filename length, but the evalutaor could give a full path
 #define MAX_CMD_LEN 4096	// if the evaluator can get a command more than this size, i'll jump
 #define MAX_ENV_NAME 512	// 256 is the length limit for an ENV variable name, but just to be safe :D.
+
+// The only allowed Global variable
+extern volatile sig_atomic_t	g_heredoc_interrupted;
 
 // Enums
 enum	file_type
@@ -125,6 +128,9 @@ void	execute_builtin(t_cmd *cmd, t_cmd_path *path, int stdin_backup, int stdout_
 void	execute_builtin_child(t_cmd *cmd, t_cmd_path *path);
 void	execute_command(t_cmd **cmd, t_cmd_path *path);
 void	wait_for_children(t_cmd_path *path);
+void	interactive_sig_handler(int sig);
+void	setup_interactive_signals(void);
+void	setup_exec_signals(void);
 
 
 // print errors

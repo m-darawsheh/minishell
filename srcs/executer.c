@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 18:42:30 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/16 18:52:59 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/16 19:15:48 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,10 +52,12 @@ void execute_command(t_cmd **cmd, t_cmd_path *path)
 		if (pid == 0)
 		{
 			setup_io_redirections_child(cmd[i], pipe_fd, prev_pipe, i);
+			setup_exec_signals();
 			execute_builtin_child(cmd[i], path);
 		}
 		handle_pipes(pipe_fd, prev_pipe, cmd, i);
 	}
+	setup_interactive_signals();
 	wait_for_children(path);
 }
 
