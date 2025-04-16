@@ -68,7 +68,7 @@ int	do_exit(t_cmd *cmd)
 	if (cmd->cmd_split[2] != NULL)
 	{
 		ft_putstr_fd("minishell: exit: too many arguments\n", 2);
-		return (0);
+		return (1);
 	}
 	if (!exit_isdigit(cmd->cmd_split[1]))
 	{
