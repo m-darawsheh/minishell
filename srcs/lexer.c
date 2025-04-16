@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/15 18:46:05 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/26 13:29:20 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/16 19:56:37 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,26 +23,33 @@ void	free_tokens(t_token **tokens)
 	{
 		free(tokens[i]->value);
 		free(tokens[i]);
+		tokens[i] = NULL;
 	}
 	free(tokens);
+	tokens = NULL;
 }
 
-static void	add_special_single_token(t_lexer *lexer)
+static void	add_special_single_token(t_lexer *lexer, int flag)
 {
 	char	special_buf[2];
 
 	special_buf[0] = lexer->line[lexer->i];
 	special_buf[1] = '\0';
 	lexer->i++;
-	if (special_buf[0] == '|')
-		add_token(lexer, special_buf, TOKEN_PIPE);
+	if (special_buf[0] == '|' )
+	{
+		if (flag == 0)
+			add_token(lexer, special_buf, TOKEN_PIPE);
+		else
+			add_token(lexer, special_buf, TOKEN_WORD);
+	}
 	else if (special_buf[0] == '<')
 		add_token(lexer, special_buf, TOKEN_REDIR_IN);
 	else
 		add_token(lexer, special_buf, TOKEN_REDIR_OUT);
 }
 
-static int	process_special(t_lexer *lexer)
+static int	process_special(t_lexer *lexer, int flag)
 {
 	char	c;
 
@@ -54,7 +61,7 @@ static int	process_special(t_lexer *lexer)
 		if ((c == '>' || c == '<') && lexer->line[lexer->i + 1] == c)
 			add_special_double_token(lexer);
 		else
-			add_special_single_token(lexer);
+			add_special_single_token(lexer, flag);
 		return (1);
 	}
 	return (0);
@@ -74,7 +81,7 @@ static int	process_whitespace(t_lexer *lexer)
 	return (0);
 }
 
-t_token	**tokenize(char *line_read)
+t_token	**tokenize(char *line_read, int flag)
 {
 	t_lexer	lexer;
 
@@ -85,7 +92,7 @@ t_token	**tokenize(char *line_read)
 	{
 		if (process_quotes(&lexer))
 			continue ;
-		if (process_special(&lexer))
+		if (process_special(&lexer, flag))
 			continue ;
 		if (process_whitespace(&lexer))
 			continue ;

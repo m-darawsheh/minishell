@@ -6,7 +6,7 @@
 /*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/15 15:10:42 by mdarawsh         ###   ########.fr       */
+/*   Updated: 2025/04/16 19:53:08 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,15 +39,22 @@ void exec_cmd(char *line_read, t_cmd_path *path)
 	t_cmd **cmd;
 	t_token	**tokens;
 
-	tokens = tokenize(line_read);
-
+	tokens = tokenize(line_read, 0);
+	if (tokens == NULL)
+	{
+		return ;
+	}
 	cmd = parse_and_prepare(line_read, path, &tokens);
+	// for(int k = 0; tokens[k]; k++)
+	// {
+	// 	printf("after parse_and_prepare tokens[%d]: %s\n", k, tokens[k]->value);
+	// 	printf("after parse_and_prepare tokens[%d]->type: %d\n", k, tokens[k]->type);
+	// }
 	if (!cmd)
 		return;
 	process_heredocs(cmd);
 	prepare_command_splits(cmd, tokens);
 	execute_command(cmd, path, tokens);
-
 	free_cmds(cmd);
 }
 
@@ -68,7 +75,7 @@ static t_cmd	**parse_and_prepare(char *line_read, t_cmd_path *path, t_token ***t
 		// free_tokens(tokens);
 		// return (NULL);
 	// }
-	// free_tokens(tokens);
+	// free_tokens(tokens);`
 	return (cmd);
 }
 
@@ -123,25 +130,6 @@ char **ft_realloc(char **str, char *new_str, int old_size)
 	return (new);
 }
 
-// void  split_for_expand2(t_cmd **cmd, t_token **tokens)
-// {
-// 	int	i;
-
-// 	i = 0;
-// 	while (tokens[i])
-// 	{
-// 		if (tokens[i]->type == TOKEN_WORD && !(tokens[i]->was_in_double_quotes) && tokens[i]->the_index_must_be_split_on_space != -1)
-// 		{
-
-// 		}
-// 		i++;
-// 	}
-
-
-// }
-
-
-
 
 static void prepare_command_splits(t_cmd **cmd, t_token **tokens)
 {
@@ -149,29 +137,19 @@ static void prepare_command_splits(t_cmd **cmd, t_token **tokens)
 	int j = 0;
 	int count;
 
-
-	// for(int k = 0; tokens[k]; k++)
-	// {
-	// 	printf("tokens[%d]: %s\n", k, tokens[k]->value);
-	// }
-
-
-	while (cmd[++i])
+	while (tokens[j] && cmd[++i])
 	{
 		count = 0;
 		while (tokens[j] && tokens[j]->type != TOKEN_PIPE)
 		{
-
-			if (tokens[j]->type == TOKEN_WORD)
+			if (tokens[j] && tokens[j]->type == TOKEN_WORD)
 			{
 				if (count == 0 || (tokens[j - 1]->type != TOKEN_APPEND && tokens[j - 1]->type != TOKEN_HEREDOC && tokens[j - 1]->type != TOKEN_REDIR_IN && tokens[j - 1]->type != TOKEN_REDIR_OUT))
+				{
 					cmd[i]->cmd_split = ft_realloc(cmd[i]->cmd_split, tokens[j]->value, count);
+				}
 				count++;
 			}
-			// if (tokens[j]-> type == TOKEN_WORD && !(tokens[j]->was_in_double_quotes) && tokens[j]->the_index_must_be_split_on_space != -1)
-			// {
-			// 	// split_for_expand2
-			// }
 			j++;
 		}
 		j++;
@@ -286,10 +264,6 @@ static void setup_io_redirections_child(t_cmd *cmd, int *pipe_fd,
 	if (cmd->has_infile && cmd->infile)
 	{
 		fd = open(cmd->infile, O_RDONLY);
-		for(int k = 0; cmd->cmd_split[k]; k++)
-		{
-			printf("cmd->cmd_split[%d]: %s\n", k, cmd->cmd_split[k]);
-		}
 		if (fd == -1)
 			exit_error("File not foun4");
 		dup2(fd, STDIN_FILENO);
@@ -343,10 +317,6 @@ static void execute_builtin_child(t_cmd *cmd, t_cmd_path *path, t_token **tokens
 		exit(0);
 	}
 	setup_command(cmd, path);
-	// for (int k = 0; cmd->cmd_split[k]; k++)
-	// {
-	// 	printf("cmd->cmd_split[%d]: %s\n", k, cmd->cmd_split[k]);
-	// }
 	execve(cmd->cmd_path, cmd->cmd_split, path->envp);
 	exit(127);
 }
@@ -392,7 +362,14 @@ static void execute_command(t_cmd **cmd, t_cmd_path *path, t_token **tokens)
 	i = -1;
 	prev_pipe[0] = -1;
 	prev_pipe[1] = -1;
-
+	// for (int i = 0; cmd[i]; i++)
+	// {
+	// 	for (int j = 0; cmd[i]->cmd_split[j]; j++)
+	// 	{
+	// 		printf("cmd[%d]->cmd_split[%d]: %s\n", i, j, cmd[i]->cmd_split[j]);
+	// 	}
+	// 	// printf("cmd[%d]->cmd_split[0]: %s\n", i, cmd[i]->cmd_split[0]);
+	// }
 	while (cmd[++i])
 	{
 		is_child = cmd[i]->has_pipe || (i > 0 && cmd[i-1]->has_pipe);

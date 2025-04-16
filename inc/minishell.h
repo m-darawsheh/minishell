@@ -6,7 +6,7 @@
 /*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:24:48 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/04/14 15:44:59 by mdarawsh         ###   ########.fr       */
+/*   Updated: 2025/04/16 19:47:09 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,7 +124,7 @@ void	split_for_expand2(t_cmd **cmd, t_token **tokens);
 
 
 // Lexer
-t_token	**tokenize(char *line_read);
+t_token	**tokenize(char *line_read, int flag);
 int		parse_token(t_token ***tokens, t_cmd **cmd);
 int		process_quotes(t_lexer *lexer);
 void	init_lexer(t_lexer *lexer, char *line);

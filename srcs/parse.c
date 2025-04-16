@@ -6,7 +6,7 @@
 /*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 13:06:27 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/14 16:20:49 by mdarawsh         ###   ########.fr       */
+/*   Updated: 2025/04/16 19:22:55 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,25 +119,27 @@ int	parse_token(t_token ***tokens, t_cmd **cmd)
 {
 	int	i;
 	int	cmd_i;
+	t_token	**temp;
 
+	temp = *tokens;
 	i = -1;
 	cmd_i = 0;
 	cmd[0]->cmd[0] = '\0';
-	while (tokens[0][++i])
+	while (temp[++i])
 	{
-		if (tokens[0][i]->type == TOKEN_WORD)
+		if (temp[i]->type == TOKEN_WORD)
 			handle_word(*tokens, cmd, i, cmd_i);
-		else if (tokens[0][i]->type == TOKEN_PIPE)
+		else if (temp[i]->type == TOKEN_PIPE)
 		{
 			if(!handle_pipe(*tokens, cmd, &i, &cmd_i))
 				return (0);
 		}
-		else if ((tokens[0][i]->type == TOKEN_REDIR_IN
-			|| tokens[0][i]->type == TOKEN_REDIR_OUT)
+		else if ((temp[i]->type == TOKEN_REDIR_IN
+			|| temp[i]->type == TOKEN_REDIR_OUT)
 			&& !handle_redir(*tokens, cmd, &i, cmd_i))
 			return (0);
-		else if ((tokens[0][i]->type == TOKEN_APPEND
-			|| tokens[0][i]->type == TOKEN_HEREDOC)
+		else if ((temp[i]->type == TOKEN_APPEND
+			|| temp[i]->type == TOKEN_HEREDOC)
 			&& !handle_advanced_redir(*tokens, cmd, &i, cmd_i))
 			return (0);
 	}

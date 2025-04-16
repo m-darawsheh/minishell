@@ -6,7 +6,7 @@
 /*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 14:28:49 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/14 19:26:54 by mdarawsh         ###   ########.fr       */
+/*   Updated: 2025/04/16 19:54:22 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,14 +118,23 @@ static void	expand(t_token *token, int i, t_cmd_path *path)
 char *join_all_tokens(t_token **tokens)
 {
 	int		i;
-	char *str;
+	char	*str;
+	char	*temp;
 
 	i = 0;
 	str = ft_strdup("");
+	if (!str)
+		return (NULL);
 	while (tokens[i])
 	{
-		str = ft_strjoin(str, tokens[i]->value);
-		str = ft_strjoin(str, " ");
+		temp = ft_strjoin(str, tokens[i]->value);
+		free(str);
+		if (!temp)
+			return (NULL);
+		str = ft_strjoin(temp, " ");
+		free(temp);
+		if (!str)
+			return (NULL);
 		i++;
 	}
 	return (str);
@@ -133,15 +142,19 @@ char *join_all_tokens(t_token **tokens)
 
 void expand_2(t_token ***tokens,t_token *token, int index_token, int i,t_cmd_path *path)
 {
-	(void)path;
+	t_token **temp;
+
+	temp = *tokens;
 	token->was_in_double_quotes = 0;
 	token->the_index_must_be_split_on_space = index_token;
 	char *str;
+	str = NULL;
 	expand(token, i, path);
 	str = join_all_tokens(*tokens);
-	// must free tokens
-	// here must call tokenizer
-	*tokens = tokenize(str);
+	free_tokens(*tokens);
+	*tokens = tokenize(str,1);
+	temp = *tokens;
+	free(str);
 }
 
 static void	check_for_expansion(t_token ***tokens, t_token *token, int index_token, t_cmd_path *path)
