@@ -3,48 +3,45 @@
 /*                                                        :::      ::::::::   */
 /*   export_handle.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 23:43:49 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/04/09 15:18:28 by mdarawsh         ###   ########.fr       */
+/*   Updated: 2025/04/17 21:03:59 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void add_env(t_cmd_path *path, t_cmd *cmd, int index)
+void	add_env(t_cmd_path *path, t_cmd *cmd, int index)
 {
-	int i;
-	char *tmp;
+	int		i;
+	char	*tmp;
 
 	i = 0;
 	tmp = ft_strdup(cmd->cmd_split[index]);
 	if (!tmp)
-		return;
+		return ;
 	while (path->envp[i])
 		i++;
 	path->envp = realloc_2d(path->envp, i, i + 1);
 	if (!path->envp)
 	{
 		free(tmp);
-		return;
+		return ;
 	}
 	path->envp[i] = ft_strdup(tmp);
 	if (!path->envp[i])
 	{
 		free(tmp);
-		return;
+		return ;
 	}
 	path->envp[i + 1] = NULL;
 	free(tmp);
 }
 
-// export [0]
-// VAR=newVALUE [1]
-// VAR=oldValue
-int check_env(t_cmd_path *path, t_cmd *cmd, int *i, int index)
+int	check_env(t_cmd_path *path, t_cmd *cmd, int *i, int index)
 {
-	int j;
+	int	j;
 
 	j = 0;
 	while (cmd->cmd_split[index][j] != '=')
@@ -58,10 +55,10 @@ int check_env(t_cmd_path *path, t_cmd *cmd, int *i, int index)
 	return (0);
 }
 
-void edit_env(t_cmd_path *path, t_cmd *cmd, int *i, int index)
+void	edit_env(t_cmd_path *path, t_cmd *cmd, int *i, int index)
 {
-	int j;
-	int k;
+	int	j;
+	int	k;
 
 	j = 0;
 	k = 0;
@@ -73,9 +70,9 @@ void edit_env(t_cmd_path *path, t_cmd *cmd, int *i, int index)
 	path->envp[*i] = ft_strdup(cmd->cmd_split[index]);
 }
 
-void print_export(t_cmd_path *path)
+void	print_export(t_cmd_path *path)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (path->envp[i])
@@ -85,9 +82,9 @@ void print_export(t_cmd_path *path)
 	}
 }
 
-int valid_input(t_cmd *cmd, int index)
+int	valid_input(t_cmd *cmd, int index)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (cmd->cmd_split[index][i])
@@ -134,10 +131,10 @@ int valid_input(t_cmd *cmd, int index)
 	return (1);
 }
 
-void export_handle(t_cmd *cmd, t_cmd_path *path)
+void	export_handle(t_cmd *cmd, t_cmd_path *path)
 {
-	int i;
-	int index;
+	int	i;
+	int	index;
 
 	i = 0;
 	index = 1;
@@ -152,7 +149,7 @@ void export_handle(t_cmd *cmd, t_cmd_path *path)
 		{
 			printf("somthing wrong with must put valid input like this -> name=value\n");
 			index++;
-			continue;
+			continue ;
 		}
 		if (check_env(path, cmd, &i, index))
 			edit_env(path, cmd, &i, index);

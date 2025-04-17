@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 13:06:27 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/26 13:41:23 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/17 21:07:51 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,11 +117,11 @@ int	parse_token(t_token **tokens, t_cmd **cmd)
 				return (0);
 		}
 		else if ((tokens[i]->type == TOKEN_REDIR_IN
-			|| tokens[i]->type == TOKEN_REDIR_OUT)
+				|| tokens[i]->type == TOKEN_REDIR_OUT)
 			&& !handle_redir(tokens, cmd, &i, cmd_i))
 			return (0);
 		else if ((tokens[i]->type == TOKEN_APPEND
-			|| tokens[i]->type == TOKEN_HEREDOC)
+				|| tokens[i]->type == TOKEN_HEREDOC)
 			&& !handle_advanced_redir(tokens, cmd, &i, cmd_i))
 			return (0);
 	}

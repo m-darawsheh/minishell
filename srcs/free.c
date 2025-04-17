@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 17:23:22 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/23 15:48:35 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/17 21:04:31 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	free_2d(char **str)
 {
-	int i;
+	int	i;
 
 	if (!str)
 		return ;

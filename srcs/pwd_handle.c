@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 03:55:12 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/04/17 18:06:45 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/17 21:08:30 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void	pwd_handle(t_cmd_path *path)
 	if (!pwd)
 	{
 		perror("PWD not found");
-		return;
+		return ;
 	}
 	printf("%s\n", pwd);
 	free(pwd);

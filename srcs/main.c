@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:25:54 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/04/16 19:29:13 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/17 21:06:34 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ int	check_if_empty(char *line_read)
 	return (1);
 }
 
-void process_command_line(char *line_read, t_cmd_path *path)
+void	process_command_line(char *line_read, t_cmd_path *path)
 {
 	if (g_heredoc_interrupted == 130)
 	{
@@ -48,7 +48,6 @@ int	main(int argc, char **argv, char **envp)
 {
 	char		*line_read;
 	t_cmd_path	path;
-	(void)argv;
 
 	if (argc > 1)
 		exit_error("Usage: ./minishell");
@@ -63,4 +62,5 @@ int	main(int argc, char **argv, char **envp)
 	}
 	free_2d(path.envp);
 	free_2d(path.path);
+	(void)argv;
 }
