@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/16 18:47:50 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/17 17:30:29 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,15 +87,22 @@ static void prepare_command_splits(t_cmd **cmd)
 	}
 }
 
-void wait_for_children(t_cmd_path *path)
+void wait_for_children(t_cmd_path *path, t_cmd **cmd)
 {
-	int status;
+	int	status;
+	int	i;
+	int	last_pid;
 
-	while (waitpid(-1, &status, 0) > 0)
+	i = 0;
+	while (cmd[i])
+		i++;
+	last_pid = cmd[i - 1]->pid;
+	if (waitpid(last_pid, &status, 0) > 0)
 	{
 		if (WIFEXITED(status))
 			path->exit_status = WEXITSTATUS(status);
 		else if (WIFSIGNALED(status))
 			path->exit_status = 128 + WTERMSIG(status);
 	}
+	while (waitpid(-1, &status, 0) > 0);
 }

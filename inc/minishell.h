@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:24:48 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/04/16 19:37:09 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/17 17:28:32 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,7 @@ typedef struct s_cmd_path
 
 typedef struct s_command
 {
+	pid_t					pid;
 	int						heredoc_fd;
 	int						has_pipe;
 	int						has_infile;
@@ -127,7 +128,7 @@ void	handle_pipes(int *pipe_fd, int *prev_pipe, t_cmd **cmd, int i);
 void	execute_builtin(t_cmd *cmd, t_cmd_path *path, int stdin_backup, int stdout_backup);
 void	execute_builtin_child(t_cmd *cmd, t_cmd_path *path);
 void	execute_command(t_cmd **cmd, t_cmd_path *path);
-void	wait_for_children(t_cmd_path *path);
+void	wait_for_children(t_cmd_path *path, t_cmd **cmd);
 void	interactive_sig_handler(int sig);
 void	setup_interactive_signals(void);
 void	setup_exec_signals(void);

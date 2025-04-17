@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 18:42:30 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/16 19:15:48 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/17 17:28:39 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void execute_command(t_cmd **cmd, t_cmd_path *path)
 	int		prev_pipe[2];
 	int		stdin_backup;
 	int		stdout_backup;
-	pid_t	pid;
+	// pid_t	pid;
 
 	i = -1;
 	prev_pipe[0] = -1;
@@ -48,8 +48,8 @@ void execute_command(t_cmd **cmd, t_cmd_path *path)
 		if (cmd[i]->has_pipe)
 			if (pipe(pipe_fd) == -1)
 				exit_error("Pipe failed");
-		pid = fork();
-		if (pid == 0)
+		cmd[i]->pid = fork();
+		if (cmd[i]->pid == 0)
 		{
 			setup_io_redirections_child(cmd[i], pipe_fd, prev_pipe, i);
 			setup_exec_signals();
@@ -58,7 +58,7 @@ void execute_command(t_cmd **cmd, t_cmd_path *path)
 		handle_pipes(pipe_fd, prev_pipe, cmd, i);
 	}
 	setup_interactive_signals();
-	wait_for_children(path);
+	wait_for_children(path, cmd);
 }
 
 void execute_builtin(t_cmd *cmd, t_cmd_path *path,
