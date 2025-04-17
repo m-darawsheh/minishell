@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 13:37:31 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/16 19:02:22 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/17 17:42:33 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,7 +131,7 @@ char **realloc_2d(char **str , int old_size , int new_size)
 			free(str);
 			return (NULL);
 		}
-		ft_memcpy(new[i], str[i], ft_strlen(str[i]));
+		ft_strlcpy(new[i], str[i], ft_strlen(str[i]) + 1);
 		i++;
 	}
 	free(str);

@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 18:42:30 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/17 17:28:39 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/17 18:07:07 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,9 @@ void execute_builtin(t_cmd *cmd, t_cmd_path *path,
 	else if (!ft_strncmp(cmd->cmd_split[0], "exit", 4))
 		path->exit_status = do_exit(cmd);
 	else if (!ft_strncmp(cmd->cmd_split[0], "cd", 2))
+	{
 		path->exit_status = do_cd(cmd, path);
+	}
 	else if (!ft_strncmp(cmd->cmd_split[0], "export", 6))
 	{
 		path->exit_status = 0;

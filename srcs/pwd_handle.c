@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pwd_handle.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 03:55:12 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/04/06 15:47:58 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/17 18:06:45 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,10 +35,6 @@ void	pwd_handle(t_cmd_path *path)
 	char	*pwd;
 
 	pwd = find_pwd(path);
-	for (int i = 0; path->envp[i]; i++)
-	{
-		printf("%s\n", path->envp[i]);
-	}
 	if (!pwd)
 	{
 		perror("PWD not found");
