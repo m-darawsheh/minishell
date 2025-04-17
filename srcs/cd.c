@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 12:02:07 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/17 18:06:19 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/17 18:49:26 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,7 @@ int	do_cd(t_cmd *cmd, t_cmd_path *path)
 		ft_putstr_fd(": No such file or directiory\n", STDERR_FILENO);
 		return (1);
 	}
+	free(new_path);
 	change_pwd(path);
 	return (0);
 }
