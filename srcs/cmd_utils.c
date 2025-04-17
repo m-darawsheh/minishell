@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 13:37:31 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/17 19:27:18 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/17 21:22:55 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,8 @@ void	setup_command(t_cmd *cmd, t_cmd_path *path)
 	cmd->path = path;
 	if (access (cmd->cmd_split[0], X_OK) == 0)
 	{
-		if (stat(cmd->cmd_split[0], &path_stat) == 0 &&
-				S_ISDIR(path_stat.st_mode))
+		if (stat(cmd->cmd_split[0], &path_stat) == 0
+			&& S_ISDIR(path_stat.st_mode))
 			print_dir_error(cmd->cmd_split[0]);
 		cmd->cmd_path = ft_strdup(cmd->cmd_split[0]);
 		return ;
@@ -34,7 +34,7 @@ void	setup_command(t_cmd *cmd, t_cmd_path *path)
 		cmd->cmd_path = ft_strjoin(tmp, cmd->cmd_split[0]);
 		free(tmp);
 		if (access(cmd->cmd_path, X_OK) == 0)
-		break ;
+			break ;
 		free(cmd->cmd_path);
 		i++;
 	}
@@ -48,10 +48,11 @@ static void	get_file(t_cmd **cmd, char *line_read, int *i, int j, int type)
 
 	k = 0;
 	while (line_read[*i] == ' ' || line_read[*i] == '\t'
-			|| (type == OUTFILE && line_read[*i] == '>')
-			|| (type == INFILE && line_read[*i] == '<'))
+		|| (type == OUTFILE && line_read[*i] == '>')
+		|| (type == INFILE && line_read[*i] == '<'))
 		(*i)++;
-	while (line_read[*i] != ' ' && line_read[*i] != '|' && line_read[*i] != '\0')
+	while (line_read[*i] != ' ' && line_read[*i] != '|'
+		&& line_read[*i] != '\0')
 	{
 		if (type == INFILE)
 			cmd[j]->infile[k] = line_read[*i];
@@ -108,19 +109,19 @@ void	init_cmds(t_cmd **cmd, char *line)
 	cmd[j]->cmd[k] = '\0';
 }
 
-
-char **realloc_2d(char **str , int old_size , int new_size)
+char	**realloc_2d(char **str, int old_size, int new_size)
 {
-	int i = 0;
-	char **new;
+	int		i;
+	char	**new;
 
+	i = -1;
 	new = malloc(new_size * sizeof(char *));
 	if (!new)
 	{
 		free(str);
 		return (NULL);
 	}
-	while (i < old_size)
+	while (++i < old_size)
 	{
 		new[i] = malloc((ft_strlen(str[i]) + 1) * sizeof(char));
 		if (!new[i])
@@ -132,7 +133,6 @@ char **realloc_2d(char **str , int old_size , int new_size)
 			return (NULL);
 		}
 		ft_strlcpy(new[i], str[i], ft_strlen(str[i]) + 1);
-		i++;
 	}
 	free(str);
 	return (new);

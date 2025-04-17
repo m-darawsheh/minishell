@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/17 18:42:55 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/17 21:19:32 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,13 @@ static int		process_heredocs(t_cmd **cmd);
 static t_cmd	**parse_and_prepare(char *line_read, t_cmd_path *path);
 static void		prepare_command_splits(t_cmd **cmd);
 
-void exec_cmd(char *line_read, t_cmd_path *path)
+void	exec_cmd(char *line_read, t_cmd_path *path)
 {
 	t_cmd	**cmd;
 
 	cmd = parse_and_prepare(line_read, path);
 	if (!cmd)
-		return;
+		return ;
 	if (!process_heredocs(cmd))
 	{
 		path->exit_status = 130;
@@ -33,7 +33,7 @@ void exec_cmd(char *line_read, t_cmd_path *path)
 	free_cmds(cmd);
 }
 
-static t_cmd	**parse_and_prepare(char *line_read, t_cmd_path *path)
+static	t_cmd	**parse_and_prepare(char *line_read, t_cmd_path *path)
 {
 	t_cmd	**cmd;
 	t_token	**tokens;
@@ -56,7 +56,7 @@ static t_cmd	**parse_and_prepare(char *line_read, t_cmd_path *path)
 
 static int	process_heredocs(t_cmd **cmd)
 {
-	int i;
+	int	i;
 
 	i = -1;
 	while (cmd[++i])
@@ -72,9 +72,9 @@ static int	process_heredocs(t_cmd **cmd)
 	return (1);
 }
 
-static void prepare_command_splits(t_cmd **cmd)
+static void	prepare_command_splits(t_cmd **cmd)
 {
-	int i;
+	int	i;
 
 	i = -1;
 	while (cmd[++i])
@@ -83,11 +83,11 @@ static void prepare_command_splits(t_cmd **cmd)
 		if (!cmd[i]->cmd_split)
 			exit_error("Malloc failed");
 		if (cmd[i]->cmd_split[0] == NULL)
-			return;
+			return ;
 	}
 }
 
-void wait_for_children(t_cmd_path *path, t_cmd **cmd)
+void	wait_for_children(t_cmd_path *path, t_cmd **cmd)
 {
 	int	status;
 	int	i;
@@ -107,5 +107,6 @@ void wait_for_children(t_cmd_path *path, t_cmd **cmd)
 		else if (WIFSIGNALED(status))
 			path->exit_status = 128 + WTERMSIG(status);
 	}
-	while (waitpid(-1, &status, 0) > 0);
+	while (waitpid(-1, &status, 0) > 0)
+		;
 }
