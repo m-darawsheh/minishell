@@ -1,49 +1,16 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   exit.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/17 20:47:36 by hassende          #+#    #+#             */
+/*   Updated: 2025/04/17 20:47:45 by hassende         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
-
-// these cases are not working (not all)
-
-// mdarawsh@c2r2s2:~/sgoinfre/minishell$ exit d
-// exit
-// bash: exit: d: numeric argument required
-// mdarawsh@c2r2s2 ~/sgoinfre/minishell
-//  % bash
-// mdarawsh@c2r2s2:~/sgoinfre/minishell$ exit 55555
-// exit
-// mdarawsh@c2r2s2 ~/sgoinfre/minishell
-//  % bash
-// mdarawsh@c2r2s2:~/sgoinfre/minishell$ exit d
-// exit
-// bash: exit: d: numeric argument required
-// mdarawsh@c2r2s2 ~/sgoinfre/minishell
-//  % bash
-// mdarawsh@c2r2s2:~/sgoinfre/minishell$ exit 5 5
-// exit
-// bash: exit: too many arguments
-// mdarawsh@c2r2s2:~/sgoinfre/minishell$ exit 5b 5
-// exit
-// bash: exit: 5b: numeric argument required
-// mdarawsh@c2r2s2 ~/sgoinfre/minishell
-//  % bash
-// mdarawsh@c2r2s2:~/sgoinfre/minishell$ ls | exit 5 5
-// bash: exit: too many arguments
-// mdarawsh@c2r2s2:~/sgoinfre/minishell$  exit 5 5 | ls
-// bash: exit: too many arguments
-// inc  libft  Makefile  minishell  objs  readme.md  srcs
-// mdarawsh@c2r2s2:~/sgoinfre/minishell$  exit 5 5b
-// exit
-// bash: exit: too many arguments
-// mdarawsh@c2r2s2:~/sgoinfre/minishell$  exit 5b 5
-// exit
-// bash: exit: 5b: numeric argument required
-// mdarawsh@c2r2s2 ~/sgoinfre/minishell
-//  % bash
-// mdarawsh@c2r2s2:~/sgoinfre/minishell$  exit 5 5b
-// exit
-// bash: exit: too many arguments
-// mdarawsh@c2r2s2:~/sgoinfre/minishell$  exit 555555
-// exit
-// mdarawsh@c2r2s2 ~/sgoinfre/minishell
-
 
 static int	exit_isdigit(char *str)
 {

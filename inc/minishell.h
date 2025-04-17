@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:24:48 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/04/17 17:28:32 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/17 20:56:00 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,6 +132,8 @@ void	wait_for_children(t_cmd_path *path, t_cmd **cmd);
 void	interactive_sig_handler(int sig);
 void	setup_interactive_signals(void);
 void	setup_exec_signals(void);
+void	check_for_expansion(t_token *token, t_cmd_path *path);
+void	remove_quotes(t_token *token);
 
 
 // print errors
