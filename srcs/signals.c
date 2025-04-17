@@ -6,13 +6,13 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 15:17:16 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/16 19:37:21 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/17 19:26:46 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-volatile sig_atomic_t g_heredoc_interrupted = 0;
+volatile sig_atomic_t	g_heredoc_interrupted = 0;
 
 void	interactive_sig_handler(int sig)
 {

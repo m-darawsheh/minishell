@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expander.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 14:28:49 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/06 14:43:18 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/17 19:31:02 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,9 +47,6 @@ static char	*get_env_value(const char *name, t_cmd_path *path)
 	int		name_len;
 	char	*env_var;
 
-	// if (ft_strcmp(name, "?") == 0)
-	// 	return ft_itoa(path->exit_status);
-	// Search in environment variables
 	i = 0;
 	name_len = ft_strlen(name);
 	while (path->envp[i])
@@ -102,7 +99,7 @@ static void	expand(t_token *token, int i, t_cmd_path *path)
 	{
 		var_name[j++] = token->value[i++];
 		var_name[j] = '\0';
-		change_value(token, start, i, ft_itoa(path->exit_status));  // Default to 0 for now
+		change_value(token, start, i, ft_itoa(path->exit_status));
 	}
 	else
 	{
@@ -141,7 +138,7 @@ static void	check_for_expansion(t_token *token, t_cmd_path *path)
 
 void expander(t_token **tokens, t_cmd_path *path)
 {
-	int i;
+	int	i;
 
 	i = -1;
 	while (tokens[++i])

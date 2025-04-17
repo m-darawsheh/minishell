@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 18:40:15 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/16 18:41:23 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/17 19:24:12 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,8 @@ void	setup_io_redirections(t_cmd *cmd)
 	}
 }
 
-void setup_io_redirections_child(t_cmd *cmd, int *pipe_fd,
-									   int *prev_pipe, int i)
+void	setup_io_redirections_child(t_cmd *cmd, int *pipe_fd,
+										int *prev_pipe, int i)
 {
 	int	fd;
 
@@ -95,16 +95,16 @@ void setup_io_redirections_child(t_cmd *cmd, int *pipe_fd,
 	}
 }
 
-void handle_pipes(int *pipe_fd, int *prev_pipe, t_cmd **cmd, int i)
+void	handle_pipes(int *pipe_fd, int *prev_pipe, t_cmd **cmd, int i)
 {
-	if (i > 0 && cmd[i-1]->has_pipe)
+	if (i > 0 && cmd[i - 1]-> has_pipe)
 	{
 		close(prev_pipe[0]);
 		close(prev_pipe[1]);
 	}
 	if (cmd[i]->has_pipe)
 	{
-		if (cmd[i+1] && (cmd[i+1]->has_infile || cmd[i+1]->has_heredoc))
+		if (cmd[i + 1] && (cmd[i + 1]->has_infile || cmd[i + 1]->has_heredoc))
 		{
 			close(pipe_fd[1]);
 			prev_pipe[0] = pipe_fd[0];

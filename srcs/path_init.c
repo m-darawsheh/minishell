@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 18:23:27 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/16 18:45:17 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/17 19:21:21 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,10 +42,11 @@ char	**find_path(char **envp)
 	return (NULL);
 }
 
-char	**get_envp (char **envp)
+char	**get_envp(char **envp)
 {
 	int		i;
 	char	**tmp;
+
 	i = 0;
 	while (envp[i])
 		i++;
@@ -68,9 +69,8 @@ char	**get_envp (char **envp)
 
 void	struc_init(t_cmd_path *path, char **envp)
 {
-	// path->envp = envp;
 	path->exit_status = 0;
-	path-> envp = get_envp(envp);
+	path->envp = get_envp(envp);
 	path->path = find_path(path->envp);
 	if (!path->path)
 	{

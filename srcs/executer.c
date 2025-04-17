@@ -6,13 +6,13 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 18:42:30 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/17 18:47:55 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/17 19:29:32 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void execute_command(t_cmd **cmd, t_cmd_path *path)
+void	execute_command(t_cmd **cmd, t_cmd_path *path)
 {
 	int		i;
 	int		is_child;
@@ -28,13 +28,13 @@ void execute_command(t_cmd **cmd, t_cmd_path *path)
 	got_forked = 0;
 	while (cmd[++i])
 	{
-		is_child = cmd[i]->has_pipe || (i > 0 && cmd[i-1]->has_pipe);
+		is_child = cmd[i]->has_pipe || (i > 0 && cmd[i - 1]->has_pipe);
 		if (!is_child)
 		{
 			stdin_backup = -1;
 			stdout_backup = -1;
-			if ((cmd[i]->has_appendfile || cmd[i]->has_infile ||
-				 cmd[i]->has_outfile) && is_builtin(cmd[i]))
+			if ((cmd[i]->has_appendfile || cmd[i]->has_infile
+				|| cmd[i]->has_outfile) && is_builtin(cmd[i]))
 			{
 				stdout_backup = dup(STDOUT_FILENO);
 				stdin_backup = dup(STDIN_FILENO);
@@ -43,7 +43,7 @@ void execute_command(t_cmd **cmd, t_cmd_path *path)
 			if (is_builtin(cmd[i]))
 			{
 				execute_builtin(cmd[i], path, stdin_backup, stdout_backup);
-				continue;
+				continue ;
 			}
 		}
 		got_forked = 1;
@@ -64,7 +64,7 @@ void execute_command(t_cmd **cmd, t_cmd_path *path)
 		wait_for_children(path, cmd);
 }
 
-void execute_builtin(t_cmd *cmd, t_cmd_path *path,
+void	execute_builtin(t_cmd *cmd, t_cmd_path *path,
 							int stdin_backup, int stdout_backup)
 {
 	if (!ft_strncmp(cmd->cmd_split[0], "echo", 4))
@@ -110,7 +110,7 @@ void execute_builtin(t_cmd *cmd, t_cmd_path *path,
 	}
 }
 
-void execute_builtin_child(t_cmd *cmd, t_cmd_path *path)
+void	execute_builtin_child(t_cmd *cmd, t_cmd_path *path)
 {
 	if (!ft_strncmp(cmd->cmd_split[0], "echo", 4))
 	{

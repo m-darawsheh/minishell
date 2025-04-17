@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/15 18:46:05 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/26 13:29:20 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/17 19:26:02 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,6 @@ static int	process_special(t_lexer *lexer)
 	c = lexer->line[lexer->i];
 	if (c == '|' || c == '<' || c == '>')
 	{
-		// There could be a word before the special character
 		add_word_token(lexer);
 		if ((c == '>' || c == '<') && lexer->line[lexer->i + 1] == c)
 			add_special_double_token(lexer);
@@ -99,4 +98,3 @@ t_token	**tokenize(char *line_read)
 	}
 	return (lexer.tokens);
 }
-

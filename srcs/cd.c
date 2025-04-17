@@ -6,20 +6,20 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 12:02:07 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/17 18:49:26 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/17 19:32:26 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static char*	get_home_var(char **envp)
+static char	*get_home_var(char **envp)
 {
 	int		i;
 	char	*rtn;
 
 	i = -1;
 	while (envp[++i])
-		if (!ft_strncmp(envp[i], "HOME=", 5)) // should we handle if the evalutor doesn't have HOME? (with unset maybe)
+		if (!ft_strncmp(envp[i], "HOME=", 5))
 			break ;
 	if (!envp[i])
 	{
@@ -31,6 +31,7 @@ static char*	get_home_var(char **envp)
 		return (NULL);
 	return (rtn);
 }
+
 void	change_pwd(t_cmd_path *path)
 {
 	int		i;
@@ -65,7 +66,6 @@ void	change_pwd(t_cmd_path *path)
 	free(tmp);
 }
 
-// if new_path is set from the first (if) free it if not do nothing
 int	do_cd(t_cmd *cmd, t_cmd_path *path)
 {
 	char	*new_path;

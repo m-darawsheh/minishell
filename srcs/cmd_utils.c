@@ -6,10 +6,9 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 13:37:31 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/17 17:42:33 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/17 19:27:18 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 
 #include "minishell.h"
 
@@ -22,7 +21,8 @@ void	setup_command(t_cmd *cmd, t_cmd_path *path)
 	cmd->path = path;
 	if (access (cmd->cmd_split[0], X_OK) == 0)
 	{
-		if (stat(cmd->cmd_split[0], &path_stat) == 0 && S_ISDIR(path_stat.st_mode))
+		if (stat(cmd->cmd_split[0], &path_stat) == 0 &&
+				S_ISDIR(path_stat.st_mode))
 			print_dir_error(cmd->cmd_split[0]);
 		cmd->cmd_path = ft_strdup(cmd->cmd_split[0]);
 		return ;
