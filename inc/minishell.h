@@ -6,13 +6,11 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:24:48 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/04/17 20:56:00 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/17 21:16:33 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
-
-# ifndef MINISHELL_H
+#ifndef MINISHELL_H
 # define MINISHELL_H
 
 // System Libraries
@@ -32,45 +30,50 @@
 # include "libft.h"
 
 // Macros
-#define MAX_FILENAME 4096	// 256 is the Standard filename length, but the evalutaor could give a full path
-#define MAX_CMD_LEN 4096	// if the evaluator can get a command more than this size, i'll jump
-#define MAX_ENV_NAME 512	// 256 is the length limit for an ENV variable name, but just to be safe :D.
+
+// 256 is the Standard filename length, but the evalutaor could give a full path
+# define MAX_FILENAME 4096
+# define MAX_CMD_LEN 4096
+	// 256 is the length limit for an ENV variable name, but just to be safe :D.
+# define MAX_ENV_NAME 512
 
 // The only allowed Global variable
 extern volatile sig_atomic_t	g_heredoc_interrupted;
 
 // Enums
-enum	file_type
+enum	e_file_type
 {
 	INFILE,
 	OUTFILE
 };
 
-typedef enum e_token_type {
+typedef enum e_token_type
+{
 	TOKEN_WORD,	// Regular word or quoted string
 	TOKEN_PIPE,
 	TOKEN_REDIR_IN,
 	TOKEN_REDIR_OUT,
 	TOKEN_APPEND,
 	TOKEN_HEREDOC
-} t_token_type;
+}	t_token_type;
 
 // Structures
-typedef struct s_token {
-	char *value;
-	t_token_type type;
-} t_token;
+typedef struct s_token
+{
+	char			*value;
+	t_token_type	type;
+}	t_token;
 
-typedef struct s_lexer {
-	t_token **tokens;
+typedef struct s_lexer
+{
+	t_token	**tokens;
 	char	buffer[MAX_CMD_LEN];
 	char	*line;
 	int		count;
 	int		buffer_pos;
 	int		in_quotes;
 	int		i;
-} t_lexer;
-
+}	t_lexer;
 
 typedef struct s_cmd_path
 {
@@ -101,7 +104,7 @@ typedef struct s_command
 
 // Function Prototypes
 t_cmd	**t_cmd_malloc(char *line_read, t_cmd_path *path);
-char	**realloc_2d(char **str , int old_size , int new_size);
+char	**realloc_2d(char **str, int old_size, int new_size);
 char	**find_path(char **envp);
 int		do_exit(t_cmd *cmd);
 int		do_cd(t_cmd *cmd, t_cmd_path *path);
@@ -110,12 +113,12 @@ void	*print_and_null(char *str);
 void	exit_error(char *str);
 void	free_2d(char **str);
 void	struc_init(t_cmd_path *path, char **envp);
-void	setup_signals();
+void	setup_signals(void);
 void	exec_cmd(char *line_read, t_cmd_path *path);
 void	init_cmds(t_cmd **cmd, char *line);
 void	setup_command(t_cmd *cmd, t_cmd_path *path);
 void	pwd_handle(t_cmd_path *path);
-void	export_handle(t_cmd *cmd ,t_cmd_path *path);
+void	export_handle(t_cmd *cmd, t_cmd_path *path);
 void	do_echo(t_cmd *cmd);
 void	free_cmds(t_cmd **cmd);
 void	handle_heredoc(t_cmd *cmd);
@@ -123,9 +126,11 @@ void	expander(t_token **tokens, t_cmd_path *path);
 void	print_env(t_cmd_path *path);
 void	handle_unset(t_cmd *cmd, t_cmd_path *path);
 void	setup_io_redirections(t_cmd *cmd);
-void	setup_io_redirections_child(t_cmd *cmd, int *pipe_fd, int *prev_pipe, int i);
+void	setup_io_redirections_child(t_cmd *cmd, int *pipe_fd,
+			int *prev_pipe, int i);
 void	handle_pipes(int *pipe_fd, int *prev_pipe, t_cmd **cmd, int i);
-void	execute_builtin(t_cmd *cmd, t_cmd_path *path, int stdin_backup, int stdout_backup);
+void	execute_builtin(t_cmd *cmd, t_cmd_path *path, int stdin_backup,
+			int stdout_backup);
 void	execute_builtin_child(t_cmd *cmd, t_cmd_path *path);
 void	execute_command(t_cmd **cmd, t_cmd_path *path);
 void	wait_for_children(t_cmd_path *path, t_cmd **cmd);
@@ -135,11 +140,9 @@ void	setup_exec_signals(void);
 void	check_for_expansion(t_token *token, t_cmd_path *path);
 void	remove_quotes(t_token *token);
 
-
 // print errors
 void	print_not_found(t_cmd *cmd);
 void	print_dir_error(char *cmd);
-
 
 // Lexer
 t_token	**tokenize(char *line_read);
