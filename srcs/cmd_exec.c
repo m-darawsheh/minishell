@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/17 17:30:29 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/17 18:39:53 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,10 @@ void wait_for_children(t_cmd_path *path, t_cmd **cmd)
 	i = 0;
 	while (cmd[i])
 		i++;
-	last_pid = cmd[i - 1]->pid;
+	if (i == 0)
+		last_pid = cmd[0]->pid;
+	else
+		last_pid = cmd[i - 1]->pid;
 	if (waitpid(last_pid, &status, 0) > 0)
 	{
 		if (WIFEXITED(status))
