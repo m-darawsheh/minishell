@@ -6,7 +6,7 @@
 /*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/16 19:53:08 by mdarawsh         ###   ########.fr       */
+/*   Updated: 2025/04/18 15:27:38 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,21 +40,21 @@ void exec_cmd(char *line_read, t_cmd_path *path)
 	t_token	**tokens;
 
 	tokens = tokenize(line_read, 0);
+	for (int i = 0; tokens[i]; i++)
+	{
+		printf ("tokens[%d]: %s\n", i, tokens[i]->value);
+	}
 	if (tokens == NULL)
 	{
 		return ;
 	}
 	cmd = parse_and_prepare(line_read, path, &tokens);
-	// for(int k = 0; tokens[k]; k++)
-	// {
-	// 	printf("after parse_and_prepare tokens[%d]: %s\n", k, tokens[k]->value);
-	// 	printf("after parse_and_prepare tokens[%d]->type: %d\n", k, tokens[k]->type);
-	// }
 	if (!cmd)
 		return;
 	process_heredocs(cmd);
 	prepare_command_splits(cmd, tokens);
 	execute_command(cmd, path, tokens);
+	free_tokens(tokens);
 	free_cmds(cmd);
 }
 
