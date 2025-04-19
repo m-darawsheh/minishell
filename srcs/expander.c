@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 14:28:49 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/17 20:55:43 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/19 13:24:51 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,11 +68,9 @@ static void	expand(t_token *token, int i, t_cmd_path *path)
 	i++;
 	j = 0;
 	if (token->value[i] == '?')
-	{
-		var_name[j++] = token->value[i++];
-		var_name[j] = '\0';
-		change_value(token, start, i, ft_itoa(path->exit_status));
-	}
+		change_value(token, start, i + 1, ft_itoa(path->exit_status));
+	else if (token->value[i] == '0')
+		change_value(token, start, i + 1, ft_strdup("minishell"));
 	else
 	{
 		while (token->value[i] && (ft_isalnum(token->value[i])
