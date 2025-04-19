@@ -6,7 +6,7 @@
 /*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 14:28:49 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/19 11:23:39 by mdarawsh         ###   ########.fr       */
+/*   Updated: 2025/04/19 18:46:45 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,9 @@ static void	remove_quotes(t_token *token)
 	i = 0;
 	j = 0;
 	quote_state = 0;
-
+	printf("token->value from remove quotes: %s\n", token->value);
 	while (token && token->value[i])
 	{
-		printf("remove_quotes the i size is %d\n" , i);
 		if (token->value[i] == '\'' && quote_state == 0)
 			quote_state = 1;
 		else if (token->value[i] == '\'' && quote_state == 1)
@@ -38,9 +37,18 @@ static void	remove_quotes(t_token *token)
 			new_value[j++] = token->value[i];
 		i++;
 	}
+
+	printf("j from remove quotes: %d\n", j);
 	new_value[j] = '\0';
-	free(token->value);
-	token->value = ft_strdup(new_value);
+	// else
+	// {
+		// ft_bzero(new_value, ft_strlen(token->value) + 1);
+	// }
+	printf("new_value from remove quotes: %s\n", new_value);
+	// free(token->value);
+	// token->value = NULL;
+	// token->value = ft_strdup(new_value);
+	
 }
 
 static char	*get_env_value(const char *name, t_cmd_path *path)
@@ -176,10 +184,15 @@ void expand_2(t_token ***tokens,t_token *token, int index_token, int i,t_cmd_pat
 	free_tokens(*tokens);
 	*tokens = tokenize(str,1);
 	temp = *tokens;
-	for(int k = 0; temp[k]; k++)
-	{
-		printf("token[%d]: %s\n", k, temp[k]->value);
-	}
+	printf("temp[0]->value from expand2: %s\n", temp[0]->value);
+	token->value = ft_strdup(temp[0]->value);
+
+	// free (token->value);
+	// token->value = ft_strdup(temp[0]->value);
+	// for(int k = 0; temp[k]; k++)
+	// {
+	// 	printf("token[%d]: %s\n", k, temp[k]->value);
+	// }
 	free(str);
 }
 
@@ -187,7 +200,9 @@ static void	check_for_expansion(t_token ***tokens, t_token *token, int index_tok
 {
 	int	i;
 	int	quote_state;
+	int flag;
 
+	flag = 0;
 	i = 0;
 	quote_state = 0;
 	while (token && token->value && token->value[i])
@@ -208,13 +223,35 @@ static void	check_for_expansion(t_token ***tokens, t_token *token, int index_tok
 				token->was_in_double_quotes = 1;
 				token->the_index_must_be_split_on_space = -1;
 				expand(token, i, path);
+				flag = 1;
 			}
 			else
+			{
 				expand_2(tokens,token, index_token, i,path);
+				printf("the value is 3 after expand2 function %s\n", token->value);
+			}
 		}
 		i++;
-		printf("the value is %s\n", token->value);
 	}
+
+	// if (flag == 1)
+	// {
+	// 	if (ft_strncmp(token->value, "\"\"", 2) == 0)
+	// 	{
+	// 		char *str;
+	// 		str = NULL;
+
+
+	// 	}
+
+	// }
+	// if (token->value == NULL)
+	// {
+	// 	printf("the value is NULL\n");
+	// }
+
+	// printf("the value is %s\n", token->value);
+	printf("the value is before send to remove quotes %s\n", token->value);
 	remove_quotes(token);
 }
 
