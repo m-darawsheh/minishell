@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 12:02:07 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/17 19:32:26 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/19 16:03:48 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,10 +32,9 @@ static char	*get_home_var(char **envp)
 	return (rtn);
 }
 
-void	change_pwd(t_cmd_path *path)
+static void	update_pwd(t_cmd_path *path, char **tmp)
 {
 	int		i;
-	char	*tmp;
 	char	*new_pwd;
 
 	i = 0;
@@ -43,18 +42,28 @@ void	change_pwd(t_cmd_path *path)
 		i++;
 	if (path->envp[i])
 	{
-		tmp = ft_strdup(path->envp[i] + 4);
+		*tmp = ft_strdup(path->envp[i] + 4);
 		free(path->envp[i]);
 		new_pwd = getcwd(NULL, 0);
 		if (!new_pwd)
 		{
-			ft_putstr_fd("cd: error retrieving current directory\n", STDERR_FILENO);
-			free(tmp);
+			ft_putstr_fd("cd: error retrieving current directory\n", 2);
 			return ;
 		}
 		path->envp[i] = ft_strjoin("PWD=", new_pwd);
 		free(new_pwd);
 	}
+}
+
+void	change_pwd(t_cmd_path *path)
+{
+	int		i;
+	char	*tmp;
+
+	tmp = NULL;
+	update_pwd(path, &tmp);
+	if (!tmp)
+		return ;
 	i = 0;
 	while (path->envp[i] && ft_strncmp(path->envp[i], "OLDPWD=", 7))
 		i++;

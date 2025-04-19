@@ -6,32 +6,16 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 18:40:15 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/17 19:24:12 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/19 15:54:59 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	setup_io_redirections(t_cmd *cmd)
+static void	setup_io_continued(t_cmd *cmd)
 {
 	int	fd;
 
-	if (cmd->has_infile)
-	{
-		fd = open(cmd->infile, O_RDONLY);
-		if (fd == -1)
-			exit_error("File not found");
-		dup2(fd, STDIN_FILENO);
-		close(fd);
-	}
-	if (cmd->has_outfile)
-	{
-		fd = open(cmd->outfile, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-		if (fd == -1)
-			exit_error("File not found");
-		dup2(fd, STDOUT_FILENO);
-		close(fd);
-	}
 	if (cmd->has_appendfile)
 	{
 		fd = open(cmd->outfile, O_CREAT | O_WRONLY | O_APPEND, 0644);
@@ -47,28 +31,8 @@ void	setup_io_redirections(t_cmd *cmd)
 	}
 }
 
-void	setup_io_redirections_child(t_cmd *cmd, int *pipe_fd,
-										int *prev_pipe, int i)
+static void	setup_io_child_continued(t_cmd *cmd, int fd)
 {
-	int	fd;
-
-	if (cmd->has_heredoc)
-	{
-		dup2(cmd->heredoc_fd, STDIN_FILENO);
-		close(cmd->heredoc_fd);
-	}
-	if (cmd->has_pipe)
-	{
-		dup2(pipe_fd[1], STDOUT_FILENO);
-		close(pipe_fd[0]);
-		close(pipe_fd[1]);
-	}
-	if (i > 0 && prev_pipe[0] != -1)
-	{
-		dup2(prev_pipe[0], STDIN_FILENO);
-		close(prev_pipe[0]);
-		close(prev_pipe[1]);
-	}
 	if (cmd->has_infile)
 	{
 		fd = open(cmd->infile, O_RDONLY);
@@ -93,6 +57,55 @@ void	setup_io_redirections_child(t_cmd *cmd, int *pipe_fd,
 		dup2(fd, STDOUT_FILENO);
 		close(fd);
 	}
+}
+
+void	setup_io_redirections(t_cmd *cmd)
+{
+	int	fd;
+
+	if (cmd->has_infile)
+	{
+		fd = open(cmd->infile, O_RDONLY);
+		if (fd == -1)
+			exit_error("File not found");
+		dup2(fd, STDIN_FILENO);
+		close(fd);
+	}
+	if (cmd->has_outfile)
+	{
+		fd = open(cmd->outfile, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+		if (fd == -1)
+			exit_error("File not found");
+		dup2(fd, STDOUT_FILENO);
+		close(fd);
+	}
+	setup_io_continued(cmd);
+}
+
+void	setup_io_redirections_child(t_cmd *cmd, int *pipe_fd,
+										int *prev_pipe, int i)
+{
+	int	fd;
+
+	fd = -1;
+	if (cmd->has_heredoc)
+	{
+		dup2(cmd->heredoc_fd, STDIN_FILENO);
+		close(cmd->heredoc_fd);
+	}
+	if (cmd->has_pipe)
+	{
+		dup2(pipe_fd[1], STDOUT_FILENO);
+		close(pipe_fd[0]);
+		close(pipe_fd[1]);
+	}
+	if (i > 0 && prev_pipe[0] != -1)
+	{
+		dup2(prev_pipe[0], STDIN_FILENO);
+		close(prev_pipe[0]);
+		close(prev_pipe[1]);
+	}
+	setup_io_child_continued(cmd, fd);
 }
 
 void	handle_pipes(int *pipe_fd, int *prev_pipe, t_cmd **cmd, int i)

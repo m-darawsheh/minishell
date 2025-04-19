@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 20:47:36 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/19 15:46:44 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/19 15:53:45 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,8 @@ static int	check_overflow(const char *str)
 		i++;
 	while (str[i] >= '0' && str[i] <= '9')
 	{
-		if (result > max / 10
-			|| (result == max / 10 && (str[i] - '0') > max % 10))
+		if (result > max / 10 || (result == max / 10
+				&& (unsigned long long)(str[i] - '0') > max % 10))
 			return (1);
 		result = result * 10 + (str[i] - '0');
 		i++;
