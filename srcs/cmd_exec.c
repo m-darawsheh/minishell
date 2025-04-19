@@ -6,7 +6,7 @@
 /*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/18 15:27:38 by mdarawsh         ###   ########.fr       */
+/*   Updated: 2025/04/19 10:51:54 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,10 +40,6 @@ void exec_cmd(char *line_read, t_cmd_path *path)
 	t_token	**tokens;
 
 	tokens = tokenize(line_read, 0);
-	for (int i = 0; tokens[i]; i++)
-	{
-		printf ("tokens[%d]: %s\n", i, tokens[i]->value);
-	}
 	if (tokens == NULL)
 	{
 		return ;

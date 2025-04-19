@@ -6,7 +6,7 @@
 /*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 14:28:49 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/16 19:54:22 by mdarawsh         ###   ########.fr       */
+/*   Updated: 2025/04/19 11:23:39 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,10 @@ static void	remove_quotes(t_token *token)
 	i = 0;
 	j = 0;
 	quote_state = 0;
-	while (token->value[i])
+
+	while (token && token->value[i])
 	{
+		printf("remove_quotes the i size is %d\n" , i);
 		if (token->value[i] == '\'' && quote_state == 0)
 			quote_state = 1;
 		else if (token->value[i] == '\'' && quote_state == 1)
@@ -98,7 +100,7 @@ static void	expand(t_token *token, int i, t_cmd_path *path)
 	start = i;
 	i++;
 	j = 0;
-	if (token->value[i] == '?')
+	if (token && token->value && token->value[i] == '?')
 	{
 		var_name[j++] = token->value[i++];
 		var_name[j] = '\0';
@@ -106,7 +108,7 @@ static void	expand(t_token *token, int i, t_cmd_path *path)
 	}
 	else
 	{
-		while (token->value[i] && (ft_isalnum(token->value[i])
+		while (token && token->value && token->value[i] && (ft_isalnum(token->value[i])
 				|| token->value[i] == '_'))
 			var_name[j++] = token->value[i++];
 		var_name[j] = '\0';
@@ -114,7 +116,17 @@ static void	expand(t_token *token, int i, t_cmd_path *path)
 			change_value(token, start, i, get_env_value(var_name, path));
 	}
 }
+int	count_tokens(t_token **tokens)
+{
+	int	i;
 
+	i = 0;
+	if (!tokens)
+		return (0);
+	while (tokens[i])
+		i++;
+	return (i);
+}
 char *join_all_tokens(t_token **tokens)
 {
 	int		i;
@@ -131,6 +143,10 @@ char *join_all_tokens(t_token **tokens)
 		free(str);
 		if (!temp)
 			return (NULL);
+		if (count_tokens(tokens) == i + 1)
+		{
+			return (temp);
+		}
 		str = ft_strjoin(temp, " ");
 		free(temp);
 		if (!str)
@@ -151,9 +167,19 @@ void expand_2(t_token ***tokens,t_token *token, int index_token, int i,t_cmd_pat
 	str = NULL;
 	expand(token, i, path);
 	str = join_all_tokens(*tokens);
+	if (ft_strlen(str) == 0)
+	{
+		free(str);
+		str = ft_strdup("\"\"");
+	}
+	printf("str: %s\n", str);
 	free_tokens(*tokens);
 	*tokens = tokenize(str,1);
 	temp = *tokens;
+	for(int k = 0; temp[k]; k++)
+	{
+		printf("token[%d]: %s\n", k, temp[k]->value);
+	}
 	free(str);
 }
 
@@ -164,8 +190,9 @@ static void	check_for_expansion(t_token ***tokens, t_token *token, int index_tok
 
 	i = 0;
 	quote_state = 0;
-	while (token && token->value[i])
+	while (token && token->value && token->value[i])
 	{
+
 		if (token->value[i] == '\'' && quote_state == 0)
 			quote_state = 1;
 		else if (token->value[i] == '\'' && quote_state == 1)
@@ -186,6 +213,7 @@ static void	check_for_expansion(t_token ***tokens, t_token *token, int index_tok
 				expand_2(tokens,token, index_token, i,path);
 		}
 		i++;
+		printf("the value is %s\n", token->value);
 	}
 	remove_quotes(token);
 }
