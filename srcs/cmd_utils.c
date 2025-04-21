@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 13:37:31 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/17 21:22:55 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/21 23:14:13 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,8 @@ void	setup_command(t_cmd *cmd, t_cmd_path *path)
 		cmd->cmd_path = ft_strdup(cmd->cmd_split[0]);
 		return ;
 	}
-	i = 0;
-	while (path->path[i])
+	i = -1;
+	while (path->path[++i])
 	{
 		tmp = ft_strjoin(path->path[i], "/");
 		cmd->cmd_path = ft_strjoin(tmp, cmd->cmd_split[0]);
@@ -36,7 +36,6 @@ void	setup_command(t_cmd *cmd, t_cmd_path *path)
 		if (access(cmd->cmd_path, X_OK) == 0)
 			break ;
 		free(cmd->cmd_path);
-		i++;
 	}
 	if (!path->path[i])
 		print_not_found(cmd);

@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 18:42:30 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/19 16:06:42 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/21 23:40:08 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,17 @@ void	execute_command(t_cmd **cmd, t_cmd_path *path)
 				stdout_backup = dup(STDOUT_FILENO);
 				stdin_backup = dup(STDIN_FILENO);
 				setup_io_redirections(cmd[i]);
+			}
+			if (cmd[i]->cmd_split && cmd[i]->cmd_split[0] && ft_strchr(cmd[i]->cmd_split[0], ' '))
+			{
+				char **new_args = ft_split(cmd[i]->cmd_split[0], ' ');
+				if (new_args)
+				{
+					if (cmd[i]->cmd_split[1])
+						append_args(new_args, cmd[i]);
+					free_2d(cmd[i]->cmd_split);
+					cmd[i]->cmd_split = new_args;
+				}
 			}
 			if (is_builtin(cmd[i]))
 			{
@@ -110,8 +121,10 @@ void	execute_builtin(t_cmd *cmd, t_cmd_path *path,
 	}
 }
 
-void	execute_builtin_child(t_cmd *cmd, t_cmd_path *path)
+static void	do_builtin_children(t_cmd *cmd, t_cmd_path *path)
 {
+	int	rtn_code;
+
 	if (!ft_strncmp(cmd->cmd_split[0], "echo", 4))
 	{
 		do_echo(cmd);
@@ -124,10 +137,8 @@ void	execute_builtin_child(t_cmd *cmd, t_cmd_path *path)
 	}
 	else if (!ft_strncmp(cmd->cmd_split[0], "cd", 2))
 	{
-		int rtn_code = do_cd(cmd, path);
-		if (rtn_code)
-			exit(rtn_code);
-		exit(0);
+		rtn_code = do_cd(cmd, path);
+		exit(rtn_code);
 	}
 	else if (!ft_strncmp(cmd->cmd_split[0], "export", 6))
 	{
@@ -139,7 +150,65 @@ void	execute_builtin_child(t_cmd *cmd, t_cmd_path *path)
 		print_env(path);
 		exit(0);
 	}
-	setup_command(cmd, path);
+}
+
+void	append_args(char **new_args, t_cmd *cmd)
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	while (new_args[i])
+		i++;
+	j = 1;
+	while (cmd->cmd_split[j])
+		j++;
+	new_args = realloc_2d(new_args, i, i + j);
+	if (!new_args)
+		return ;
+	j = 1;
+	while (cmd->cmd_split[j])
+	{
+		new_args[i] = ft_strdup(cmd->cmd_split[j]);
+		if (!new_args[i])
+			return ;
+		i++;
+		j++;
+	}
+}
+
+int	expanded_as_command(t_cmd *cmd)
+{
+	char	**new_args;
+
+	if (!ft_strchr(cmd->cmd_split[0], ' '))
+		return (0);
+	new_args = ft_split(cmd->cmd_split[0], ' ');
+	setup_command(cmd, cmd->path);
+	if (!new_args)
+		return (0);
+	if (cmd->cmd_split[1])
+		append_args(new_args, cmd);
+	if (!new_args)
+		return (0);
+	free_2d(cmd->cmd_split);
+	cmd->cmd_split = new_args;
+	return (1);
+}
+
+// ! WOW - very demure
+void	wow()
+{
+	return ;
+}
+
+void	execute_builtin_child(t_cmd *cmd, t_cmd_path *path)
+{
+	do_builtin_children(cmd, path);
+	if (expanded_as_command(cmd))
+		wow();
+	else
+		setup_command(cmd, path);
 	execve(cmd->cmd_path, cmd->cmd_split, path->envp);
 	exit(127);
 }

@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:24:48 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/04/21 22:51:10 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/21 23:40:56 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,6 +140,10 @@ void	setup_exec_signals(void);
 void	check_for_expansion(t_token *token, t_cmd_path *path);
 void	remove_quotes(t_token *token);
 int		ft_strcmp(const char *s1, const char *s2);
+int		expanded_as_command(t_cmd *cmd);
+void	append_args(char **new_args, t_cmd *cmd);
+void	wow();
+
 
 // print errors
 void	print_not_found(t_cmd *cmd);
