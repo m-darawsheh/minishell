@@ -1,28 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   free.c                                             :+:      :+:    :+:   */
+/*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/25 17:23:22 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/21 21:33:03 by hassende         ###   ########.fr       */
+/*   Created: 2025/04/21 22:50:24 by hassende          #+#    #+#             */
+/*   Updated: 2025/04/21 22:50:46 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	free_2d(char **str)
+int	ft_strcmp(const char *s1, const char *s2)
 {
-	int	i;
-
-	if (!str || !*str)
-		return ;
-	i = 0;
-	while (str[i])
+	while (*s1 && (*s1 == *s2))
 	{
-		free(str[i]);
-		i++;
+		s1++;
+		s2++;
 	}
-	free(str);
+	return *(unsigned char*)s1 - *(unsigned char*)s2;
 }

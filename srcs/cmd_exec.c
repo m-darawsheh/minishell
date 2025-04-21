@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/21 21:15:14 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/21 21:53:35 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 		return ;
 	}
 	prepare_command_splits(cmd, tokens);
-	free(tokens);
+	free_tokens(tokens);
 	execute_command(cmd, path);
 	free_cmds(cmd);
 }
@@ -98,7 +98,7 @@ static void prepare_command_splits(t_cmd **cmd, t_token **tokens)
 		if (tokens[i]->type == TOKEN_WORD)
 		{
 			if (!cmd[cmd_idx]->cmd_split)
-				cmd[cmd_idx]->cmd_split = ft_calloc(count_tokens(tokens), sizeof(char*));
+				cmd[cmd_idx]->cmd_split = ft_calloc(count_tokens(tokens) + 1, sizeof(char*));
 			cmd[cmd_idx]->cmd_split[arg_idx++] = ft_strdup(tokens[i]->value);
 		}
 		else if (tokens[i]->type == TOKEN_PIPE)
@@ -112,8 +112,7 @@ static void prepare_command_splits(t_cmd **cmd, t_token **tokens)
 					i++;
 		i++;
 	}
-	if (cmd[cmd_idx])
-		cmd[cmd_idx]->cmd_split[arg_idx] = NULL;
+	cmd[cmd_idx]->cmd_split[arg_idx] = NULL;
 }
 
 void	wait_for_children(t_cmd_path *path, t_cmd **cmd)

@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:25:54 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/04/17 21:06:34 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/21 21:50:42 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,5 +62,6 @@ int	main(int argc, char **argv, char **envp)
 	}
 	free_2d(path.envp);
 	free_2d(path.path);
+	rl_clear_history();
 	(void)argv;
 }

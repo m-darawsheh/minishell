@@ -5,156 +5,168 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/09 23:43:49 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/04/17 21:03:59 by hassende         ###   ########.fr       */
+/*   Created: 2025/04/21 23:10:45 by hassende          #+#    #+#             */
+/*   Updated: 2025/04/21 22:52:08 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	add_env(t_cmd_path *path, t_cmd *cmd, int index)
-{
-	int		i;
-	char	*tmp;
-
-	i = 0;
-	tmp = ft_strdup(cmd->cmd_split[index]);
-	if (!tmp)
-		return ;
-	while (path->envp[i])
-		i++;
-	path->envp = realloc_2d(path->envp, i, i + 1);
-	if (!path->envp)
-	{
-		free(tmp);
-		return ;
-	}
-	path->envp[i] = ft_strdup(tmp);
-	if (!path->envp[i])
-	{
-		free(tmp);
-		return ;
-	}
-	path->envp[i + 1] = NULL;
-	free(tmp);
-}
-
-int	check_env(t_cmd_path *path, t_cmd *cmd, int *i, int index)
-{
-	int	j;
-
-	j = 0;
-	while (cmd->cmd_split[index][j] != '=')
-		j++;
-	while (path->envp[*i])
-	{
-		if (ft_strncmp(path->envp[*i], cmd->cmd_split[index], j) == 0)
-			return (*i);
-		(*i)++;
-	}
-	return (0);
-}
-
-void	edit_env(t_cmd_path *path, t_cmd *cmd, int *i, int index)
-{
-	int	j;
-	int	k;
-
-	j = 0;
-	k = 0;
-	while (cmd->cmd_split[index][j] != '=')
-		j++;
-	while (path->envp[*i][k] != '=')
-		k++;
-	free(path->envp[*i]);
-	path->envp[*i] = ft_strdup(cmd->cmd_split[index]);
-}
-
-void	print_export(t_cmd_path *path)
+static int	is_valid_identifier(char *str)
 {
 	int	i;
 
-	i = 0;
-	while (path->envp[i])
+	if (!str || !*str)
+		return (0);
+	if (!ft_isalpha(str[0]) && str[0] != '_')
+		return (0);
+	i = 1;
+	while (str[i] && str[i] != '=')
 	{
-		printf("declare -x %s\n", path->envp[i]);
-		i++;
-	}
-}
-
-int	valid_input(t_cmd *cmd, int index)
-{
-	int	i;
-
-	i = 0;
-	while (cmd->cmd_split[index][i])
-	{
-		while (cmd->cmd_split[index][i] && cmd->cmd_split[index][i] != '=')
-		{
-			if (!(ft_isalpha(cmd->cmd_split[index][i]) || ft_isdigit(cmd->cmd_split[index][i]) || cmd->cmd_split[index][i] == '_'))
-			{
-				printf("export: `%s': not a valid identifier\n", cmd->cmd_split[index]);
-				return (0);
-			}
-			i++;
-		}
-		if (cmd->cmd_split[index][i])
-		{
-			i++;
-			if (cmd->cmd_split[index][0] == '=')
-				return (0);
-			while (cmd->cmd_split[index][i])
-			{
-				printf("%c", cmd->cmd_split[index][i]);
-				// if the value in quotes we need skip  the  spaces
-				if (cmd->cmd_split[index][i] == '"' || cmd->cmd_split[index][i] == '\'')
-				{
-					printf("\n\n\n\n\ni inter\n\n\n\n\n\n");
-					while (cmd->cmd_split[index][i] && cmd->cmd_split[index][i] != '"' && cmd->cmd_split[index][i] != '\'')
-					{
-						printf("export: `%s': not a valid identifier\n", cmd->cmd_split[index]);
-						i++;
-					}
-					return (1);
-				}
-				if (!(ft_isalpha(cmd->cmd_split[index][i]) || ft_isdigit(cmd->cmd_split[index][i]) || cmd->cmd_split[index][i] == '_'))
-					return (0);
-				i++;
-			}
-			if (cmd->cmd_split[index][i - 1] == '=')
-				return (0);
-			return (1);
-		}
-		else
+		if (!ft_isalnum(str[i]) && str[i] != '_')
 			return (0);
+		i++;
 	}
 	return (1);
 }
 
-void	export_handle(t_cmd *cmd, t_cmd_path *path)
+static int	get_name_length(char *var)
 {
 	int	i;
-	int	index;
 
 	i = 0;
-	index = 1;
-	if (cmd->cmd_split[1] == NULL)
+	while (var[i] && var[i] != '=')
+		i++;
+	return (i);
+}
+
+static int	find_env_var(char **envp, char *var, int name_len)
+{
+	int	i;
+
+	i = 0;
+	while (envp[i])
 	{
-		print_export(path);
+		if (ft_strncmp(envp[i], var, name_len) == 0 &&
+			(envp[i][name_len] == '=' || envp[i][name_len] == '\0'))
+			return (i);
+		i++;
+	}
+	return (-1);
+}
+
+static void	add_env_var(t_cmd_path *path, char *var)
+{
+	int		i;
+	char	**new_env;
+
+	i = 0;
+	while (path->envp[i])
+		i++;
+	new_env = ft_calloc(i + 2, sizeof(char *));
+	if (!new_env)
+		return;
+	i = 0;
+	while (path->envp[i])
+	{
+		new_env[i] = path->envp[i];
+		i++;
+	}
+	new_env[i] = ft_strdup(var);
+	if (!new_env[i])
+	{
+		free(new_env);
 		return;
 	}
-	while (cmd->cmd_split[index])
+	new_env[i + 1] = NULL;
+	free(path->envp);
+	path->envp = new_env;
+}
+
+static void	update_env_var(t_cmd_path *path, char *var, int pos)
+{
+	free(path->envp[pos]);
+	path->envp[pos] = ft_strdup(var);
+}
+
+static void	print_sorted_env(t_cmd_path *path)
+{
+	int		i;
+	int		j;
+	int		count;
+	char	**sorted;
+	char	*temp;
+
+	count = 0;
+	while (path->envp[count])
+		count++;
+	sorted = ft_calloc(count + 1, sizeof(char *));
+	if (!sorted)
+		return;
+	i = 0;
+	while (path->envp[i])
 	{
-		if (!valid_input(cmd, index))
+		sorted[i] = ft_strdup(path->envp[i]);
+		i++;
+	}
+	sorted[i] = NULL;
+	i = 0;
+	while (i < count - 1)
+	{
+		j = i + 1;
+		while (j < count )
 		{
-			printf("somthing wrong with must put valid input like this -> name=value\n");
-			index++;
-			continue ;
+			if (ft_strcmp(sorted[i], sorted[j]) > 0)
+			{
+				temp = sorted[i];
+				sorted[i] = sorted[j];
+				sorted[j] = temp;
+			}
+			j++;
 		}
-		if (check_env(path, cmd, &i, index))
-			edit_env(path, cmd, &i, index);
-		else
-			add_env(path, cmd, index);
-		index++;
+		i++;
+	}
+	i = 0;
+	while (sorted[i])
+	{
+		printf("declare -x %s\n", sorted[i]);
+		free(sorted[i]);
+		i++;
+	}
+	free(sorted);
+}
+
+void	export_handle(t_cmd *cmd, t_cmd_path *path)
+{
+	int		i;
+	int		env_pos;
+	int		name_len;
+
+	if (!cmd->cmd_split[1])
+	{
+		print_sorted_env(path);
+		return;
+	}
+	i = 1;
+	while (cmd->cmd_split[i])
+	{
+		if (!is_valid_identifier(cmd->cmd_split[i]))
+		{
+			ft_putstr_fd("export: `", 2);
+			ft_putstr_fd(cmd->cmd_split[i], 2);
+			ft_putstr_fd("': not a valid identifier\n", 2);
+			i++;
+			continue;
+		}
+		name_len = get_name_length(cmd->cmd_split[i]);
+		env_pos = find_env_var(path->envp, cmd->cmd_split[i], name_len);
+		if (ft_strchr(cmd->cmd_split[i], '=') || env_pos == -1)
+		{
+			if (env_pos >= 0)
+				update_env_var(path, cmd->cmd_split[i], env_pos);
+			else
+				add_env_var(path, cmd->cmd_split[i]);
+		}
+		i++;
 	}
 }

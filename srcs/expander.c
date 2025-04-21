@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 14:28:49 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/19 13:33:52 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/21 22:29:22 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ static void	change_value(t_token *token, int start, int end, char *env_var)
 	old_len = ft_strlen(token->value);
 	env_len = ft_strlen(env_var);
 	new_len = old_len - (end - start) + env_len;
-	new_value = (char *)malloc(new_len + 1);
+	new_value = malloc(new_len + 1);
 	if (!new_value)
 		return ;
 	ft_strlcpy(new_value, token->value, start + 1);
@@ -82,25 +82,42 @@ static void	expand(t_token *token, int i, t_cmd_path *path)
 	}
 }
 
+static void	set_quote_state(int *quote_state, char c)
+{
+	if (c == '\'' && *quote_state == 0)
+		*quote_state = 1;
+	else if (c == '\'' && *quote_state == 1)
+		*quote_state = 0;
+	else if (c == '\"' && *quote_state == 0)
+		*quote_state = 2;
+	else if (c == '\"' && *quote_state == 2)
+		*quote_state = 0;
+}
+
 void	check_for_expansion(t_token *token, t_cmd_path *path)
 {
-	int	i;
-	int	quote_state;
+	int		i;
+	int		quote_state;
+	char	*prev_value;
 
+	if (token->value == NULL || !token->value[0])
+		return ;
 	i = 0;
 	quote_state = 0;
 	while (token->value[i])
 	{
-		if (token->value[i] == '\'' && quote_state == 0)
-			quote_state = 1;
-		else if (token->value[i] == '\'' && quote_state == 1)
-			quote_state = 0;
-		else if (token->value[i] == '\"' && quote_state == 0)
-			quote_state = 2;
-		else if (token->value[i] == '\"' && quote_state == 2)
-			quote_state = 0;
-		else if (token->value[i] == '$' && quote_state != 1)
+		set_quote_state(&quote_state, token->value[i]);
+		if (token->value[i] == '$' && quote_state != 1)
+		{
+			prev_value = ft_strdup(token->value);
 			expand(token, i, path);
+			if (ft_strncmp(prev_value, token->value, ft_strlen(prev_value)) != 0)
+			{
+				free(prev_value);
+				continue;
+			}
+			free(prev_value);
+		}
 		i++;
 	}
 	remove_quotes(token);
