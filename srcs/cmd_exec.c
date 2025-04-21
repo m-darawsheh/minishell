@@ -6,21 +6,22 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/17 21:19:32 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/21 21:15:14 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 static int		process_heredocs(t_cmd **cmd);
-static t_cmd	**parse_and_prepare(char *line_read, t_cmd_path *path);
-static void		prepare_command_splits(t_cmd **cmd);
+static t_cmd	**parse_and_prepare(char *line_read, t_cmd_path *path, t_token ***tokens_head);
+static void		prepare_command_splits(t_cmd **cmd, t_token **tokens);
 
 void	exec_cmd(char *line_read, t_cmd_path *path)
 {
 	t_cmd	**cmd;
+	t_token	**tokens;
 
-	cmd = parse_and_prepare(line_read, path);
+	cmd = parse_and_prepare(line_read, path, &tokens);
 	if (!cmd)
 		return ;
 	if (!process_heredocs(cmd))
@@ -28,12 +29,13 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 		path->exit_status = 130;
 		return ;
 	}
-	prepare_command_splits(cmd);
+	prepare_command_splits(cmd, tokens);
+	free(tokens);
 	execute_command(cmd, path);
 	free_cmds(cmd);
 }
 
-static	t_cmd	**parse_and_prepare(char *line_read, t_cmd_path *path)
+static	t_cmd	**parse_and_prepare(char *line_read, t_cmd_path *path, t_token ***tokens_head)
 {
 	t_cmd	**cmd;
 	t_token	**tokens;
@@ -50,7 +52,7 @@ static	t_cmd	**parse_and_prepare(char *line_read, t_cmd_path *path)
 		free_tokens(tokens);
 		return (NULL);
 	}
-	free_tokens(tokens);
+	*tokens_head = tokens;
 	return (cmd);
 }
 
@@ -72,19 +74,46 @@ static int	process_heredocs(t_cmd **cmd)
 	return (1);
 }
 
-static void	prepare_command_splits(t_cmd **cmd)
+int	count_tokens(t_token **tokens)
+{
+	int	count;
+
+	count = 0;
+	while (tokens[count] && tokens[count]->type  == TOKEN_WORD)
+		count++;
+	return (count);
+}
+
+static void prepare_command_splits(t_cmd **cmd, t_token **tokens)
 {
 	int	i;
+	int	cmd_idx;
+	int	arg_idx;
 
-	i = -1;
-	while (cmd[++i])
+	i = 0;
+	cmd_idx = 0;
+	arg_idx = 0;
+	while (tokens[i])
 	{
-		cmd[i]->cmd_split = ft_split(cmd[i]->cmd, ' ');
-		if (!cmd[i]->cmd_split)
-			exit_error("Malloc failed");
-		if (cmd[i]->cmd_split[0] == NULL)
-			return ;
+		if (tokens[i]->type == TOKEN_WORD)
+		{
+			if (!cmd[cmd_idx]->cmd_split)
+				cmd[cmd_idx]->cmd_split = ft_calloc(count_tokens(tokens), sizeof(char*));
+			cmd[cmd_idx]->cmd_split[arg_idx++] = ft_strdup(tokens[i]->value);
+		}
+		else if (tokens[i]->type == TOKEN_PIPE)
+		{
+			cmd[cmd_idx]->cmd_split[arg_idx] = NULL;
+			cmd_idx++;
+			arg_idx = 0;
+		}
+		else if (tokens[i]->type == TOKEN_REDIR_IN || tokens[i]->type == TOKEN_REDIR_OUT ||
+				tokens[i]->type == TOKEN_APPEND || tokens[i]->type == TOKEN_HEREDOC)
+					i++;
+		i++;
 	}
+	if (cmd[cmd_idx])
+		cmd[cmd_idx]->cmd_split[arg_idx] = NULL;
 }
 
 void	wait_for_children(t_cmd_path *path, t_cmd **cmd)
