@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 14:28:49 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/22 17:39:04 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/22 19:22:07 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,6 +120,7 @@ void	check_for_expansion(t_token *token, t_cmd_path *path)
 				continue ;
 			}
 			free(prev_value);
+			token->from_expansion = 1;
 		}
 		i++;
 	}

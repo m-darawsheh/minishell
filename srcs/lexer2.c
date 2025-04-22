@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/15 18:49:26 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/22 17:24:30 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/22 19:21:50 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ void add_token(t_lexer *lexer, char *value, t_token_type type)
 		lexer->tokens[lexer->count]->value = ft_strdup(value);
 		lexer->tokens[lexer->count]->type = type;
 		lexer->tokens[lexer->count]->quoted = 0;
+		lexer->tokens[lexer->count]->from_expansion = 0;
 		lexer->count++;
 	}
 }

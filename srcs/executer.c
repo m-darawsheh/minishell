@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 18:42:30 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/22 18:27:50 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/22 19:58:31 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,33 +78,33 @@ void	execute_command(t_cmd **cmd, t_cmd_path *path)
 void	execute_builtin(t_cmd *cmd, t_cmd_path *path,
 							int stdin_backup, int stdout_backup)
 {
-	if (!ft_strncmp(cmd->cmd_split[0], "echo", 4))
+	if (!ft_strcmp(cmd->cmd_split[0], "echo"))
 	{
 		path->exit_status = 0;
 		do_echo(cmd);
 	}
-	else if (!ft_strncmp(cmd->cmd_split[0], "exit", 4))
+	else if (!ft_strcmp(cmd->cmd_split[0], "exit"))
 		path->exit_status = do_exit(cmd);
-	else if (!ft_strncmp(cmd->cmd_split[0], "cd", 2))
+	else if (!ft_strcmp(cmd->cmd_split[0], "cd"))
 	{
 		path->exit_status = do_cd(cmd, path);
 	}
-	else if (!ft_strncmp(cmd->cmd_split[0], "export", 6))
+	else if (!ft_strcmp(cmd->cmd_split[0], "export"))
 	{
 		path->exit_status = 0;
 		export_handle(cmd, path);
 	}
-	else if (!ft_strncmp(cmd->cmd_split[0], "env", 3))
+	else if (!ft_strcmp(cmd->cmd_split[0], "env"))
 	{
 		path->exit_status = 0;
 		print_env(path);
 	}
-	else if (!ft_strncmp(cmd->cmd_split[0], "pwd", 3))
+	else if (!ft_strcmp(cmd->cmd_split[0], "pwd"))
 	{
 		path->exit_status = 0;
 		pwd_handle(path);
 	}
-	else if (!ft_strncmp(cmd->cmd_split[0], "unset", 5))
+	else if (!ft_strcmp(cmd->cmd_split[0], "unset"))
 	{
 		path->exit_status = 0;
 		handle_unset(cmd, path);
@@ -123,32 +123,36 @@ void	execute_builtin(t_cmd *cmd, t_cmd_path *path,
 
 static void	do_builtin_children(t_cmd *cmd, t_cmd_path *path)
 {
-	int	rtn_code;
-
-	if (!ft_strncmp(cmd->cmd_split[0], "echo", 4))
+	if (!ft_strcmp(cmd->cmd_split[0], "echo"))
 	{
+		path->exit_status = 0;
 		do_echo(cmd);
-		exit(0);
 	}
-	else if (!ft_strncmp(cmd->cmd_split[0], "exit", 4))
+	else if (!ft_strcmp(cmd->cmd_split[0], "exit"))
+		path->exit_status = do_exit(cmd);
+	else if (!ft_strcmp(cmd->cmd_split[0], "cd"))
 	{
-		do_exit(cmd);
-		exit(1);
+		path->exit_status = do_cd(cmd, path);
 	}
-	else if (!ft_strncmp(cmd->cmd_split[0], "cd", 2))
+	else if (!ft_strcmp(cmd->cmd_split[0], "export"))
 	{
-		rtn_code = do_cd(cmd, path);
-		exit(rtn_code);
-	}
-	else if (!ft_strncmp(cmd->cmd_split[0], "export", 6))
-	{
+		path->exit_status = 0;
 		export_handle(cmd, path);
-		exit(0);
 	}
-	else if (!ft_strncmp(cmd->cmd_split[0], "env", 3))
+	else if (!ft_strcmp(cmd->cmd_split[0], "env"))
 	{
+		path->exit_status = 0;
 		print_env(path);
-		exit(0);
+	}
+	else if (!ft_strcmp(cmd->cmd_split[0], "pwd"))
+	{
+		path->exit_status = 0;
+		pwd_handle(path);
+	}
+	else if (!ft_strcmp(cmd->cmd_split[0], "unset"))
+	{
+		path->exit_status = 0;
+		handle_unset(cmd, path);
 	}
 }
 
@@ -205,12 +209,14 @@ void	wow()
 
 void	execute_builtin_child(t_cmd *cmd, t_cmd_path *path)
 {
-	// if (cmd->cmd_split || cmd->cmd_split[0])
+	if (cmd->cmd_split && cmd->cmd_split[0])
+	{
 		do_builtin_children(cmd, path);
-	if (expanded_as_command(cmd))
-		wow();
-	else
-		setup_command(cmd, path);
-	execve(cmd->cmd_path, cmd->cmd_split, path->envp);
+		if (expanded_as_command(cmd))
+			wow();
+		else
+			setup_command(cmd, path);
+		execve(cmd->cmd_path, cmd->cmd_split, path->envp);
+	}
 	exit(127);
 }

@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 13:06:27 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/17 21:07:51 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/22 19:34:03 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,6 +111,11 @@ int	parse_token(t_token **tokens, t_cmd **cmd)
 	{
 		if (tokens[i]->type == TOKEN_WORD)
 			handle_word(tokens, cmd, i, cmd_i);
+		else if (tokens[i]->from_expansion && tokens[i]->value[0] == '|')
+		{
+			tokens[i]->type = TOKEN_WORD;
+			handle_word(tokens, cmd, i, cmd_i);
+		}
 		else if (tokens[i]->type == TOKEN_PIPE)
 		{
 			if(!handle_pipe(tokens, cmd, &i, &cmd_i))

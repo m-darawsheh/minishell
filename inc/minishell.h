@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:24:48 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/04/22 17:48:43 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/22 19:21:28 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,7 @@ typedef struct s_token
 	char			*value;
 	t_token_type	type;
 	int				quoted;
+	int				from_expansion;
 }	t_token;
 
 typedef struct s_lexer
