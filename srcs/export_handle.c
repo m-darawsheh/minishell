@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 23:10:45 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/21 22:52:08 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/22 20:28:21 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,6 +155,7 @@ void	export_handle(t_cmd *cmd, t_cmd_path *path)
 			ft_putstr_fd("export: `", 2);
 			ft_putstr_fd(cmd->cmd_split[i], 2);
 			ft_putstr_fd("': not a valid identifier\n", 2);
+			path->exit_status = 1;
 			i++;
 			continue;
 		}

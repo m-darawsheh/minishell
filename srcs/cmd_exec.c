@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/22 18:29:10 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/22 20:21:24 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,10 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 
 	cmd = parse_and_prepare(line_read, path, &tokens);
 	if (!cmd)
+	{
+		free_cmds(cmd);
 		return ;
+	}
 	if (!process_heredocs(cmd))
 	{
 		path->exit_status = 130;
@@ -52,6 +55,7 @@ static	t_cmd	**parse_and_prepare(char *line_read, t_cmd_path *path,
 	if (!parse_token(tokens, cmd))
 	{
 		free_tokens(tokens);
+		free_cmds(cmd);
 		return (NULL);
 	}
 	*tokens_head = tokens;

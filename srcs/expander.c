@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 14:28:49 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/22 19:22:07 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/22 20:26:41 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,8 @@ static void	expand(t_token *token, int i, t_cmd_path *path)
 		change_value(token, start, i + 1, ft_itoa(path->exit_status));
 	else if (token->value[i] == '0')
 		change_value(token, start, i + 1, ft_strdup("minishell"));
+	else if (ft_isalnum(token->value[i]))
+		change_value(token, start, i + 1, ft_strdup(""));
 	else
 	{
 		while (token->value[i] && (ft_isalnum(token->value[i])
