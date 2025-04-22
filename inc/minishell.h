@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:24:48 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/04/22 10:14:50 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/22 17:08:04 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,7 @@ typedef struct s_token
 {
 	char			*value;
 	t_token_type	type;
+	int				quoted;
 }	t_token;
 
 typedef struct s_lexer
@@ -93,6 +94,7 @@ typedef struct s_command
 	int						has_heredoc;
 	int						builtin;
 	int						skip_exec;
+	int						was_quoted;
 	char					*cmd;
 	char					**cmd_split;
 	char					*infile;

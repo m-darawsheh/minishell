@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 13:57:52 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/21 21:35:04 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/22 17:30:12 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,7 @@ static void	init_cmd_struct(t_cmd *cmd, t_cmd_path *path)
 	cmd->has_heredoc = 0;
 	cmd->skip_exec = 0;
 	cmd->heredoc_fd = -1;
+	cmd->was_quoted = 0;
 	cmd->cmd[0] = '\0';
 	cmd->infile[0] = '\0';
 	cmd->outfile[0] = '\0';

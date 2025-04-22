@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 14:28:49 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/21 22:29:22 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/22 17:20:14 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,14 +82,17 @@ static void	expand(t_token *token, int i, t_cmd_path *path)
 	}
 }
 
-static void	set_quote_state(int *quote_state, char c)
+static void	set_quote_state(int *quote_state, char c, t_token *token)
 {
 	if (c == '\'' && *quote_state == 0)
 		*quote_state = 1;
 	else if (c == '\'' && *quote_state == 1)
 		*quote_state = 0;
 	else if (c == '\"' && *quote_state == 0)
+	{
+		token->quoted = 1;
 		*quote_state = 2;
+	}
 	else if (c == '\"' && *quote_state == 2)
 		*quote_state = 0;
 }
@@ -106,7 +109,7 @@ void	check_for_expansion(t_token *token, t_cmd_path *path)
 	quote_state = 0;
 	while (token->value[i])
 	{
-		set_quote_state(&quote_state, token->value[i]);
+		set_quote_state(&quote_state, token->value[i], token);
 		if (token->value[i] == '$' && quote_state != 1)
 		{
 			prev_value = ft_strdup(token->value);

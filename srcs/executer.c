@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 18:42:30 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/22 10:21:14 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/22 17:21:56 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void	execute_command(t_cmd **cmd, t_cmd_path *path)
 				stdin_backup = dup(STDIN_FILENO);
 				setup_io_redirections(cmd[i]);
 			}
-			if (cmd[i]->cmd_split && cmd[i]->cmd_split[0] && ft_strchr(cmd[i]->cmd_split[0], ' '))
+			if (cmd[i]->cmd_split && cmd[i]->cmd_split[0] && ft_strchr(cmd[i]->cmd_split[0], ' ') && cmd[i]->was_quoted != 1)
 			{
 				char **new_args = ft_split(cmd[i]->cmd_split[0], ' ');
 				if (new_args)

@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/22 10:04:59 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/22 17:21:29 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,8 @@ static void prepare_command_splits(t_cmd **cmd, t_token **tokens)
 			if (!cmd[cmd_idx]->cmd_split)
 				cmd[cmd_idx]->cmd_split = ft_calloc(count_tokens(tokens) + 1, sizeof(char*));
 			cmd[cmd_idx]->cmd_split[arg_idx++] = ft_strdup(tokens[i]->value);
+			if (tokens[i]->quoted == 1)
+				cmd[cmd_idx]->was_quoted = 1;
 		}
 		else if (tokens[i]->type == TOKEN_PIPE)
 		{
