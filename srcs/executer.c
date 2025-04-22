@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 18:42:30 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/21 23:40:08 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/22 10:21:14 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void	execute_command(t_cmd **cmd, t_cmd_path *path)
 				if (new_args)
 				{
 					if (cmd[i]->cmd_split[1])
-						append_args(new_args, cmd[i]);
+						append_args(&new_args, cmd[i]);
 					free_2d(cmd[i]->cmd_split);
 					cmd[i]->cmd_split = new_args;
 				}
@@ -152,29 +152,30 @@ static void	do_builtin_children(t_cmd *cmd, t_cmd_path *path)
 	}
 }
 
-void	append_args(char **new_args, t_cmd *cmd)
+void append_args(char ***new_args, t_cmd *cmd)
 {
 	int	i;
 	int	j;
 
 	i = 0;
-	while (new_args[i])
+	while ((*new_args)[i])
 		i++;
 	j = 1;
 	while (cmd->cmd_split[j])
 		j++;
-	new_args = realloc_2d(new_args, i, i + j);
-	if (!new_args)
-		return ;
+	*new_args = realloc_2d(*new_args, i, i + j);
+	if (!*new_args)
+		return;
 	j = 1;
 	while (cmd->cmd_split[j])
 	{
-		new_args[i] = ft_strdup(cmd->cmd_split[j]);
-		if (!new_args[i])
+		(*new_args)[i] = ft_strdup(cmd->cmd_split[j]);
+		if (!(*new_args)[i])
 			return ;
 		i++;
 		j++;
 	}
+	(*new_args)[i] = NULL;
 }
 
 int	expanded_as_command(t_cmd *cmd)
@@ -188,7 +189,7 @@ int	expanded_as_command(t_cmd *cmd)
 	if (!new_args)
 		return (0);
 	if (cmd->cmd_split[1])
-		append_args(new_args, cmd);
+		append_args(&new_args, cmd);
 	if (!new_args)
 		return (0);
 	free_2d(cmd->cmd_split);

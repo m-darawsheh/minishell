@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 16:19:37 by hassende          #+#    #+#             */
-/*   Updated: 2025/03/16 15:30:55 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/22 09:56:15 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,8 @@ void	free_cmds(t_cmd **cmd)
 		return ;
 	while (cmd[++i])
 	{
-		free_2d(cmd[i]->cmd_split);
+		if (cmd[i]->cmd_split)
+			free_2d(cmd[i]->cmd_split);
 		free(cmd[i]->infile);
 		free(cmd[i]->outfile);
 		free(cmd[i]->cmd);

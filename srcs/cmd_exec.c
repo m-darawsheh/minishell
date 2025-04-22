@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/21 21:53:35 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/22 10:04:59 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ static	t_cmd	**parse_and_prepare(char *line_read, t_cmd_path *path, t_token ***t
 	cmd = t_cmd_malloc(line_read, path);
 	if (!cmd)
 		return (NULL);
-	tokens = tokenize(line_read);
+	tokens = tokenize(line_read, path);
 	if (!tokens)
 		return (NULL);
 	expander(tokens, path);

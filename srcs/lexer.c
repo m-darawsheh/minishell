@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/15 18:46:05 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/17 19:26:02 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/22 10:05:25 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ static int	process_whitespace(t_lexer *lexer)
 	return (0);
 }
 
-t_token	**tokenize(char *line_read)
+t_token	**tokenize(char *line_read, t_cmd_path *path)
 {
 	t_lexer	lexer;
 
@@ -94,6 +94,7 @@ t_token	**tokenize(char *line_read)
 	if (lexer.in_quotes != 0)
 	{
 		free_tokens(lexer.tokens);
+		path->exit_status = 2;
 		return (print_and_null("Syntax error: unclosed quotes"));
 	}
 	return (lexer.tokens);

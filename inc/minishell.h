@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:24:48 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/04/21 23:40:56 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/22 10:14:50 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,7 +141,7 @@ void	check_for_expansion(t_token *token, t_cmd_path *path);
 void	remove_quotes(t_token *token);
 int		ft_strcmp(const char *s1, const char *s2);
 int		expanded_as_command(t_cmd *cmd);
-void	append_args(char **new_args, t_cmd *cmd);
+void	append_args(char ***new_args, t_cmd *cmd);
 void	wow();
 
 
@@ -150,7 +150,7 @@ void	print_not_found(t_cmd *cmd);
 void	print_dir_error(char *cmd);
 
 // Lexer
-t_token	**tokenize(char *line_read);
+t_token	**tokenize(char *line_read, t_cmd_path *path);
 int		parse_token(t_token **tokens, t_cmd **cmd);
 int		process_quotes(t_lexer *lexer);
 void	init_lexer(t_lexer *lexer, char *line);
