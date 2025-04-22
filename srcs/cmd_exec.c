@@ -6,14 +6,15 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/22 17:21:29 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/22 18:29:10 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 static int		process_heredocs(t_cmd **cmd);
-static t_cmd	**parse_and_prepare(char *line_read, t_cmd_path *path, t_token ***tokens_head);
+static t_cmd	**parse_and_prepare(char *line_read, t_cmd_path *path,
+					t_token ***tokens_head);
 static void		prepare_command_splits(t_cmd **cmd, t_token **tokens);
 
 void	exec_cmd(char *line_read, t_cmd_path *path)
@@ -35,7 +36,8 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 	free_cmds(cmd);
 }
 
-static	t_cmd	**parse_and_prepare(char *line_read, t_cmd_path *path, t_token ***tokens_head)
+static	t_cmd	**parse_and_prepare(char *line_read, t_cmd_path *path,
+		t_token ***tokens_head)
 {
 	t_cmd	**cmd;
 	t_token	**tokens;
@@ -74,31 +76,22 @@ static int	process_heredocs(t_cmd **cmd)
 	return (1);
 }
 
-int	count_tokens(t_token **tokens)
-{
-	int	count;
-
-	count = 0;
-	while (tokens[count] && tokens[count]->type  == TOKEN_WORD)
-		count++;
-	return (count);
-}
-
-static void prepare_command_splits(t_cmd **cmd, t_token **tokens)
+static void	prepare_command_splits(t_cmd **cmd, t_token **tokens)
 {
 	int	i;
 	int	cmd_idx;
 	int	arg_idx;
 
-	i = 0;
+	i = -1;
 	cmd_idx = 0;
 	arg_idx = 0;
-	while (tokens[i])
+	while (tokens[++i])
 	{
 		if (tokens[i]->type == TOKEN_WORD)
 		{
 			if (!cmd[cmd_idx]->cmd_split)
-				cmd[cmd_idx]->cmd_split = ft_calloc(count_tokens(tokens) + 1, sizeof(char*));
+				cmd[cmd_idx]->cmd_split = ft_calloc(count_tokens(tokens) + 1,
+						sizeof(char*));
 			cmd[cmd_idx]->cmd_split[arg_idx++] = ft_strdup(tokens[i]->value);
 			if (tokens[i]->quoted == 1)
 				cmd[cmd_idx]->was_quoted = 1;
@@ -109,10 +102,8 @@ static void prepare_command_splits(t_cmd **cmd, t_token **tokens)
 			cmd_idx++;
 			arg_idx = 0;
 		}
-		else if (tokens[i]->type == TOKEN_REDIR_IN || tokens[i]->type == TOKEN_REDIR_OUT ||
-				tokens[i]->type == TOKEN_APPEND || tokens[i]->type == TOKEN_HEREDOC)
-					i++;
-		i++;
+		else if (is_not_word(tokens[i]->type))
+			i++;
 	}
 	cmd[cmd_idx]->cmd_split[arg_idx] = NULL;
 }

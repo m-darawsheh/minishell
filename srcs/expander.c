@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 14:28:49 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/22 17:20:14 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/22 17:39:04 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,10 +114,10 @@ void	check_for_expansion(t_token *token, t_cmd_path *path)
 		{
 			prev_value = ft_strdup(token->value);
 			expand(token, i, path);
-			if (ft_strncmp(prev_value, token->value, ft_strlen(prev_value)) != 0)
+			if (ft_strcmp(prev_value, token->value) != 0)
 			{
 				free(prev_value);
-				continue;
+				continue ;
 			}
 			free(prev_value);
 		}
