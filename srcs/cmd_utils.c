@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 13:37:31 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/22 10:25:10 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/23 14:19:14 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void	setup_command(t_cmd *cmd, t_cmd_path *path)
 		free(cmd->cmd_path);
 	}
 	if (!path->path[i])
-		print_not_found(cmd);
+		print_not_found(cmd, path);
 }
 
 static void	get_file(t_cmd **cmd, char *line_read, int *i, int j, int type)

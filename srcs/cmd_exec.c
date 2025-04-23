@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_exec.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/22 20:21:24 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/23 14:41:27 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 	cmd = parse_and_prepare(line_read, path, &tokens);
 	if (!cmd)
 	{
-		free_cmds(cmd);
+		free_cmds(cmd, 0);
 		return ;
 	}
 	if (!process_heredocs(cmd))
@@ -36,7 +36,7 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 	prepare_command_splits(cmd, tokens);
 	free_tokens(tokens);
 	execute_command(cmd, path);
-	free_cmds(cmd);
+	free_cmds(cmd, 0);
 }
 
 static	t_cmd	**parse_and_prepare(char *line_read, t_cmd_path *path,
@@ -55,7 +55,7 @@ static	t_cmd	**parse_and_prepare(char *line_read, t_cmd_path *path,
 	if (!parse_token(tokens, cmd))
 	{
 		free_tokens(tokens);
-		free_cmds(cmd);
+		free_cmds(cmd, 0);
 		return (NULL);
 	}
 	*tokens_head = tokens;
@@ -73,7 +73,7 @@ static int	process_heredocs(t_cmd **cmd)
 			handle_heredoc(cmd[i]);
 		if (cmd[i]->skip_exec)
 		{
-			free_cmds(cmd);
+			free_cmds(cmd, 0);
 			return (0);
 		}
 	}

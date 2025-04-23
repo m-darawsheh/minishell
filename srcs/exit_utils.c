@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 16:19:37 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/22 09:56:15 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/23 14:40:35 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void	*print_and_null(char *str)
 	return (NULL);
 }
 
-void	free_cmds(t_cmd **cmd)
+void	free_cmds(t_cmd **cmd, int came_from_error)
 {
 	int	i;
 
@@ -38,7 +38,7 @@ void	free_cmds(t_cmd **cmd)
 		free(cmd[i]->infile);
 		free(cmd[i]->outfile);
 		free(cmd[i]->cmd);
-		if (cmd[i]->cmd_path)
+		if (cmd[i]->cmd_path && !came_from_error)
 			free(cmd[i]->cmd_path);
 		if (cmd[i]->delimiter)
 			free(cmd[i]->delimiter);

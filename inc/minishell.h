@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:24:48 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/04/22 19:21:28 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/23 14:40:23 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,7 @@ typedef struct s_command
 	char					*cmd_path;
 	char					*delimiter;
 	t_cmd_path				*path;
+	struct s_command		**main_cmd;
 }	t_cmd;
 
 // Function Prototypes
@@ -123,7 +124,7 @@ void	setup_command(t_cmd *cmd, t_cmd_path *path);
 void	pwd_handle(t_cmd_path *path);
 void	export_handle(t_cmd *cmd, t_cmd_path *path);
 void	do_echo(t_cmd *cmd);
-void	free_cmds(t_cmd **cmd);
+void	free_cmds(t_cmd **cmd, int came_from_error);
 void	handle_heredoc(t_cmd *cmd);
 void	expander(t_token **tokens, t_cmd_path *path);
 void	print_env(t_cmd_path *path);
@@ -148,10 +149,11 @@ void	append_args(char ***new_args, t_cmd *cmd);
 void	wow();
 int		is_not_word(t_token_type type);
 int		count_tokens(t_token **tokens);
-
+void	free_single_cmd(t_cmd *cmd);
+void	free_path(t_cmd_path *path);
 
 // print errors
-void	print_not_found(t_cmd *cmd);
+void	print_not_found(t_cmd *cmd, t_cmd_path *path);
 void	print_dir_error(char *cmd);
 
 // Lexer

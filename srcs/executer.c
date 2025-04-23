@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executer.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 18:42:30 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/22 19:58:31 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/23 14:40:52 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ void	execute_command(t_cmd **cmd, t_cmd_path *path)
 	got_forked = 0;
 	while (cmd[++i])
 	{
+		cmd[i]->main_cmd = cmd;
 		is_child = cmd[i]->has_pipe || (i > 0 && cmd[i - 1]->has_pipe);
 		if (!is_child)
 		{
@@ -218,5 +219,6 @@ void	execute_builtin_child(t_cmd *cmd, t_cmd_path *path)
 			setup_command(cmd, path);
 		execve(cmd->cmd_path, cmd->cmd_split, path->envp);
 	}
+	free_cmds(&cmd, 0);
 	exit(127);
 }
