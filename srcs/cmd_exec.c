@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/23 16:10:24 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/23 16:35:09 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,12 +50,14 @@ static	t_cmd	**parse_and_prepare(char *line_read, t_cmd_path *path,
 		return (NULL);
 	tokens = tokenize(line_read, path);
 	if (!tokens)
+	{
+		free_cmds(cmd, 0);
 		return (NULL);
+	}
 	expander(tokens, path);
 	if (!parse_token(tokens, cmd))
 	{
 		free_tokens(tokens);
-		free_cmds(cmd, 0);
 		return (NULL);
 	}
 	*tokens_head = tokens;

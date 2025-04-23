@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/15 18:46:05 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/22 10:05:25 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/23 16:33:03 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,21 @@ static int	process_whitespace(t_lexer *lexer)
 	return (0);
 }
 
+int	token_check(t_lexer lexer)
+{
+	if (lexer.count == 2 && (lexer.tokens[0]->type == TOKEN_WORD && !(lexer.tokens[1]->type == TOKEN_WORD)))
+	{
+		free_tokens(lexer.tokens);
+		return (1);
+	}
+	if (lexer.count == 2 && (lexer.tokens[1]->type == TOKEN_WORD && !(lexer.tokens[0]->type == TOKEN_WORD)))
+	{
+		free_tokens(lexer.tokens);
+		return (1);
+	}
+	return (0);
+}
+
 t_token	**tokenize(char *line_read, t_cmd_path *path)
 {
 	t_lexer	lexer;
@@ -97,5 +112,7 @@ t_token	**tokenize(char *line_read, t_cmd_path *path)
 		path->exit_status = 2;
 		return (print_and_null("Syntax error: unclosed quotes"));
 	}
+	if (token_check(lexer))
+		return (NULL);
 	return (lexer.tokens);
 }
