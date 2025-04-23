@@ -3,15 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 19:24:24 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/17 19:25:34 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/23 08:09:41 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+// echo must work like that
+// test="mohammed   darawsheh"
+// echo $test  --->  mohammed darawseh
+// echo "$test"    --->  mohammed   darawsheh
 static int	check_all_n(char *str)
 {
 	int	i;
