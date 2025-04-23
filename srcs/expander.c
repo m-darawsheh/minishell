@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expander.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 14:28:49 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/22 20:26:41 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/23 12:32:30 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ static void	expand(t_token *token, int i, t_cmd_path *path)
 		change_value(token, start, i + 1, ft_itoa(path->exit_status));
 	else if (token->value[i] == '0')
 		change_value(token, start, i + 1, ft_strdup("minishell"));
-	else if (ft_isalnum(token->value[i]))
+	else if (ft_isdigit(token->value[i]))
 		change_value(token, start, i + 1, ft_strdup(""));
 	else
 	{
@@ -79,6 +79,7 @@ static void	expand(t_token *token, int i, t_cmd_path *path)
 				|| token->value[i] == '_'))
 			var_name[j++] = token->value[i++];
 		var_name[j] = '\0';
+
 		if (j > 0)
 			change_value(token, start, i, get_env_value(var_name, path));
 	}
