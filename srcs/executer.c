@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 18:42:30 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/23 14:40:52 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/23 15:01:04 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -208,11 +208,16 @@ void	wow()
 	return ;
 }
 
-void	execute_builtin_child(t_cmd *cmd, t_cmd_path *path)
+void execute_builtin_child(t_cmd *cmd, t_cmd_path *path)
 {
 	if (cmd->cmd_split && cmd->cmd_split[0])
 	{
-		do_builtin_children(cmd, path);
+		if (is_builtin(cmd))
+		{
+			do_builtin_children(cmd, path);
+			free_single_cmd(cmd);
+			exit(0);
+		}
 		if (expanded_as_command(cmd))
 			wow();
 		else
