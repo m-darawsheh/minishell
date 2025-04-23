@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/23 14:41:27 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/23 16:10:24 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,8 +83,10 @@ static int	process_heredocs(t_cmd **cmd)
 static void	prepare_command_splits(t_cmd **cmd, t_token **tokens)
 {
 	int	i;
+	int	j;
 	int	cmd_idx;
 	int	arg_idx;
+	int	token_count;
 
 	i = -1;
 	cmd_idx = 0;
@@ -94,8 +96,18 @@ static void	prepare_command_splits(t_cmd **cmd, t_token **tokens)
 		if (tokens[i]->type == TOKEN_WORD)
 		{
 			if (!cmd[cmd_idx]->cmd_split)
-				cmd[cmd_idx]->cmd_split = ft_calloc(count_tokens(tokens) + 1,
+			{
+				token_count = 0;
+				j = i;
+				while (tokens[j] && tokens[j]->type != TOKEN_PIPE)
+				{
+					if (tokens[j]->type == TOKEN_WORD)
+						token_count++;
+					j++;
+				}
+				cmd[cmd_idx]->cmd_split = ft_calloc(token_count + 1,
 						sizeof(char*));
+			}
 			cmd[cmd_idx]->cmd_split[arg_idx++] = ft_strdup(tokens[i]->value);
 			if (tokens[i]->quoted == 1)
 				cmd[cmd_idx]->was_quoted = 1;

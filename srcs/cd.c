@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/10 12:02:07 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/19 16:03:48 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/23 16:14:33 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ int	do_cd(t_cmd *cmd, t_cmd_path *path)
 		return (1);
 	}
 	else
-		new_path = cmd->cmd_split[1];
+		new_path = ft_strdup(cmd->cmd_split[1]);
 	if (chdir(new_path) == -1)
 	{
 		ft_putstr_fd("cd: ", STDERR_FILENO);

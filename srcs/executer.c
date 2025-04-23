@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 18:42:30 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/23 15:01:04 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/23 15:52:09 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,23 +190,23 @@ int	expanded_as_command(t_cmd *cmd)
 	if (!ft_strchr(cmd->cmd_split[0], ' '))
 		return (0);
 	new_args = ft_split(cmd->cmd_split[0], ' ');
-	setup_command(cmd, cmd->path);
 	if (!new_args)
-		return (0);
+	return (0);
 	if (cmd->cmd_split[1])
-		append_args(&new_args, cmd);
+	append_args(&new_args, cmd);
 	if (!new_args)
-		return (0);
+	return (0);
 	free_2d(cmd->cmd_split);
 	cmd->cmd_split = new_args;
+	setup_command(cmd, cmd->path);
 	return (1);
 }
 
-// ! WOW - very demure
-void	wow()
-{
-	return ;
-}
+// // ! WOW - very demure
+// void	wow()
+// {
+// 	return ;
+// }
 
 void execute_builtin_child(t_cmd *cmd, t_cmd_path *path)
 {
@@ -215,12 +215,11 @@ void execute_builtin_child(t_cmd *cmd, t_cmd_path *path)
 		if (is_builtin(cmd))
 		{
 			do_builtin_children(cmd, path);
-			free_single_cmd(cmd);
+			free_cmds(cmd->main_cmd, 1);
+			free_path(path);
 			exit(0);
 		}
-		if (expanded_as_command(cmd))
-			wow();
-		else
+		if (!expanded_as_command(cmd))
 			setup_command(cmd, path);
 		execve(cmd->cmd_path, cmd->cmd_split, path->envp);
 	}
