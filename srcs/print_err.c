@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   print_err.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 19:02:08 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/23 14:40:29 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/23 17:43:29 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,8 +66,10 @@ void	free_single_cmd(t_cmd *cmd)
 
 void	print_not_found(t_cmd *cmd, t_cmd_path *path)
 {
-	ft_putstr_fd(cmd->cmd_split[0], 2);
-	ft_putstr_fd(": command not found\n", 2);
+	// ft_putstr_fd(cmd->cmd_split[0], 2);
+	// ft_putstr_fd(": command not found\n", 2);
+	printf("%s", cmd->cmd_split[0]);
+	printf(":  command not found\n");
 	if (cmd->main_cmd)
 		free_cmds(cmd->main_cmd, 1);
 	else
