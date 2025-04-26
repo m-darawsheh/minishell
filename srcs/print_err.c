@@ -6,34 +6,11 @@
 /*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 19:02:08 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/23 17:43:29 by mdarawsh         ###   ########.fr       */
+/*   Updated: 2025/04/26 17:13:23 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-// void	free_cmds(t_cmd **cmd)
-// {
-// 	int	i;
-
-// 	i = -1;
-// 	if (!cmd)
-// 		return ;
-// 	while (cmd[++i])
-// 	{
-// 		if (cmd[i]->cmd_split)
-// 			free_2d(cmd[i]->cmd_split);
-// 		free(cmd[i]->infile);
-// 		free(cmd[i]->outfile);
-// 		free(cmd[i]->cmd);
-// 		if (cmd[i]->cmd_path)
-// 			free(cmd[i]->cmd_path);
-// 		if (cmd[i]->delimiter)
-// 			free(cmd[i]->delimiter);
-// 		free(cmd[i]);
-// 	}
-// 	free(cmd);
-// }
 
 void	free_path(t_cmd_path *path)
 {
@@ -55,8 +32,6 @@ void	free_single_cmd(t_cmd *cmd)
 		free(cmd->outfile);
 	if (cmd->cmd)
 		free(cmd->cmd);
-	// if (cmd->cmd_path)
-	// 	free(cmd->cmd_path);
 	if (cmd->delimiter)
 		free(cmd->delimiter);
 	if (cmd->main_cmd)
@@ -66,8 +41,6 @@ void	free_single_cmd(t_cmd *cmd)
 
 void	print_not_found(t_cmd *cmd, t_cmd_path *path)
 {
-	// ft_putstr_fd(cmd->cmd_split[0], 2);
-	// ft_putstr_fd(": command not found\n", 2);
 	printf("%s", cmd->cmd_split[0]);
 	printf(":  command not found\n");
 	if (cmd->main_cmd)

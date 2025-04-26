@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/15 18:46:05 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/23 16:33:03 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/26 17:38:54 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,12 +75,14 @@ static int	process_whitespace(t_lexer *lexer)
 
 int	token_check(t_lexer lexer)
 {
-	if (lexer.count == 2 && (lexer.tokens[0]->type == TOKEN_WORD && !(lexer.tokens[1]->type == TOKEN_WORD)))
+	if (lexer.count == 2 && (lexer.tokens[0]->type == TOKEN_WORD
+			&& !(lexer.tokens[1]->type == TOKEN_WORD)))
 	{
 		free_tokens(lexer.tokens);
 		return (1);
 	}
-	if (lexer.count == 2 && (lexer.tokens[1]->type == TOKEN_WORD && !(lexer.tokens[0]->type == TOKEN_WORD)))
+	if (lexer.count == 2 && (lexer.tokens[1]->type == TOKEN_WORD
+			&& !(lexer.tokens[0]->type == TOKEN_WORD)))
 	{
 		free_tokens(lexer.tokens);
 		return (1);
