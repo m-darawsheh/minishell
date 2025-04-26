@@ -6,26 +6,11 @@
 /*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/15 18:46:05 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/26 17:38:54 by mdarawsh         ###   ########.fr       */
+/*   Updated: 2025/04/26 17:41:37 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-void	free_tokens(t_token **tokens)
-{
-	int	i;
-
-	i = -1;
-	if (!tokens)
-		return ;
-	while (tokens[++i])
-	{
-		free(tokens[i]->value);
-		free(tokens[i]);
-	}
-	free(tokens);
-}
 
 static void	add_special_single_token(t_lexer *lexer)
 {

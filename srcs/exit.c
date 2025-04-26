@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 20:47:36 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/19 15:53:45 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/26 17:40:56 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,4 +74,19 @@ int	do_exit(t_cmd *cmd)
 	exit_code = ft_atoi(cmd->cmd_split[1]);
 	exit_code %= 256;
 	exit ((int)exit_code);
+}
+
+void	free_tokens(t_token **tokens)
+{
+	int	i;
+
+	i = -1;
+	if (!tokens)
+		return ;
+	while (tokens[++i])
+	{
+		free(tokens[i]->value);
+		free(tokens[i]);
+	}
+	free(tokens);
 }
