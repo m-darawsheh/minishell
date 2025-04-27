@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 13:06:27 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/22 19:34:03 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/27 15:37:57 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,7 @@ static int	handle_redir(t_token **tokens, t_cmd **cmd,
 		int fd = open(tokens[*i + 1]->value, O_RDONLY);
 		if (fd == -1)
 		{
-			ft_putstr_fd("minishell: ", 2);
-			ft_putstr_fd(tokens[*i + 1]->value, 2);
-			ft_putstr_fd(": No such file or directory\n", 2);
+			print_file_error(tokens[*i + 1]->value);
 			return (0);
 		}
 		close(fd);
@@ -47,7 +45,10 @@ static int	handle_redir(t_token **tokens, t_cmd **cmd,
 	{
 		int fd = open(tokens[*i + 1]->value, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		if (fd == -1)
+		{
+			print_file_error(tokens[*i + 1]->value);
 			return (0);
+		}
 		cmd[cmd_i]->has_outfile = 1;
 		(*i)++;
 		ft_strlcpy(cmd[cmd_i]->outfile, tokens[*i]->value, MAX_FILENAME);
@@ -69,7 +70,10 @@ static int	handle_advanced_redir(t_token **tokens, t_cmd **cmd,
 	{
 		int fd = open(tokens[*i + 1]->value, O_WRONLY | O_CREAT | O_APPEND, 0644);
 		if (fd == -1)
+		{
+			print_file_error(tokens[*i + 1]->value);
 			return (0);
+		}
 		cmd[cmd_i]->has_appendfile = 1;
 		(*i)++;
 		ft_strlcpy(cmd[cmd_i]->outfile, tokens[*i]->value, MAX_FILENAME);

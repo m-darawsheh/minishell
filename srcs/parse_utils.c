@@ -1,34 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_putstr_fd.c                                     :+:      :+:    :+:   */
+/*   parse_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/27 15:49:09 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/27 15:32:19 by hassende         ###   ########.fr       */
+/*   Created: 2025/04/27 15:28:52 by hassende          #+#    #+#             */
+/*   Updated: 2025/04/27 15:30:05 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "minishell.h"
 
-void	ft_putstr_fd(char *s, int fd)
+void	print_file_error(char *filename)
 {
-	int		i;
-	char	*buffer;
-
-	if (!s)
-		return ;
-	buffer = ft_calloc(ft_strlen(s) + 1, sizeof(char));
-	if (!buffer)
-		return ;
-	i = 0;
-	while (s[i] != '\0')
-	{
-		buffer[i] = s[i];
-		i++;
-	}
-	buffer[i] = '\0';
-	write(fd, buffer, ft_strlen(buffer));
-	free(buffer);
+	ft_putstr_fd("minishell: ", 2);
+	ft_putstr_fd(filename, 2);
+	ft_putstr_fd(": No such file or directory\n", 2);
 }

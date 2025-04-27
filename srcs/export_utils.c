@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   export_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 17:46:56 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/04/26 17:50:07 by mdarawsh         ###   ########.fr       */
+/*   Updated: 2025/04/27 15:19:40 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int	is_valid_identifier(char *str)
+int	is_valid_identifier(char *str)
 {
 	int	i;
 
@@ -30,7 +30,7 @@ static int	is_valid_identifier(char *str)
 	return (1);
 }
 
-static int	get_name_length(char *var)
+int	get_name_length(char *var)
 {
 	int	i;
 
@@ -40,7 +40,7 @@ static int	get_name_length(char *var)
 	return (i);
 }
 
-static int	find_env_var(char **envp, char *var, int name_len)
+int	find_env_var(char **envp, char *var, int name_len)
 {
 	int	i;
 
@@ -55,7 +55,7 @@ static int	find_env_var(char **envp, char *var, int name_len)
 	return (-1);
 }
 
-static void	add_env_var(t_cmd_path *path, char *var)
+void	add_env_var(t_cmd_path *path, char *var)
 {
 	int		i;
 	char	**new_env;
@@ -83,7 +83,7 @@ static void	add_env_var(t_cmd_path *path, char *var)
 	path->envp = new_env;
 }
 
-static void	update_env_var(t_cmd_path *path, char *var, int pos)
+void	update_env_var(t_cmd_path *path, char *var, int pos)
 {
 	free(path->envp[pos]);
 	path->envp[pos] = ft_strdup(var);

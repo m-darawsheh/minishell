@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:24:48 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/04/23 15:46:22 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/27 15:33:39 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,7 +151,12 @@ int		is_not_word(t_token_type type);
 int		count_tokens(t_token **tokens);
 void	free_single_cmd(t_cmd *cmd);
 void	free_path(t_cmd_path *path);
-
+int		is_valid_identifier(char *str);
+int		get_name_length(char *var);
+int		find_env_var(char **envp, char *var, int name_len);
+void	add_env_var(t_cmd_path *path, char *var);
+void	update_env_var(t_cmd_path *path, char *var, int env_pos);
+void	print_file_error(char *filename);
 // print errors
 void	print_not_found(t_cmd *cmd, t_cmd_path *path);
 void	print_dir_error(char *cmd);
