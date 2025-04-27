@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:24:48 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/04/27 15:58:15 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/27 16:17:14 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,6 +156,8 @@ int		find_env_var(char **envp, char *var, int name_len);
 void	add_env_var(t_cmd_path *path, char *var);
 void	update_env_var(t_cmd_path *path, char *var, int env_pos);
 void	print_file_error(char *filename);
+int		count_command_tokens(t_token **tokens, int start_idx);
+void	setter_norm(t_cmd **cmd, int *cmd_idx, int *arg_idx);
 // print errors
 void	print_not_found(t_cmd *cmd, t_cmd_path *path);
 void	print_dir_error(char *cmd);
