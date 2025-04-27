@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executer.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 18:42:30 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/23 15:52:09 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/27 15:58:01 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -201,12 +201,6 @@ int	expanded_as_command(t_cmd *cmd)
 	setup_command(cmd, cmd->path);
 	return (1);
 }
-
-// // ! WOW - very demure
-// void	wow()
-// {
-// 	return ;
-// }
 
 void execute_builtin_child(t_cmd *cmd, t_cmd_path *path)
 {

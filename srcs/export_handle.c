@@ -3,22 +3,49 @@
 /*                                                        :::      ::::::::   */
 /*   export_handle.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 23:10:45 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/26 17:50:00 by mdarawsh         ###   ########.fr       */
+/*   Updated: 2025/04/27 15:55:34 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static void	print_sorted_env(t_cmd_path *path)
+static void	print_sorted_helper(char **sorted, int count)
 {
 	int		i;
 	int		j;
+	char	*temp;
+
+	i = -1;
+	while (++i < count - 1)
+	{
+		j = i + 1;
+		while (j < count)
+		{
+			if (ft_strcmp(sorted[i], sorted[j]) > 0)
+			{
+				temp = sorted[i];
+				sorted[i] = sorted[j];
+				sorted[j] = temp;
+			}
+			j++;
+		}
+	}
+	i = -1;
+	while (sorted[++i])
+	{
+		printf("declare -x %s\n", sorted[i]);
+		free(sorted[i]);
+	}
+}
+
+static void	print_sorted_env(t_cmd_path *path)
+{
+	int		i;
 	int		count;
 	char	**sorted;
-	char	*temp;
 
 	count = 0;
 	while (path->envp[count])
@@ -33,30 +60,16 @@ static void	print_sorted_env(t_cmd_path *path)
 		i++;
 	}
 	sorted[i] = NULL;
-	i = 0;
-	while (i < count - 1)
-	{
-		j = i + 1;
-		while (j < count)
-		{
-			if (ft_strcmp(sorted[i], sorted[j]) > 0)
-			{
-				temp = sorted[i];
-				sorted[i] = sorted[j];
-				sorted[j] = temp;
-			}
-			j++;
-		}
-		i++;
-	}
-	i = 0;
-	while (sorted[i])
-	{
-		printf("declare -x %s\n", sorted[i]);
-		free(sorted[i]);
-		i++;
-	}
+	print_sorted_helper(sorted, count);
 	free(sorted);
+}
+
+static void	add_or_update(t_cmd_path *path, char *var, int env_pos)
+{
+	if (env_pos >= 0)
+		update_env_var(path, var, env_pos);
+	else
+		add_env_var(path, var);
 }
 
 void	export_handle(t_cmd *cmd, t_cmd_path *path)
@@ -66,10 +79,7 @@ void	export_handle(t_cmd *cmd, t_cmd_path *path)
 	int		name_len;
 
 	if (!cmd->cmd_split[1])
-	{
-		print_sorted_env(path);
-		return ;
-	}
+		return (print_sorted_env(path));
 	i = 1;
 	while (cmd->cmd_split[i])
 	{
@@ -85,12 +95,7 @@ void	export_handle(t_cmd *cmd, t_cmd_path *path)
 		name_len = get_name_length(cmd->cmd_split[i]);
 		env_pos = find_env_var(path->envp, cmd->cmd_split[i], name_len);
 		if (ft_strchr(cmd->cmd_split[i], '=') || env_pos == -1)
-		{
-			if (env_pos >= 0)
-				update_env_var(path, cmd->cmd_split[i], env_pos);
-			else
-				add_env_var(path, cmd->cmd_split[i]);
-		}
+			add_or_update(path, cmd->cmd_split[i], env_pos);
 		i++;
 	}
 }

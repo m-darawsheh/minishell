@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expander.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 14:28:49 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/23 12:32:30 by mdarawsh         ###   ########.fr       */
+/*   Updated: 2025/04/27 15:42:14 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,6 @@ static void	expand(t_token *token, int i, t_cmd_path *path)
 				|| token->value[i] == '_'))
 			var_name[j++] = token->value[i++];
 		var_name[j] = '\0';
-
 		if (j > 0)
 			change_value(token, start, i, get_env_value(var_name, path));
 	}
@@ -108,9 +107,9 @@ void	check_for_expansion(t_token *token, t_cmd_path *path)
 
 	if (token->value == NULL || !token->value[0])
 		return ;
-	i = 0;
+	i = -1;
 	quote_state = 0;
-	while (token->value[i])
+	while (token->value[++i])
 	{
 		set_quote_state(&quote_state, token->value[i], token);
 		if (token->value[i] == '$' && quote_state != 1)
@@ -125,7 +124,6 @@ void	check_for_expansion(t_token *token, t_cmd_path *path)
 			free(prev_value);
 			token->from_expansion = 1;
 		}
-		i++;
 	}
 	remove_quotes(token);
 }

@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:24:48 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/04/27 15:33:39 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/27 15:58:15 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,7 +146,6 @@ void	remove_quotes(t_token *token);
 int		ft_strcmp(const char *s1, const char *s2);
 int		expanded_as_command(t_cmd *cmd);
 void	append_args(char ***new_args, t_cmd *cmd);
-// void	wow();
 int		is_not_word(t_token_type type);
 int		count_tokens(t_token **tokens);
 void	free_single_cmd(t_cmd *cmd);
