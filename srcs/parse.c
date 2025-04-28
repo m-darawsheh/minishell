@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 13:06:27 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/27 15:37:57 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/28 15:57:48 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@ static void	handle_word(t_token **tokens, t_cmd **cmd, int i, int cmd_i)
 static int	handle_redir(t_token **tokens, t_cmd **cmd,
 						int *i, int cmd_i)
 {
+	int	fd;
+
 	if (!tokens[*i + 1] || tokens[*i + 1]->type != TOKEN_WORD)
 	{
 		ft_putstr_fd("minishell: syntax error near token `newline'\n", 2);
@@ -30,7 +32,7 @@ static int	handle_redir(t_token **tokens, t_cmd **cmd,
 	}
 	if (tokens[*i]->type == TOKEN_REDIR_IN)
 	{
-		int fd = open(tokens[*i + 1]->value, O_RDONLY);
+		fd = open(tokens[*i + 1]->value, O_RDONLY);
 		if (fd == -1)
 		{
 			print_file_error(tokens[*i + 1]->value);
@@ -42,24 +44,15 @@ static int	handle_redir(t_token **tokens, t_cmd **cmd,
 		ft_strlcpy(cmd[cmd_i]->infile, tokens[*i]->value, MAX_FILENAME);
 	}
 	else if (tokens[*i]->type == TOKEN_REDIR_OUT)
-	{
-		int fd = open(tokens[*i + 1]->value, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-		if (fd == -1)
-		{
-			print_file_error(tokens[*i + 1]->value);
-			return (0);
-		}
-		cmd[cmd_i]->has_outfile = 1;
-		(*i)++;
-		ft_strlcpy(cmd[cmd_i]->outfile, tokens[*i]->value, MAX_FILENAME);
-		close(fd);
-	}
+		return (handle_redir_2(tokens, cmd, i, cmd_i));
 	return (1);
 }
 
 static int	handle_advanced_redir(t_token **tokens, t_cmd **cmd,
 								int *i, int cmd_i)
 {
+	int	fd;
+
 	if (!tokens[*i + 1] || tokens[*i + 1]->type != TOKEN_WORD)
 	{
 		ft_putstr_fd("minishell: syntax error near token \'>> / <<\'\n", 2);
@@ -68,7 +61,7 @@ static int	handle_advanced_redir(t_token **tokens, t_cmd **cmd,
 	}
 	if (tokens[*i]->type == TOKEN_APPEND)
 	{
-		int fd = open(tokens[*i + 1]->value, O_WRONLY | O_CREAT | O_APPEND, 0644);
+		fd = open(tokens[*i + 1]->value, O_WRONLY | O_CREAT | O_APPEND, 0644);
 		if (fd == -1)
 		{
 			print_file_error(tokens[*i + 1]->value);
@@ -80,13 +73,7 @@ static int	handle_advanced_redir(t_token **tokens, t_cmd **cmd,
 		close(fd);
 	}
 	else if (tokens[*i]->type == TOKEN_HEREDOC)
-	{
-		cmd[cmd_i]->has_heredoc = 1;
-		(*i)++;
-		cmd[cmd_i]->delimiter = ft_strdup(tokens[*i]->value);
-		if (!cmd[cmd_i]->delimiter)
-			return (0);
-	}
+		handle_redir_3(tokens, cmd, i, cmd_i);
 	return (1);
 }
 

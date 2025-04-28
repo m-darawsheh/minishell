@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 18:42:30 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/27 15:58:01 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/28 16:25:00 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -217,6 +217,7 @@ void execute_builtin_child(t_cmd *cmd, t_cmd_path *path)
 			setup_command(cmd, path);
 		execve(cmd->cmd_path, cmd->cmd_split, path->envp);
 	}
-	free_cmds(&cmd, 0);
+	free_cmds(cmd->main_cmd, 1);
+	free_path(path);
 	exit(127);
 }

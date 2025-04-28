@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/27 16:15:44 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/28 16:20:01 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,19 @@ static int		process_heredocs(t_cmd **cmd);
 static t_cmd	**parse_and_prepare(char *line_read, t_cmd_path *path,
 					t_token ***tokens_head);
 static void		prepare_command_splits(t_cmd **cmd, t_token **tokens);
+
+void	close_fds(t_cmd **cmd)
+{
+	int	i;
+
+	i = 0;
+	while (cmd[i])
+	{
+		if (cmd[i]->has_heredoc)
+			close(cmd[i]->heredoc_fd);
+		i++;
+	}
+}
 
 void	exec_cmd(char *line_read, t_cmd_path *path)
 {
@@ -36,6 +49,7 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 	prepare_command_splits(cmd, tokens);
 	free_tokens(tokens);
 	execute_command(cmd, path);
+	close_fds(cmd);
 	free_cmds(cmd, 0);
 }
 
@@ -107,6 +121,8 @@ static void	prepare_command_splits(t_cmd **cmd, t_token **tokens)
 		else if (is_not_word(tokens[i]->type))
 			i++;
 	}
+	if (!cmd[cmd_idx]->cmd_split)
+		cmd[cmd_idx]->cmd_split = ft_calloc(1, sizeof(char*));
 	cmd[cmd_idx]->cmd_split[arg_idx] = NULL;
 }
 

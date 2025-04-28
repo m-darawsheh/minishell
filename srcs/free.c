@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   free.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 17:23:22 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/23 16:06:43 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/28 16:31:19 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void	free_2d(char **str)
 {
 	int	i;
 
-	if (!str || !*str)
+	if (!str)
 		return ;
 	i = 0;
 	while (str[i])
