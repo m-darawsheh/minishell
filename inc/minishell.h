@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:24:48 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/04/28 15:53:33 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/28 16:49:08 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,9 +159,14 @@ void	print_file_error(char *filename);
 int		count_command_tokens(t_token **tokens, int start_idx);
 void	setter_norm(t_cmd **cmd, int *cmd_idx, int *arg_idx);
 int		handle_redir_2(t_token **tokens, t_cmd **cmd,
-	int *i, int cmd_i);
+					int *i, int cmd_i);
 int handle_redir_3(t_token **tokens, t_cmd **cmd,
-		int *i, int cmd_i);
+					int *i, int cmd_i);
+int	handle_redir(t_token **tokens, t_cmd **cmd,
+					int *i, int cmd_i);
+void	handle_word(t_token **tokens, t_cmd **cmd, int i, int cmd_i);
+int	handle_advanced_redir(t_token **tokens, t_cmd **cmd,
+							int *i, int cmd_i);
 
 // print errors
 void	print_not_found(t_cmd *cmd, t_cmd_path *path);

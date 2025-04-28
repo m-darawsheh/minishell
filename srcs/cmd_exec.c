@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/28 16:20:01 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/28 16:57:08 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,30 +122,5 @@ static void	prepare_command_splits(t_cmd **cmd, t_token **tokens)
 			i++;
 	}
 	if (!cmd[cmd_idx]->cmd_split)
-		cmd[cmd_idx]->cmd_split = ft_calloc(1, sizeof(char*));
-	cmd[cmd_idx]->cmd_split[arg_idx] = NULL;
-}
-
-void	wait_for_children(t_cmd_path *path, t_cmd **cmd)
-{
-	int	status;
-	int	i;
-	int	last_pid;
-
-	i = 0;
-	while (cmd[i])
-		i++;
-	if (i == 1)
-		last_pid = cmd[0]->pid;
-	else
-		last_pid = cmd[i - 1]->pid;
-	if (waitpid(last_pid, &status, 0) > 0)
-	{
-		if (WIFEXITED(status))
-			path->exit_status = WEXITSTATUS(status);
-		else if (WIFSIGNALED(status))
-			path->exit_status = 128 + WTERMSIG(status);
-	}
-	while (waitpid(-1, &status, 0) > 0)
-		;
+		cmd[cmd_idx]->cmd_split = ft_calloc(1, sizeof (char *));
 }

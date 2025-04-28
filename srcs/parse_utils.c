@@ -6,23 +6,23 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 15:28:52 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/28 16:04:51 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/28 16:50:30 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void print_file_error(char *filename)
+void	print_file_error(char *filename)
 {
 	ft_putstr_fd("minishell: ", 2);
 	ft_putstr_fd(filename, 2);
 	ft_putstr_fd(": No such file or directory\n", 2);
 }
 
-int handle_redir_2(t_token **tokens, t_cmd **cmd,
+int	handle_redir_2(t_token **tokens, t_cmd **cmd,
 						int *i, int cmd_i)
 {
-	int fd;
+	int	fd;
 
 	fd = open(tokens[*i + 1]->value, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (fd == -1)
@@ -37,7 +37,7 @@ int handle_redir_2(t_token **tokens, t_cmd **cmd,
 	return (1);
 }
 
-int handle_redir_3(t_token **tokens, t_cmd **cmd,
+int	handle_redir_3(t_token **tokens, t_cmd **cmd,
 						int *i, int cmd_i)
 {
 	cmd[cmd_i]->has_heredoc = 1;

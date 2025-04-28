@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 17:44:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/27 16:15:52 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/28 16:57:13 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,4 +51,28 @@ void	setter_norm(t_cmd **cmd, int *cmd_idx, int *arg_idx)
 	cmd[*cmd_idx]->cmd_split[*arg_idx] = NULL;
 	(*cmd_idx)++;
 	*arg_idx = 0;
+}
+
+void	wait_for_children(t_cmd_path *path, t_cmd **cmd)
+{
+	int	status;
+	int	i;
+	int	last_pid;
+
+	i = 0;
+	while (cmd[i])
+		i++;
+	if (i == 1)
+		last_pid = cmd[0]->pid;
+	else
+		last_pid = cmd[i - 1]->pid;
+	if (waitpid(last_pid, &status, 0) > 0)
+	{
+		if (WIFEXITED(status))
+			path->exit_status = WEXITSTATUS(status);
+		else if (WIFSIGNALED(status))
+			path->exit_status = 128 + WTERMSIG(status);
+	}
+	while (waitpid(-1, &status, 0) > 0)
+		;
 }

@@ -4,7 +4,7 @@ SRCS_FILES = main.c exit_utils.c free.c signals.c path_init.c \
 			lexer.c lexer2.c parse.c expander.c \
 			heredoc.c unset.c  setup_io.c executer.c print_err.c\
 			expander_call.c utils.c cmd_exec_utils.c export_utils.c parse_utils.c \
-			
+			parse_utils2.c
 
 
 SRCS = $(addprefix srcs/, $(SRCS_FILES))
