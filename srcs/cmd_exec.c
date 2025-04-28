@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/28 16:57:08 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/28 17:12:41 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 	if (!process_heredocs(cmd))
 	{
 		path->exit_status = 130;
+		free_tokens(tokens);
 		return ;
 	}
 	prepare_command_splits(cmd, tokens);

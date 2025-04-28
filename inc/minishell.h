@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:24:48 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/04/28 16:49:08 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/28 17:41:10 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,13 @@ typedef struct s_lexer
 	int		in_quotes;
 	int		i;
 }	t_lexer;
+
+typedef struct s_pipe_data
+{
+	int	*pipe_fd;
+	int	*prev_pipe;
+	int	*got_forked;
+}	t_pipe_data;
 
 typedef struct s_cmd_path
 {
@@ -159,14 +166,26 @@ void	print_file_error(char *filename);
 int		count_command_tokens(t_token **tokens, int start_idx);
 void	setter_norm(t_cmd **cmd, int *cmd_idx, int *arg_idx);
 int		handle_redir_2(t_token **tokens, t_cmd **cmd,
-					int *i, int cmd_i);
-int handle_redir_3(t_token **tokens, t_cmd **cmd,
-					int *i, int cmd_i);
-int	handle_redir(t_token **tokens, t_cmd **cmd,
-					int *i, int cmd_i);
+			int *i, int cmd_i);
+int		handle_redir_3(t_token **tokens, t_cmd **cmd,
+			int *i, int cmd_i);
+int		handle_redir(t_token **tokens, t_cmd **cmd,
+			int *i, int cmd_i);
 void	handle_word(t_token **tokens, t_cmd **cmd, int i, int cmd_i);
-int	handle_advanced_redir(t_token **tokens, t_cmd **cmd,
-							int *i, int cmd_i);
+int		handle_advanced_redir(t_token **tokens, t_cmd **cmd,
+			int *i, int cmd_i);
+void	init_execution(int *prev_pipe, int *got_forked);
+void	handle_io_redirect(t_cmd *cmd, int *stdin_backup, int *stdout_backup);
+void	handle_unquoted_spaces(t_cmd *cmd);
+void	handle_non_piped_cmd(t_cmd *cmd,
+			int *stdin_backup, int *stdout_backup);
+void	execute_child(t_cmd *cmd,
+			int *pipe_fd, int *prev_pipe, int i);
+void	handle_piping(t_cmd *cmd, int *pipe_fd);
+void	process_command(t_cmd **cmd, int i, t_pipe_data *pipe_data);
+void	execute_command(t_cmd **cmd, t_cmd_path *path);
+void	restore_io(int stdin_backup, int stdout_backup);
+void	execute_echo_exit_cd(t_cmd *cmd, t_cmd_path *path);
 
 // print errors
 void	print_not_found(t_cmd *cmd, t_cmd_path *path);
