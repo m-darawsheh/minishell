@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/29 15:59:51 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/29 16:53:41 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,7 @@ static	t_cmd	**parse_and_prepare(char *line_read, t_cmd_path *path,
 	expander(tokens, path);
 	if (!parse_token(tokens, cmd))
 	{
+		free_cmds(cmd, 0);
 		free_tokens(tokens);
 		return (NULL);
 	}
@@ -90,7 +91,7 @@ static int	process_heredocs(t_cmd **cmd)
 		j = 0;
 		if (cmd[i]->has_heredoc)
 		{
-			while(cmd[i]->delimiter[j] && j <= cmd[i]->heredoc_index && !(cmd[i]->skip_exec))
+			while (cmd[i]->delimiter[j] && j <= cmd[i]->heredoc_index && !(cmd[i]->skip_exec))
 			{
 				if (cmd[i]->heredoc_fd != -1)
 					close(cmd[i]->heredoc_fd);
@@ -100,6 +101,7 @@ static int	process_heredocs(t_cmd **cmd)
 		}
 		if (cmd[i]->skip_exec)
 		{
+			close(cmd[i]->heredoc_fd);
 			free_cmds(cmd, 0);
 			return (0);
 		}

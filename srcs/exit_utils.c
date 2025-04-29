@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 16:19:37 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/29 15:57:58 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/29 16:38:50 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void	free_cmds(t_cmd **cmd, int came_from_error)
 		free(cmd[i]->cmd);
 		if (cmd[i]->cmd_path && !came_from_error)
 			free(cmd[i]->cmd_path);
-		if (cmd[i]->delimiter[0])
+		if (cmd[i]->delimiter)
 			free_2d(cmd[i]->delimiter);
 		free(cmd[i]);
 	}

@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 15:28:52 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/29 15:46:50 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/29 16:53:54 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ void	print_file_error(char *filename)
 	if (!temp2)
 		return ;
 	write(2, temp2, ft_strlen(temp2));
+	free(temp2);
 }
 
 int	handle_redir_2(t_token **tokens, t_cmd **cmd,
@@ -50,8 +51,6 @@ int	handle_redir_3(t_token **tokens, t_cmd **cmd,
 {
 	cmd[cmd_i]->has_heredoc = 1;
 	(*i)++;
-	// if (cmd[cmd_i]->delimiter)
-	// 	free(cmd[cmd_i]->delimiter);
 	cmd[cmd_i]->delimiter[cmd[cmd_i]->heredoc_index] = ft_strdup(tokens[*i]->value);
 	if (!cmd[cmd_i]->delimiter[cmd[cmd_i]->heredoc_index])
 		return (0);
