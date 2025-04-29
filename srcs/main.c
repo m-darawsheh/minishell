@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:25:54 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/04/21 21:50:42 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/29 15:38:42 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,12 +33,7 @@ void	process_command_line(char *line_read, t_cmd_path *path)
 		path->exit_status = 130;
 		g_heredoc_interrupted = 0;
 	}
-	if (*line_read == '\0' || check_if_empty(line_read))
-	{
-		free(line_read);
-		return ;
-	}
-	if (*line_read)
+	if (line_read[0])
 		add_history(line_read);
 	exec_cmd(line_read, path);
 	free(line_read);

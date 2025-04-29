@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_init.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 13:57:52 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/22 17:30:12 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/29 15:50:29 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ static void	init_cmd_struct(t_cmd *cmd, t_cmd_path *path)
 	cmd->path = path;
 	cmd->cmd_split = NULL;
 	cmd->cmd_path = NULL;
-	cmd->delimiter = NULL;
+	cmd->delimiter = ft_calloc(1024, sizeof(char *));
 	if (!cmd->cmd || !cmd->infile || !cmd->outfile)
 	{
 		free(cmd->cmd);
@@ -55,9 +55,7 @@ static void	init_cmd_struct(t_cmd *cmd, t_cmd_path *path)
 	cmd->skip_exec = 0;
 	cmd->heredoc_fd = -1;
 	cmd->was_quoted = 0;
-	cmd->cmd[0] = '\0';
-	cmd->infile[0] = '\0';
-	cmd->outfile[0] = '\0';
+	cmd->heredoc_index = 0;
 }
 
 static int	init_all_cmd_structs(t_cmd **cmd, int cmd_count, t_cmd_path *path)

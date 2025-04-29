@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   print_err.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 19:02:08 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/26 17:13:23 by mdarawsh         ###   ########.fr       */
+/*   Updated: 2025/04/29 15:37:16 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,20 +41,24 @@ void	free_single_cmd(t_cmd *cmd)
 
 void	print_not_found(t_cmd *cmd, t_cmd_path *path)
 {
-	printf("%s", cmd->cmd_split[0]);
-	printf(":  command not found\n");
-	if (cmd->main_cmd)
-		free_cmds(cmd->main_cmd, 1);
-	else
-		free_single_cmd(cmd);
+	char	*temp;
+
+	temp = ft_strjoin(cmd->cmd_split[0], " : command not found\n");
+	write(2, temp, ft_strlen(temp));
+	free(temp);
+	free_cmds(cmd->main_cmd, 1);
 	free_path(path);
 	exit(127);
 }
 
-void	print_dir_error(char *cmd)
+void	print_dir_error(t_cmd *cmd)
 {
-	ft_putstr_fd("minishell: ", 2);
-	ft_putstr_fd(cmd, 2);
-	ft_putstr_fd(": is a directory\n", 2);
+	char	*temp;
+
+	temp = ft_strjoin(cmd->cmd_split[0], " : directory not found\n");
+	write(2, temp, ft_strlen(temp));
+	free(temp);
+	free_path(cmd->path);
+	free_cmds(cmd->main_cmd, 1);
 	exit(126);
 }

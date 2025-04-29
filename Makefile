@@ -15,7 +15,7 @@ OBJS_FILES = $(SRCS_FILES:.c=.o)
 OBJS = $(addprefix $(OBJS_DIR)/, $(OBJS_FILES))
 
 CC = cc
-CFLAGS = -Wall -Wextra  -Werror -g3 -I inc -I libft
+CFLAGS = -Wall -Wextra -Werror -g3 -I inc -I libft
 
 
 NAME = minishell

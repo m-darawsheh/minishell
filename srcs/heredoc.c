@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/23 15:16:37 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/16 19:22:53 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/29 15:55:47 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,14 +37,14 @@ static void	handle_heredoc_interruption(t_cmd *cmd)
 	cmd->skip_exec = 1;
 }
 
-static void	process_heredoc_input(t_cmd *cmd, int fd_write)
+static void	process_heredoc_input(t_cmd *cmd, int fd_write, int j)
 {
 	char	*line;
 
 	g_heredoc_interrupted = 0;
 	signal(SIGINT, heredoc_signal_handler);
 	line = readline("> ");
-	while (line && ft_strncmp(line, cmd->delimiter, MAX_CMD_LEN) != 0)
+	while (line && ft_strncmp(line, cmd->delimiter[j], MAX_CMD_LEN) != 0)
 	{
 		ft_putendl_fd(line, fd_write);
 		free(line);
@@ -55,13 +55,13 @@ static void	process_heredoc_input(t_cmd *cmd, int fd_write)
 	free(line);
 }
 
-void	handle_heredoc(t_cmd *cmd)
+void	handle_heredoc(t_cmd *cmd, int j)
 {
 	int	fd[2];
 
 	if (pipe(fd) == -1)
 		exit_error("Pipe failed");
-	process_heredoc_input(cmd, fd[1]);
+	process_heredoc_input(cmd, fd[1], j);
 	setup_signals();
 	close(fd[1]);
 	cmd->heredoc_fd = fd[0];

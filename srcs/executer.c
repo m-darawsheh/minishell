@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executer.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 18:42:30 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/28 17:19:40 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/29 14:52:50 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,7 @@ void	execute_builtin_child(t_cmd *cmd, t_cmd_path *path)
 		if (!expanded_as_command(cmd))
 			setup_command(cmd, path);
 		execve(cmd->cmd_path, cmd->cmd_split, path->envp);
+		free(cmd->cmd_path);
 	}
 	free_cmds(cmd->main_cmd, 1);
 	free_path(path);

@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 13:06:27 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/29 14:19:22 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/29 15:48:32 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,5 +68,8 @@ int	parse_token(t_token **tokens, t_cmd **cmd)
 		if (!process_token(tokens, cmd, &i, &cmd_i))
 			return (0);
 	}
+	for (int i = 0; cmd[i]; i++)
+		for (int j = 0; cmd[i]->delimiter[j]; j++)
+			printf("delimiter[%d]: %s\n", j, cmd[i]->delimiter[j]);
 	return (1);
 }

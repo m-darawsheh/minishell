@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:24:48 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/04/28 17:41:10 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/29 15:55:58 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,7 @@ typedef struct s_command
 	int						has_outfile;
 	int						has_appendfile;
 	int						has_heredoc;
+	int						heredoc_index;
 	int						builtin;
 	int						skip_exec;
 	int						was_quoted;
@@ -108,7 +109,7 @@ typedef struct s_command
 	char					*infile;
 	char					*outfile;
 	char					*cmd_path;
-	char					*delimiter;
+	char					**delimiter;
 	t_cmd_path				*path;
 	struct s_command		**main_cmd;
 }	t_cmd;
@@ -132,7 +133,7 @@ void	pwd_handle(t_cmd_path *path);
 void	export_handle(t_cmd *cmd, t_cmd_path *path);
 void	do_echo(t_cmd *cmd);
 void	free_cmds(t_cmd **cmd, int came_from_error);
-void	handle_heredoc(t_cmd *cmd);
+void	handle_heredoc(t_cmd *cmd, int j);
 void	expander(t_token **tokens, t_cmd_path *path);
 void	print_env(t_cmd_path *path);
 void	handle_unset(t_cmd *cmd, t_cmd_path *path);
@@ -189,7 +190,7 @@ void	execute_echo_exit_cd(t_cmd *cmd, t_cmd_path *path);
 
 // print errors
 void	print_not_found(t_cmd *cmd, t_cmd_path *path);
-void	print_dir_error(char *cmd);
+void	print_dir_error(t_cmd *cmd);
 
 // Lexer
 t_token	**tokenize(char *line_read, t_cmd_path *path);

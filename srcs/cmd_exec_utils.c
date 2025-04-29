@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_exec_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 17:44:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/28 16:57:13 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/29 14:47:23 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,8 @@ int	count_command_tokens(t_token **tokens, int start_idx)
 
 void	setter_norm(t_cmd **cmd, int *cmd_idx, int *arg_idx)
 {
-	cmd[*cmd_idx]->cmd_split[*arg_idx] = NULL;
+	if (cmd[*cmd_idx]->cmd_split)
+		cmd[*cmd_idx]->cmd_split[*arg_idx] = NULL;
 	(*cmd_idx)++;
 	*arg_idx = 0;
 }

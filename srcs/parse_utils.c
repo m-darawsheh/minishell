@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 15:28:52 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/28 16:50:30 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/29 15:46:50 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,17 @@
 
 void	print_file_error(char *filename)
 {
-	ft_putstr_fd("minishell: ", 2);
-	ft_putstr_fd(filename, 2);
-	ft_putstr_fd(": No such file or directory\n", 2);
+	char	*temp;
+	char	*temp2;
+
+	temp = ft_strjoin(filename, ": No such file or directory\n");
+	if (!temp)
+		return ;
+	temp2 = ft_strjoin("minishell: ", temp);
+	free(temp);
+	if (!temp2)
+		return ;
+	write(2, temp2, ft_strlen(temp2));
 }
 
 int	handle_redir_2(t_token **tokens, t_cmd **cmd,
@@ -42,10 +50,11 @@ int	handle_redir_3(t_token **tokens, t_cmd **cmd,
 {
 	cmd[cmd_i]->has_heredoc = 1;
 	(*i)++;
-	if (cmd[cmd_i]->delimiter)
-		free(cmd[cmd_i]->delimiter);
-	cmd[cmd_i]->delimiter = ft_strdup(tokens[*i]->value);
-	if (!cmd[cmd_i]->delimiter)
+	// if (cmd[cmd_i]->delimiter)
+	// 	free(cmd[cmd_i]->delimiter);
+	cmd[cmd_i]->delimiter[cmd[cmd_i]->heredoc_index] = ft_strdup(tokens[*i]->value);
+	if (!cmd[cmd_i]->delimiter[cmd[cmd_i]->heredoc_index])
 		return (0);
+	cmd[cmd_i]->heredoc_index++;
 	return (1);
 }
