@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 13:06:27 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/28 16:51:24 by hassende         ###   ########.fr       */
+/*   Updated: 2025/04/29 14:19:22 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int	handle_pipe(t_token **tokens, t_cmd **cmd, int *i, int *cmd_i)
 {
-	if (tokens[*i + 1] == NULL || tokens[*i + 1]->type != TOKEN_WORD)
+	if (tokens[*i + 1] == NULL)
 	{
 		ft_putstr_fd("minishell: syntax error near token `newline'\n", 2);
 		cmd[*cmd_i]->path->exit_status = 2;
