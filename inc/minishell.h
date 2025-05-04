@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:24:48 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/04/29 15:55:58 by hassende         ###   ########.fr       */
+/*   Updated: 2025/05/04 15:30:49 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -187,6 +187,7 @@ void	process_command(t_cmd **cmd, int i, t_pipe_data *pipe_data);
 void	execute_command(t_cmd **cmd, t_cmd_path *path);
 void	restore_io(int stdin_backup, int stdout_backup);
 void	execute_echo_exit_cd(t_cmd *cmd, t_cmd_path *path);
+int		close_free(int fd, t_cmd **cmd);
 
 // print errors
 void	print_not_found(t_cmd *cmd, t_cmd_path *path);

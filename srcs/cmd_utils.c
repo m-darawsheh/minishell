@@ -3,14 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 13:37:31 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/29 14:58:46 by hassende         ###   ########.fr       */
+/*   Updated: 2025/05/04 15:35:49 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+int	close_free(int fd, t_cmd **cmd)
+{
+	close(fd);
+	free_cmds(cmd, 0);
+	return (0);
+}
 
 void	setup_command(t_cmd *cmd, t_cmd_path *path)
 {

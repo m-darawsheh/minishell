@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_exec.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/29 16:53:41 by hassende         ###   ########.fr       */
+/*   Updated: 2025/05/04 15:40:30 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,8 +54,8 @@ void	exec_cmd(char *line_read, t_cmd_path *path)
 	free_cmds(cmd, 0);
 }
 
-static	t_cmd	**parse_and_prepare(char *line_read, t_cmd_path *path,
-		t_token ***tokens_head)
+static t_cmd	**parse_and_prepare(char *line_read, t_cmd_path *path,
+					t_token ***tokens_head)
 {
 	t_cmd	**cmd;
 	t_token	**tokens;
@@ -91,7 +91,8 @@ static int	process_heredocs(t_cmd **cmd)
 		j = 0;
 		if (cmd[i]->has_heredoc)
 		{
-			while (cmd[i]->delimiter[j] && j <= cmd[i]->heredoc_index && !(cmd[i]->skip_exec))
+			while (cmd[i]->delimiter[j] && j <= cmd[i]->heredoc_index
+				&& !(cmd[i]->skip_exec))
 			{
 				if (cmd[i]->heredoc_fd != -1)
 					close(cmd[i]->heredoc_fd);
@@ -100,11 +101,7 @@ static int	process_heredocs(t_cmd **cmd)
 			}
 		}
 		if (cmd[i]->skip_exec)
-		{
-			close(cmd[i]->heredoc_fd);
-			free_cmds(cmd, 0);
-			return (0);
-		}
+			return (close_free(cmd[i]->heredoc_fd, cmd));
 	}
 	return (1);
 }
@@ -124,7 +121,7 @@ static void	prepare_command_splits(t_cmd **cmd, t_token **tokens)
 		{
 			if (!cmd[cmd_idx]->cmd_split)
 				cmd[cmd_idx]->cmd_split = ft_calloc(
-						count_command_tokens(tokens, i) + 1, sizeof (char *));
+						count_command_tokens(tokens, i) + 1, sizeof(char *));
 			cmd[cmd_idx]->cmd_split[arg_idx++] = ft_strdup(tokens[i]->value);
 			if (tokens[i]->quoted == 1)
 				cmd[cmd_idx]->was_quoted = 1;
@@ -135,5 +132,5 @@ static void	prepare_command_splits(t_cmd **cmd, t_token **tokens)
 			i++;
 	}
 	if (!cmd[cmd_idx]->cmd_split)
-		cmd[cmd_idx]->cmd_split = ft_calloc(1, sizeof (char *));
+		cmd[cmd_idx]->cmd_split = ft_calloc(1, sizeof(char *));
 }
