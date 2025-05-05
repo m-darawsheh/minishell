@@ -3,14 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 20:47:36 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/26 17:40:56 by mdarawsh         ###   ########.fr       */
+/*   Updated: 2025/05/05 13:50:33 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+void	double_free_cmd_path(t_cmd **cmd)
+{
+	free_path(cmd[0]->path);
+	free_cmds(cmd, 0);
+}
 
 static int	check_overflow(const char *str)
 {
@@ -58,7 +64,10 @@ int	do_exit(t_cmd *cmd)
 	long long	exit_code;
 
 	if (cmd->cmd_split[1] == NULL)
+	{
+		double_free_cmd_path(cmd->main_cmd);
 		exit(0);
+	}
 	if (cmd->cmd_split[2] != NULL)
 	{
 		ft_putstr_fd("minishell: exit: too many arguments\n", 2);
@@ -73,6 +82,7 @@ int	do_exit(t_cmd *cmd)
 	}
 	exit_code = ft_atoi(cmd->cmd_split[1]);
 	exit_code %= 256;
+	double_free_cmd_path(cmd->main_cmd);
 	exit ((int)exit_code);
 }
 
