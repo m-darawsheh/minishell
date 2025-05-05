@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/21 23:10:45 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/29 15:25:54 by hassende         ###   ########.fr       */
+/*   Updated: 2025/05/05 12:38:29 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ static void	print_sorted_helper(char **sorted, int count)
 	i = -1;
 	while (sorted[++i])
 	{
-		printf("declare -x %s\n", sorted[i]);
+		printf("export %s\n", sorted[i]);
 		free(sorted[i]);
 	}
 }
