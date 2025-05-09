@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:25:54 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/04/29 16:41:32 by hassende         ###   ########.fr       */
+/*   Updated: 2025/05/09 17:03:40 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,11 @@ void	process_command_line(char *line_read, t_cmd_path *path)
 	}
 	if (line_read[0])
 		add_history(line_read);
+	if (check_if_empty(line_read))
+	{
+		free(line_read);
+		return ;
+	}
 	exec_cmd(line_read, path);
 	free(line_read);
 }

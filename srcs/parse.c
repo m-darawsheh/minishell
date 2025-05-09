@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/16 13:06:27 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/29 16:50:21 by hassende         ###   ########.fr       */
+/*   Updated: 2025/05/08 17:47:24 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,13 @@ static int	handle_expansion_pipe(t_token **tokens, t_cmd **cmd,
 
 static int	process_token(t_token **tokens, t_cmd **cmd, int *i, int *cmd_i)
 {
+	if (cmd[*cmd_i]->skip_cmd)
+	{
+		if (tokens[*i]->type == TOKEN_PIPE)
+			if (!handle_pipe(tokens, cmd, i, cmd_i))
+				return (0);
+		return (1);
+	}
 	if (tokens[*i]->type == TOKEN_WORD)
 		handle_word(tokens, cmd, *i, *cmd_i);
 	else if (tokens[*i]->from_expansion && tokens[*i]->value[0] == '|')
@@ -45,13 +52,11 @@ static int	process_token(t_token **tokens, t_cmd **cmd, int *i, int *cmd_i)
 			return (0);
 	}
 	else if ((tokens[*i]->type == TOKEN_REDIR_IN
-			|| tokens[*i]->type == TOKEN_REDIR_OUT)
-		&& !handle_redir(tokens, cmd, i, *cmd_i))
-		return (0);
+			|| tokens[*i]->type == TOKEN_REDIR_OUT))
+		handle_redir(tokens, cmd, i, *cmd_i);
 	else if ((tokens[*i]->type == TOKEN_APPEND
-			|| tokens[*i]->type == TOKEN_HEREDOC)
-		&& !handle_advanced_redir(tokens, cmd, i, *cmd_i))
-		return (0);
+			|| tokens[*i]->type == TOKEN_HEREDOC))
+		handle_advanced_redir(tokens, cmd, i, *cmd_i);
 	return (1);
 }
 

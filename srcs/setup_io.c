@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 18:40:15 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/28 16:27:50 by hassende         ###   ########.fr       */
+/*   Updated: 2025/05/08 16:25:14 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,10 @@ static void	setup_io_continued(t_cmd *cmd)
 	}
 }
 
-static void	setup_io_child_continued(t_cmd *cmd, int fd)
+static void	setup_io_child_continued(t_cmd *cmd)
 {
+	int	fd;
+
 	if (cmd->has_infile)
 	{
 		fd = open(cmd->infile, O_RDONLY);
@@ -82,30 +84,43 @@ void	setup_io_redirections(t_cmd *cmd)
 	setup_io_continued(cmd);
 }
 
-void	setup_io_redirections_child(t_cmd *cmd, int *pipe_fd,
-										int *prev_pipe, int i)
+void	clean_main_cmd_fds(t_cmd *cmd)
 {
-	int	fd;
+	int	i;
 
-	fd = -1;
+	i = 0;
+	while (cmd->main_cmd[i])
+	{
+		if (cmd->main_cmd[i] != cmd && cmd->main_cmd[i]->has_heredoc && cmd->main_cmd[i]->heredoc_fd != -1)
+			close(cmd->main_cmd[i]->heredoc_fd);
+		i++;
+	}
+}
+
+void setup_io_redirections_child(t_cmd *cmd, int *pipe_fd,
+							  int *prev_pipe, int i)
+{
+	if (i > 0 && prev_pipe[0] != -1 && !cmd->has_heredoc && !cmd->has_infile)
+		dup2(prev_pipe[0], STDIN_FILENO);
+	if (i > 0 && prev_pipe[0] != -1)
+	{
+		close(prev_pipe[0]);
+		if (prev_pipe[1] != -1)
+			close(prev_pipe[1]);
+	}
 	if (cmd->has_heredoc)
 	{
 		dup2(cmd->heredoc_fd, STDIN_FILENO);
 		close(cmd->heredoc_fd);
 	}
+	clean_main_cmd_fds(cmd);
 	if (cmd->has_pipe)
 	{
 		dup2(pipe_fd[1], STDOUT_FILENO);
 		close(pipe_fd[0]);
 		close(pipe_fd[1]);
 	}
-	if (i > 0 && prev_pipe[0] != -1)
-	{
-		dup2(prev_pipe[0], STDIN_FILENO);
-		close(prev_pipe[0]);
-		close(prev_pipe[1]);
-	}
-	setup_io_child_continued(cmd, fd);
+	setup_io_child_continued(cmd);
 }
 
 void	handle_pipes(int *pipe_fd, int *prev_pipe, t_cmd **cmd, int i)
@@ -113,7 +128,8 @@ void	handle_pipes(int *pipe_fd, int *prev_pipe, t_cmd **cmd, int i)
 	if (i > 0 && cmd[i - 1]-> has_pipe)
 	{
 		close(prev_pipe[0]);
-		close(prev_pipe[1]);
+		if (prev_pipe[1] != -1)
+			close(prev_pipe[1]);
 	}
 	if (cmd[i]->has_pipe)
 	{

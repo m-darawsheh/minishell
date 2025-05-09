@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/05/04 15:40:30 by hassende         ###   ########.fr       */
+/*   Updated: 2025/05/08 16:35:41 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,10 @@ static int	process_heredocs(t_cmd **cmd)
 				&& !(cmd[i]->skip_exec))
 			{
 				if (cmd[i]->heredoc_fd != -1)
+				{
 					close(cmd[i]->heredoc_fd);
+					cmd[i]->heredoc_fd = -1;
+				}
 				handle_heredoc(cmd[i], j);
 				j++;
 			}

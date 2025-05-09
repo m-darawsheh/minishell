@@ -6,17 +6,20 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 17:16:08 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/28 17:26:29 by hassende         ###   ########.fr       */
+/*   Updated: 2025/05/09 17:25:37 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	init_execution(int *prev_pipe, int *got_forked)
+void	init_execution(t_pipe_data *pipe_data, int *got_forked)
 {
-	prev_pipe[0] = -1;
-	prev_pipe[1] = -1;
+	pipe_data->pipe_fd[0] = -1;
+	pipe_data->pipe_fd[1] = -1;
+	pipe_data->prev_pipe[0] = -1;
+	pipe_data->prev_pipe[1] = -1;
 	*got_forked = 0;
+	pipe_data->got_forked = got_forked;
 }
 
 void	handle_io_redirect(t_cmd *cmd, int *stdin_backup, int *stdout_backup)

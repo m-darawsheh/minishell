@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   print_err.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 19:02:08 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/29 15:37:16 by hassende         ###   ########.fr       */
+/*   Updated: 2025/05/08 17:26:39 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ void	print_dir_error(t_cmd *cmd)
 {
 	char	*temp;
 
-	temp = ft_strjoin(cmd->cmd_split[0], " : directory not found\n");
+	temp = ft_strjoin(cmd->cmd_split[0], " : Is a directory\n");
 	write(2, temp, ft_strlen(temp));
 	free(temp);
 	free_path(cmd->path);

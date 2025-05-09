@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_init.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 13:57:52 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/29 16:45:31 by hassende         ###   ########.fr       */
+/*   Updated: 2025/05/08 17:13:46 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ static void	init_cmd_struct(t_cmd *cmd, t_cmd_path *path)
 	cmd->heredoc_fd = -1;
 	cmd->was_quoted = 0;
 	cmd->heredoc_index = 0;
+	cmd->skip_cmd = 0;
 }
 
 static int	init_all_cmd_structs(t_cmd **cmd, int cmd_count, t_cmd_path *path)
@@ -85,6 +86,18 @@ static int	count_commands(char *line_read)
 	count = 0;
 	while (line_read[i])
 	{
+		if (line_read[i] == '\'')
+		{
+			i++;
+			while (line_read[i] && line_read[i] != '\'')
+				i++;
+		}
+		else if (line_read[i] == '\"')
+		{
+			i++;
+			while (line_read[i] && line_read[i] != '\"')
+				i++;
+		}
 		if (line_read[i] == '|')
 			count++;
 		i++;

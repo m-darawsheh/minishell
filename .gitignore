@@ -5,4 +5,3 @@ minishell
 *infile
 *outfile
 .vscode
-readline_curses.supp

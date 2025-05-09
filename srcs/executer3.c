@@ -6,17 +6,31 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 17:18:05 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/28 17:39:47 by hassende         ###   ########.fr       */
+/*   Updated: 2025/05/09 17:05:15 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
 
 void	handle_piping(t_cmd *cmd, int *pipe_fd)
 {
 	if (cmd->has_pipe)
 		if (pipe(pipe_fd) == -1)
 			exit_error("Pipe failed");
+}
+
+void handle_skip_piped_cmd(t_cmd *cmd, t_pipe_data *pipe_data)
+{
+	cmd->pid = -1;
+
+	if (cmd->has_pipe)
+	{
+		handle_piping(cmd, pipe_data->pipe_fd);
+		close(pipe_data->pipe_fd[1]);
+		pipe_data->prev_pipe[0] = pipe_data->pipe_fd[0];
+		pipe_data->prev_pipe[1] = -1;
+	}
 }
 
 void	process_non_pipe_cmd(t_cmd *cmd, int *stdin_backup, int *stdout_backup)
@@ -34,6 +48,8 @@ void	process_command(t_cmd **cmd, int i, t_pipe_data *pipe_data)
 
 	cmd[i]->main_cmd = cmd;
 	is_child = cmd[i]->has_pipe || (i > 0 && cmd[i - 1]->has_pipe);
+	if (cmd[i]->skip_cmd)
+		return (handle_skip_piped_cmd(cmd[i], pipe_data));
 	if (!is_child)
 	{
 		process_non_pipe_cmd(cmd[i], &stdin_backup, &stdout_backup);
@@ -48,21 +64,41 @@ void	process_command(t_cmd **cmd, int i, t_pipe_data *pipe_data)
 	handle_pipes(pipe_data->pipe_fd, pipe_data->prev_pipe, cmd, i);
 }
 
+void	close_all_pipes(t_pipe_data *pipe_data)
+{
+	if ( pipe_data->prev_pipe[0] != -1)
+	{
+		close(pipe_data->prev_pipe[0]);
+		pipe_data->prev_pipe[0] = -1;
+	}
+	if (pipe_data->pipe_fd[0] != -1)
+	{
+		close(pipe_data->pipe_fd[0]);
+		pipe_data->pipe_fd[0] = -1;
+	}
+	if (pipe_data->pipe_fd[1] != -1)
+	{
+		close(pipe_data->pipe_fd[1]);
+		pipe_data->pipe_fd[1] = -1;
+	}
+	if (pipe_data->prev_pipe[1] != -1)
+	{
+		close(pipe_data->prev_pipe[1]);
+		pipe_data->prev_pipe[1] = -1;
+	}
+}
+
 void	execute_command(t_cmd **cmd, t_cmd_path *path)
 {
 	int			i;
-	int			pipe_fd[2];
-	int			prev_pipe[2];
 	int			got_forked;
 	t_pipe_data	pipe_data;
 
 	i = -1;
-	init_execution(prev_pipe, &got_forked);
-	pipe_data.pipe_fd = pipe_fd;
-	pipe_data.prev_pipe = prev_pipe;
-	pipe_data.got_forked = &got_forked;
+	init_execution(&pipe_data, &got_forked);
 	while (cmd[++i])
 		process_command(cmd, i, &pipe_data);
+	close_all_pipes(&pipe_data);
 	setup_interactive_signals();
 	if (got_forked)
 		wait_for_children(path, cmd);

@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:24:48 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/05/04 15:30:49 by hassende         ###   ########.fr       */
+/*   Updated: 2025/05/09 17:16:37 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,8 +79,8 @@ typedef struct s_lexer
 
 typedef struct s_pipe_data
 {
-	int	*pipe_fd;
-	int	*prev_pipe;
+	int	pipe_fd[2];
+	int	prev_pipe[2];
 	int	*got_forked;
 }	t_pipe_data;
 
@@ -103,6 +103,7 @@ typedef struct s_command
 	int						heredoc_index;
 	int						builtin;
 	int						skip_exec;
+	int						skip_cmd;
 	int						was_quoted;
 	char					*cmd;
 	char					**cmd_split;
@@ -175,7 +176,7 @@ int		handle_redir(t_token **tokens, t_cmd **cmd,
 void	handle_word(t_token **tokens, t_cmd **cmd, int i, int cmd_i);
 int		handle_advanced_redir(t_token **tokens, t_cmd **cmd,
 			int *i, int cmd_i);
-void	init_execution(int *prev_pipe, int *got_forked);
+void	init_execution(t_pipe_data *pipe_data, int *got_forked);
 void	handle_io_redirect(t_cmd *cmd, int *stdin_backup, int *stdout_backup);
 void	handle_unquoted_spaces(t_cmd *cmd);
 void	handle_non_piped_cmd(t_cmd *cmd,
@@ -188,6 +189,7 @@ void	execute_command(t_cmd **cmd, t_cmd_path *path);
 void	restore_io(int stdin_backup, int stdout_backup);
 void	execute_echo_exit_cd(t_cmd *cmd, t_cmd_path *path);
 int		close_free(int fd, t_cmd **cmd);
+void	set_status_skip(t_cmd **cmd, int cmd_i, int status);
 
 // print errors
 void	print_not_found(t_cmd *cmd, t_cmd_path *path);

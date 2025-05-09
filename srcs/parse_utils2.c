@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 16:47:28 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/28 16:48:06 by hassende         ###   ########.fr       */
+/*   Updated: 2025/05/08 17:42:40 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ int	handle_redir(t_token **tokens, t_cmd **cmd,
 	if (!tokens[*i + 1] || tokens[*i + 1]->type != TOKEN_WORD)
 	{
 		ft_putstr_fd("minishell: syntax error near token `newline'\n", 2);
-		cmd[cmd_i]->path->exit_status = 2;
+		set_status_skip(cmd, cmd_i, 2);
 		return (0);
 	}
 	if (tokens[*i]->type == TOKEN_REDIR_IN)
@@ -36,6 +36,7 @@ int	handle_redir(t_token **tokens, t_cmd **cmd,
 		if (fd == -1)
 		{
 			print_file_error(tokens[*i + 1]->value);
+			set_status_skip(cmd, cmd_i, 1);
 			return (0);
 		}
 		close(fd);
@@ -56,7 +57,7 @@ int	handle_advanced_redir(t_token **tokens, t_cmd **cmd,
 	if (!tokens[*i + 1] || tokens[*i + 1]->type != TOKEN_WORD)
 	{
 		ft_putstr_fd("minishell: syntax error near token \'>> / <<\'\n", 2);
-		cmd[cmd_i]->path->exit_status = 2;
+		set_status_skip(cmd, cmd_i, 2);
 		return (0);
 	}
 	if (tokens[*i]->type == TOKEN_APPEND)
@@ -65,6 +66,7 @@ int	handle_advanced_redir(t_token **tokens, t_cmd **cmd,
 		if (fd == -1)
 		{
 			print_file_error(tokens[*i + 1]->value);
+			set_status_skip(cmd, cmd_i, 1);
 			return (0);
 		}
 		cmd[cmd_i]->has_appendfile = 1;

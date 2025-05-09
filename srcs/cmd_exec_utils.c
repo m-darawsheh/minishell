@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_exec_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/22 17:44:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/29 14:47:23 by hassende         ###   ########.fr       */
+/*   Updated: 2025/05/09 16:53:07 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,12 +61,15 @@ void	wait_for_children(t_cmd_path *path, t_cmd **cmd)
 	int	last_pid;
 
 	i = 0;
+	last_pid = -1;
 	while (cmd[i])
+	{
+		if (cmd[i]->pid > 0)
+			last_pid = cmd[i]->pid;
 		i++;
-	if (i == 1)
-		last_pid = cmd[0]->pid;
-	else
-		last_pid = cmd[i - 1]->pid;
+	}
+	if (last_pid == -1)
+		return ;
 	if (waitpid(last_pid, &status, 0) > 0)
 	{
 		if (WIFEXITED(status))

@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 15:28:52 by hassende          #+#    #+#             */
-/*   Updated: 2025/05/04 15:37:10 by hassende         ###   ########.fr       */
+/*   Updated: 2025/05/08 18:12:28 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ int	handle_redir_2(t_token **tokens, t_cmd **cmd,
 	if (fd == -1)
 	{
 		print_file_error(tokens[*i + 1]->value);
+		set_status_skip(cmd, cmd_i, 1);
 		return (0);
 	}
 	cmd[cmd_i]->has_outfile = 1;
