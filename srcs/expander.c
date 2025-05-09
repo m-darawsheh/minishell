@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expander.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 14:28:49 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/29 16:43:05 by hassende         ###   ########.fr       */
+/*   Updated: 2025/05/09 18:13:13 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,31 +99,37 @@ static void	set_quote_state(int *quote_state, char c, t_token *token)
 		*quote_state = 0;
 }
 
-void	check_for_expansion(t_token *token, t_cmd_path *path)
+static void process_dollar_sign(t_token *token, int *i, t_cmd_path *path)
 {
-	int		i;
-	int		quote_state;
-	char	*prev_value;
+	char *prev_value;
+
+	prev_value = ft_strdup(token->value);
+	expand(token, *i, path);
+	token->from_expansion = 1;
+	if (ft_strcmp(prev_value, token->value) != 0)
+	{
+		free(prev_value);
+		(*i)--;
+		return;
+	}
+	free(prev_value);
+}
+
+void check_for_expansion(t_token *token, t_cmd_path *path)
+{
+	int	i;
+	int	quote_state;
 
 	if (token->value == NULL || !token->value[0])
-		return ;
-	i = -1;
+		return;
+	i = 0;
 	quote_state = 0;
-	while (token->value[++i])
+	while (token->value[i])
 	{
 		set_quote_state(&quote_state, token->value[i], token);
 		if (token->value[i] == '$' && quote_state != 1)
-		{
-			prev_value = ft_strdup(token->value);
-			expand(token, i, path);
-			if (ft_strcmp(prev_value, token->value) != 0)
-			{
-				free(prev_value);
-				continue ;
-			}
-			free(prev_value);
-			token->from_expansion = 1;
-		}
+			process_dollar_sign(token, &i, path);
+		i++;
 	}
 	remove_quotes(token);
 }
