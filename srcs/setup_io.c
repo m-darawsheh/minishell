@@ -6,7 +6,7 @@
 /*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 18:40:15 by hassende          #+#    #+#             */
-/*   Updated: 2025/05/08 16:25:14 by hassende         ###   ########.fr       */
+/*   Updated: 2025/05/09 18:19:25 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,10 +31,8 @@ static void	setup_io_continued(t_cmd *cmd)
 	}
 }
 
-static void	setup_io_child_continued(t_cmd *cmd)
+static void	setup_io_child_continued(t_cmd *cmd, int fd)
 {
-	int	fd;
-
 	if (cmd->has_infile)
 	{
 		fd = open(cmd->infile, O_RDONLY);
@@ -100,6 +98,9 @@ void	clean_main_cmd_fds(t_cmd *cmd)
 void setup_io_redirections_child(t_cmd *cmd, int *pipe_fd,
 							  int *prev_pipe, int i)
 {
+	int	fd;
+
+	fd = -1;
 	if (i > 0 && prev_pipe[0] != -1 && !cmd->has_heredoc && !cmd->has_infile)
 		dup2(prev_pipe[0], STDIN_FILENO);
 	if (i > 0 && prev_pipe[0] != -1)
@@ -120,7 +121,7 @@ void setup_io_redirections_child(t_cmd *cmd, int *pipe_fd,
 		close(pipe_fd[0]);
 		close(pipe_fd[1]);
 	}
-	setup_io_child_continued(cmd);
+	setup_io_child_continued(cmd, fd);
 }
 
 void	handle_pipes(int *pipe_fd, int *prev_pipe, t_cmd **cmd, int i)
