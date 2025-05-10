@@ -3,35 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   executer3.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 17:18:05 by hassende          #+#    #+#             */
-/*   Updated: 2025/05/09 17:05:15 by hassende         ###   ########.fr       */
+/*   Updated: 2025/05/10 13:32:03 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-
-void	handle_piping(t_cmd *cmd, int *pipe_fd)
-{
-	if (cmd->has_pipe)
-		if (pipe(pipe_fd) == -1)
-			exit_error("Pipe failed");
-}
-
-void handle_skip_piped_cmd(t_cmd *cmd, t_pipe_data *pipe_data)
-{
-	cmd->pid = -1;
-
-	if (cmd->has_pipe)
-	{
-		handle_piping(cmd, pipe_data->pipe_fd);
-		close(pipe_data->pipe_fd[1]);
-		pipe_data->prev_pipe[0] = pipe_data->pipe_fd[0];
-		pipe_data->prev_pipe[1] = -1;
-	}
-}
 
 void	process_non_pipe_cmd(t_cmd *cmd, int *stdin_backup, int *stdout_backup)
 {
@@ -66,7 +45,7 @@ void	process_command(t_cmd **cmd, int i, t_pipe_data *pipe_data)
 
 void	close_all_pipes(t_pipe_data *pipe_data)
 {
-	if ( pipe_data->prev_pipe[0] != -1)
+	if (pipe_data->prev_pipe[0] != -1)
 	{
 		close(pipe_data->prev_pipe[0]);
 		pipe_data->prev_pipe[0] = -1;

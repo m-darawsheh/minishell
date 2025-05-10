@@ -3,14 +3,33 @@
 /*                                                        :::      ::::::::   */
 /*   executer4.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 17:19:46 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/28 17:39:55 by hassende         ###   ########.fr       */
+/*   Updated: 2025/05/10 13:32:08 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+void	handle_piping(t_cmd *cmd, int *pipe_fd)
+{
+	if (cmd->has_pipe)
+		if (pipe(pipe_fd) == -1)
+			exit_error("Pipe failed");
+}
+
+void	handle_skip_piped_cmd(t_cmd *cmd, t_pipe_data *pipe_data)
+{
+	cmd->pid = -1;
+	if (cmd->has_pipe)
+	{
+		handle_piping(cmd, pipe_data->pipe_fd);
+		close(pipe_data->pipe_fd[1]);
+		pipe_data->prev_pipe[0] = pipe_data->pipe_fd[0];
+		pipe_data->prev_pipe[1] = -1;
+	}
+}
 
 void	append_args(char ***new_args, t_cmd *cmd)
 {

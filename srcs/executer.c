@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executer.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 18:42:30 by hassende          #+#    #+#             */
-/*   Updated: 2025/05/09 17:36:27 by hassende         ###   ########.fr       */
+/*   Updated: 2025/05/10 13:29:28 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,8 @@ int	expanded_as_command(t_cmd *cmd)
 {
 	char	**new_args;
 
+	if (cmd->was_quoted == 1)
+		return (0);
 	if (!ft_strchr(cmd->cmd_split[0], ' '))
 		return (0);
 	new_args = ft_split(cmd->cmd_split[0], ' ');
@@ -67,18 +69,6 @@ int	expanded_as_command(t_cmd *cmd)
 	cmd->cmd_split = new_args;
 	setup_command(cmd, cmd->path);
 	return (1);
-}
-
-void	no_path_error(t_cmd *cmd, t_cmd_path *path)
-{
-	char	*temp;
-
-	temp = ft_strjoin(cmd->cmd_split[0], " : No such file or directory\n");
-	write(2, temp, ft_strlen(temp));
-	free(temp);
-	free_cmds(cmd->main_cmd, 1);
-	free_path(path);
-	exit(127);
 }
 
 void	execute_builtin_child(t_cmd *cmd, t_cmd_path *path)

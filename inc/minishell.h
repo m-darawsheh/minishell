@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:24:48 by mdarawsh          #+#    #+#             */
-/*   Updated: 2025/05/09 17:16:37 by hassende         ###   ########.fr       */
+/*   Updated: 2025/05/10 13:57:47 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,6 +190,12 @@ void	restore_io(int stdin_backup, int stdout_backup);
 void	execute_echo_exit_cd(t_cmd *cmd, t_cmd_path *path);
 int		close_free(int fd, t_cmd **cmd);
 void	set_status_skip(t_cmd **cmd, int cmd_i, int status);
+void	no_path_error(t_cmd *cmd, t_cmd_path *path);
+void	clean_main_cmd_fds(t_cmd *cmd);
+void	handle_skip_piped_cmd(t_cmd *cmd, t_pipe_data *pipe_data);
+void	prepare_command_splits(t_cmd **cmd, t_token **tokens);
+void	process_dollar_sign(t_token *token, int *i, t_cmd_path *path);
+void	expand(t_token *token, int i, t_cmd_path *path);
 
 // print errors
 void	print_not_found(t_cmd *cmd, t_cmd_path *path);

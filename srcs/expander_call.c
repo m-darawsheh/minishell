@@ -3,14 +3,30 @@
 /*                                                        :::      ::::::::   */
 /*   expander_call.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 20:50:04 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/17 20:59:38 by hassende         ###   ########.fr       */
+/*   Updated: 2025/05/10 13:55:17 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+void	process_dollar_sign(t_token *token, int *i, t_cmd_path *path)
+{
+	char	*prev_value;
+
+	prev_value = ft_strdup(token->value);
+	expand(token, *i, path);
+	token->from_expansion = 1;
+	if (ft_strcmp(prev_value, token->value) != 0)
+	{
+		free(prev_value);
+		(*i)--;
+		return ;
+	}
+	free(prev_value);
+}
 
 // 0 -> no quotes || 1 -> single quotes || 2 -> double quotes
 static int	update_quote_state(char c, int state)

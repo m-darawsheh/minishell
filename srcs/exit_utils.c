@@ -6,11 +6,23 @@
 /*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 16:19:37 by hassende          #+#    #+#             */
-/*   Updated: 2025/04/29 16:38:50 by hassende         ###   ########.fr       */
+/*   Updated: 2025/05/10 13:29:35 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+void	no_path_error(t_cmd *cmd, t_cmd_path *path)
+{
+	char	*temp;
+
+	temp = ft_strjoin(cmd->cmd_split[0], " : No such file or directory\n");
+	write(2, temp, ft_strlen(temp));
+	free(temp);
+	free_cmds(cmd->main_cmd, 1);
+	free_path(path);
+	exit(127);
+}
 
 void	exit_error(char *str)
 {

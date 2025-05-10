@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_exec.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 12:48:35 by hassende          #+#    #+#             */
-/*   Updated: 2025/05/09 18:14:03 by hassende         ###   ########.fr       */
+/*   Updated: 2025/05/10 13:53:45 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 static int		process_heredocs(t_cmd **cmd);
 static t_cmd	**parse_and_prepare(char *line_read, t_cmd_path *path,
 					t_token ***tokens_head);
-static void		prepare_command_splits(t_cmd **cmd, t_token **tokens);
 
 void	close_fds(t_cmd **cmd)
 {
@@ -107,45 +106,4 @@ static int	process_heredocs(t_cmd **cmd)
 			return (close_free(cmd[i]->heredoc_fd, cmd));
 	}
 	return (1);
-}
-
-static int is_empty_expanded_var(t_token *token)
-{
-	return (token->from_expansion && token->value[0] == '\0');
-}
-
-static void prepare_command_splits(t_cmd **cmd, t_token **tokens)
-{
-	int	i;
-	int	cmd_idx;
-	int	arg_idx;
-	int	skip_token;
-
-	i = -1;
-	cmd_idx = 0;
-	arg_idx = 0;
-	while (tokens[++i])
-	{
-		skip_token = 0;
-		if (tokens[i]->type == TOKEN_WORD)
-		{
-			if (arg_idx == 0 && is_empty_expanded_var(tokens[i]))
-				skip_token = 1;
-			if (!skip_token)
-			{
-				if (!cmd[cmd_idx]->cmd_split)
-					cmd[cmd_idx]->cmd_split = ft_calloc(
-							count_command_tokens(tokens, i) + 1, sizeof(char *));
-				cmd[cmd_idx]->cmd_split[arg_idx++] = ft_strdup(tokens[i]->value);
-				if (tokens[i]->quoted == 1)
-					cmd[cmd_idx]->was_quoted = 1;
-			}
-		}
-		else if (tokens[i]->type == TOKEN_PIPE)
-			setter_norm(cmd, &cmd_idx, &arg_idx);
-		else if (is_not_word(tokens[i]->type))
-			i++;
-	}
-	if (!cmd[cmd_idx]->cmd_split)
-		cmd[cmd_idx]->cmd_split = ft_calloc(1, sizeof(char *));
 }

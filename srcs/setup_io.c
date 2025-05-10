@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   setup_io.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 18:40:15 by hassende          #+#    #+#             */
-/*   Updated: 2025/05/09 18:19:25 by hassende         ###   ########.fr       */
+/*   Updated: 2025/05/10 13:30:43 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,21 +82,8 @@ void	setup_io_redirections(t_cmd *cmd)
 	setup_io_continued(cmd);
 }
 
-void	clean_main_cmd_fds(t_cmd *cmd)
-{
-	int	i;
-
-	i = 0;
-	while (cmd->main_cmd[i])
-	{
-		if (cmd->main_cmd[i] != cmd && cmd->main_cmd[i]->has_heredoc && cmd->main_cmd[i]->heredoc_fd != -1)
-			close(cmd->main_cmd[i]->heredoc_fd);
-		i++;
-	}
-}
-
-void setup_io_redirections_child(t_cmd *cmd, int *pipe_fd,
-							  int *prev_pipe, int i)
+void	setup_io_redirections_child(t_cmd *cmd, int *pipe_fd,
+			int *prev_pipe, int i)
 {
 	int	fd;
 

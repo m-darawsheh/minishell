@@ -3,7 +3,7 @@ SRCS_FILES = main.c exit_utils.c free.c signals.c path_init.c \
 			cmd_exec.c cmd_utils.c cmd_init.c built_in.c cd.c echo.c exit.c \
 			lexer.c lexer2.c parse.c expander.c \
 			heredoc.c unset.c  setup_io.c executer.c print_err.c\
-			expander_call.c utils.c cmd_exec_utils.c export_utils.c parse_utils.c \
+			expander_call.c utils.c cmd_exec_utils.c cmd_exec_utils2.c export_utils.c parse_utils.c \
 			parse_utils2.c parse_utils3.c \
 			executer2.c executer3.c executer4.c \
 

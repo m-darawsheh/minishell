@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expander.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: hassende <hassende@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 14:28:49 by hassende          #+#    #+#             */
-/*   Updated: 2025/05/09 18:13:13 by hassende         ###   ########.fr       */
+/*   Updated: 2025/05/10 13:57:38 by hassende         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ static void	change_value(t_token *token, int start, int end, char *env_var)
 	free(env_var);
 }
 
-static void	expand(t_token *token, int i, t_cmd_path *path)
+void	expand(t_token *token, int i, t_cmd_path *path)
 {
 	char	var_name[MAX_ENV_NAME];
 	int		j;
@@ -99,29 +99,13 @@ static void	set_quote_state(int *quote_state, char c, t_token *token)
 		*quote_state = 0;
 }
 
-static void process_dollar_sign(t_token *token, int *i, t_cmd_path *path)
-{
-	char *prev_value;
-
-	prev_value = ft_strdup(token->value);
-	expand(token, *i, path);
-	token->from_expansion = 1;
-	if (ft_strcmp(prev_value, token->value) != 0)
-	{
-		free(prev_value);
-		(*i)--;
-		return;
-	}
-	free(prev_value);
-}
-
-void check_for_expansion(t_token *token, t_cmd_path *path)
+void	check_for_expansion(t_token *token, t_cmd_path *path)
 {
 	int	i;
 	int	quote_state;
 
 	if (token->value == NULL || !token->value[0])
-		return;
+		return ;
 	i = 0;
 	quote_state = 0;
 	while (token->value[i])
