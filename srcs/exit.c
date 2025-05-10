@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hassende <hassende@student.42amman.com>    +#+  +:+       +#+        */
+/*   By: mdarawsh <mdarawsh@student.42amman.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/17 20:47:36 by hassende          #+#    #+#             */
-/*   Updated: 2025/05/08 16:29:11 by hassende         ###   ########.fr       */
+/*   Updated: 2025/05/10 15:00:55 by mdarawsh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,17 +68,18 @@ int	do_exit(t_cmd *cmd)
 		double_free_cmd_path(cmd->main_cmd);
 		exit(0);
 	}
-	if (cmd->cmd_split[2] != NULL)
-	{
-		ft_putstr_fd("minishell: exit: too many arguments\n", 2);
-		return (1);
-	}
 	if (!exit_isdigit(cmd->cmd_split[1]) || check_overflow(cmd->cmd_split[1]))
 	{
 		ft_putstr_fd("minishell: exit: ", 2);
 		ft_putstr_fd(cmd->cmd_split[1], 2);
 		ft_putstr_fd(": numeric argument required\n", 2);
+		double_free_cmd_path(cmd->main_cmd);
 		exit (2);
+	}
+	if (cmd->cmd_split[2] != NULL)
+	{
+		ft_putstr_fd("minishell: exit: too many arguments\n", 2);
+		return (1);
 	}
 	exit_code = ft_atoi(cmd->cmd_split[1]);
 	exit_code %= 256;
